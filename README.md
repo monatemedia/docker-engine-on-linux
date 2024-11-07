@@ -252,11 +252,11 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [issues-shield]: https://img.shields.io/github/issues/monatemedia/docker-engine-on-linux.svg?style=for-the-badge
 [issues-url]: https://github.com/monatemedia/docker-engine-on-linux/issues
 [license-shield]: https://img.shields.io/github/license/monatemedia/docker-engine-on-linux.svg?style=for-the-badge
-[license-url]: https://github.com/monatemedia/docker-engine-on-linux/blob/master/LICENSE.txt
+[license-url]: https://github.com/monatemedia/docker-engine-on-linux/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/company/monatemediaofficial
 [product-screenshot]: images/screenshot.png
-[Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white
+[Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
 [Docker-hub-url]: https://hub.docker.com/
