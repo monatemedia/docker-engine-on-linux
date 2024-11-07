@@ -109,7 +109,7 @@ I want to be able to run all my apps at the same time on my VPS.
 
 ### Built With
 
-* [![Ububtu][Ubuntu]][Ubuntu-url]
+* [![Ububtu][Ubuntu.com]][Ubuntu-url]
 * [![Docker][Docker-hub]][Docker-hub-url]
 * [![Github Actions][Github-actions]][Github-actions-url]
 * [![Nginx][Nginx]][Nginx-url]
@@ -254,7 +254,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [license-shield]: https://img.shields.io/github/license/monatemedia/docker-engine-on-linux.svg?style=for-the-badge
 [license-url]: https://github.com/monatemedia/docker-engine-on-linux/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/monatemediaofficial
+[linkedin-url]: https://linkedin.com/company/monatemediaofficial
 [product-screenshot]: images/screenshot.png
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
