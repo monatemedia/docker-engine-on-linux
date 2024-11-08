@@ -1,0 +1,13 @@
+services:
+  svelte-counter:
+    container_name: svelte-counter
+    image: ghcr.io/monatemedia/svelte-counter:latest
+    environment:
+      VIRTUAL_HOST: monatehub.monatemedia.com
+      LETSENCRYPT_HOST: monatehub.monatemedia.com
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true

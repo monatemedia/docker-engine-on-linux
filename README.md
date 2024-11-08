@@ -119,16 +119,38 @@ I want to be able to run all my apps at the same time on my VPS.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- SHARED PROXY -->
-## Shared Proxy
+<!-- CREATE SHARED PROXY -->
+## Create Shared Proxy
 
 You can use a single, centralized nginx-proxy container to manage your applications. This container will act as a reverse proxy and route traffic based on the subdomain to the correct application.
 
-### Create Centralized Nginx Proxy
+### Create Docker Compose
 
-Create a new Docker Compose file (./shared-proxy/docker-compose.yml) for the shared nginx-proxy and letsencrypt-companion containers:
+From the root directory of your VPS create a folder called shared proxy.
+
+```sh
+mkdir shared-proxy
+```
+
+Enter the directory
+
+```sh
+cd shared-proxy
+```
+
+Make a file called `docker-compose.yml`
+
+```sh
+touch docker-compose.yml
+```
+
+Enter file with VIM or NANO and enter contents.
+
+  ```sh
+  vi docker.compose.yml
+  ```
+
+Enter contents
 
   ```sh
   services:
@@ -176,8 +198,8 @@ Create the proxy-network Docker network by running this bash command (only once)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- VITE SVELTE DOCKER COMPOSE -->
-## VITE Svelte Docker Compose
+<!-- VITE SVELTE DOCKER PROJECT -->
+## Create Vite Svelte Docker Compose
 
 This is an example of how you may set up your vite project locally. Here we are setting up this app: https://github.com/monatemedia/svelte-counter
 
@@ -223,8 +245,8 @@ Save and close the the file
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- PYTHON DJANGO DOCKER COMPOSE -->
-## Python Django Docker Compose
+<!-- PYTHON DJANGO DOCKER PROJECT -->
+## Create Python Django Docker Project
 
 This is an example of how you may set up your python django project locally. Here we are setting up this app: https://github.com/monatemedia/python-django-achievementhq
 
@@ -287,7 +309,7 @@ Save and close the the file
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- USAGE EXAMPLES -->
+<!-- Create Start Script -->
 ## Usage
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
@@ -296,7 +318,14 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- USAGE EXAMPLES -->
+## Usage
 
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+
+_For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap

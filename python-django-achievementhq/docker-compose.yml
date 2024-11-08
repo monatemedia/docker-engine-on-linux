@@ -1,0 +1,30 @@
+services:
+  achievementhq_db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - proxy-network
+
+  achievementhq_web:
+    image: ghcr.io/monatemedia/python-django-achievementhq:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      VIRTUAL_HOST: achievementhq.monatemedia.com
+      LETSENCRYPT_HOST: achievementhq.monatemedia.com
+    networks:
+      - proxy-network
+
+volumes:
+  postgres_data:
+
+networks:
+  proxy-network:
+    external: true
