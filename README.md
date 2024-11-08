@@ -123,44 +123,171 @@ I want to be able to run all my apps at the same time on my VPS.
 
 
 
-<!-- GETTING STARTED -->
-## Getting Started
+<!-- SHARED PROXY -->
+## Shared Proxy
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+You can use a single, centralized nginx-proxy container to manage your applications. This container will act as a reverse proxy and route traffic based on the subdomain to the correct application.
 
-### Prerequisites
+### Create Centralized Nginx Proxy
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+Create a new Docker Compose file (./shared-proxy/docker-compose.yml) for the shared nginx-proxy and letsencrypt-companion containers:
+
   ```sh
-  npm install npm@latest -g
+  services:
+    nginx-proxy:
+      container_name: nginx-proxy
+      image: nginxproxy/nginx-proxy
+      restart: unless-stopped
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+        - ./nginx/html:/usr/share/nginx/html
+        - ./nginx/certs:/etc/nginx/certs
+        - ./nginx/vhost:/etc/nginx/vhost.d
+        - ./nginx/acme:/etc/acme.sh
+      networks:
+        - proxy-network
+
+    letsencrypt-companion:
+      container_name: letsencrypt-companion
+      image: jrcs/letsencrypt-nginx-proxy-companion
+      restart: unless-stopped
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:z
+        - ./nginx/acme:/etc/acme.sh:rw
+      networks:
+        - proxy-network
+      environment:
+        DEFAULT_EMAIL: <yourEmail>
+
+  networks:
+    proxy-network:
+      external: true
   ```
 
-### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/monatemedia/docker-engine-on-linux.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin monatemedia/docker-engine-on-linux
-   git remote -v # confirm the changes
-   ```
+### Create Proxy Network
+
+Create the proxy-network Docker network by running this bash command (only once):
+
+  ```sh
+  docker network create proxy-network
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- VITE SVELTE DOCKER COMPOSE -->
+## VITE Svelte Docker Compose
 
+This is an example of how you may set up your vite project locally. Here we are setting up this app: https://github.com/monatemedia/svelte-counter
+
+### Create Docker Compose
+
+From the root directory of your VPS create a folder called svelte-counter
+
+```sh
+mkdir svelte-counter
+```
+
+Enter the directory
+
+```sh
+cd svelte-counter
+```
+
+Make a file called `docker-compose.yml`
+
+```sh
+touch docker-compose.yml
+```
+
+Enter file with VIM or NANO and enter contents.
+
+```sh
+services:
+  svelte-counter:
+    container_name: svelte-counter
+    image: ghcr.io/monatemedia/svelte-counter:latest
+    environment:
+      VIRTUAL_HOST: monatehub.monatemedia.com
+      LETSENCRYPT_HOST: monatehub.monatemedia.com
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
+```
+
+Save and close the the file
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- PYTHON DJANGO DOCKER COMPOSE -->
+## Python Django Docker Compose
+
+This is an example of how you may set up your python django project locally. Here we are setting up this app: https://github.com/monatemedia/python-django-achievementhq
+
+### Create Docker Compose
+
+From the root directory of your VPS create a folder called python-django-achievementhq
+
+```sh
+mkdir python-django-achievementhq
+```
+
+Enter the directory
+
+```sh
+cd python-django-achievementhq
+```
+
+Make a file called `docker-compose.yml`
+
+```sh
+touch docker-compose.yml
+```
+
+Enter file with VIM or NANO and enter contents.
+
+```sh
+services:
+  achievementhq_db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - proxy-network
+
+  achievementhq_web:
+    image: ghcr.io/monatemedia/python-django-achievementhq:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      VIRTUAL_HOST: achievementhq.monatemedia.com
+      LETSENCRYPT_HOST: achievementhq.monatemedia.com
+    networks:
+      - proxy-network
+
+volumes:
+  postgres_data:
+
+networks:
+  proxy-network:
+    external: true
+```
+
+Save and close the the file
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
