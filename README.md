@@ -106,18 +106,16 @@ I want to be able to run all my apps at the same time on my VPS.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ### Built With
 
-* [![Ububtu][Ubuntu.com]][Ubuntu-url]
-* [![Docker][Docker-hub]][Docker-hub-url]
-* [![Github Actions][Github-actions]][Github-actions-url]
-* [![Nginx][Nginx]][Nginx-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+[![Ububtu][Ubuntu.com]][Ubuntu-url]
+[![Docker][Docker-hub]][Docker-hub-url]
+[![Github Actions][Github-actions]][Github-actions-url]
+[![Nginx][Nginx]][Nginx-url]
+[![Svelte][Svelte.dev]][Svelte-url]
+[![Laravel][Laravel.com]][Laravel-url]
+[![Bootstrap][Bootstrap.com]][Bootstrap-url]
+[![JQuery][JQuery.com]][JQuery-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
