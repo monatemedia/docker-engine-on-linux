@@ -113,9 +113,14 @@ I want to be able to run all my apps at the same time on my VPS.
 [![Github Actions][Github-actions]][Github-actions-url]
 [![Nginx][Nginx]][Nginx-url]
 [![Svelte][Svelte.dev]][Svelte-url]
-[![Laravel][Laravel.com]][Laravel-url]
+[![Python][Python.org]][Python-url]
+[![Django][Djangoproject.com]][Django-url]
 [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+[![PHP][Php.net]][Php-url]
+[![Laravel][Laravel.com]][Laravel-url]
 [![JQuery][JQuery.com]][JQuery-url]
+[![Vue][Vuejs.org]][Vue-url]
+[![React][React.dev]][React-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -307,6 +312,8 @@ networks:
 
 Save and close the the file
 
+_For more examples, please refer to the [Documentation](https://example.com)_
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- Create Start Script -->
@@ -420,9 +427,19 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Nginx-url]: https://nginx.org/en/
 [Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
 [Svelte-url]: https://svelte.dev/
+[Python.org]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
+[Python-url]: https://www.python.org/
+[Djangoproject.com]: https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white
+[Django-url]: https://www.djangoproject.com/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
+[Php.net]: https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white
+[Php-url]: https://www.php.net/
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
+[Vuejs.org]: https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D
+[vue-url]: https://vuejs.org/
+[React.dev]: https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB
+[React-url]: https://react.dev/
