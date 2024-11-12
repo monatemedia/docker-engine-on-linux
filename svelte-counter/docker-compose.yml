@@ -3,11 +3,12 @@ services:
     container_name: svelte-counter
     image: ghcr.io/monatemedia/svelte-counter:latest
     environment:
-      VIRTUAL_HOST: monatehub.monatemedia.com
-      LETSENCRYPT_HOST: monatehub.monatemedia.com
+      VIRTUAL_HOST: monatehub.monatemedia.com # The name of the domain where website will be hosted
+      LETSENCRYPT_HOST: monatehub.monatemedia.com # The name of the domain where website will be hosted
     networks:
       - proxy-network
 
+# Access shared proxy network
 networks:
   proxy-network:
     external: true

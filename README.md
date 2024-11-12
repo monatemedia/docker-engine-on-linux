@@ -310,11 +310,236 @@ networks:
     external: true
 ```
 
-Save and close the the file
+Save and close the file
+
+### Start Centralized Proxy and Applications
+
+Start the centralized `nginx-proxy` setup:
+
+```sh
+cd ~
+cd shared-proxy
+docker compose up
+```
+
+Start Each Application
+
+```sh
+cd /svelte-counter
+docker compose up -d
+
+cd /python-django-achievementhq
+docker compose up -d
+```
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- Create Automation Scripts -->
+## Create Automation Scripts
+
+You can make management of your various application scripts easier by creating scripts.
+
+### Create a Start Script
+
+Navigate to your home directory
+
+```sh
+cd ~
+```
+
+Create a new shell script, `start-all.sh`
+
+```sh
+touch start-all.sh
+```
+
+Open the shell script
+
+```sh
+vi start-all.sh
+```
+
+Add the following lines to the start-all.sh file. Replace the paths with the actual paths to your docker-compose.yml files:
+
+```sh
+#!/bin/bash
+
+echo "Starting centralized proxy..."
+cd /shared-proxy
+docker compose up -d
+
+echo "Starting svelte-counter app..."
+cd /svelte-counter
+docker compose up -d
+
+echo "Starting python-django-achievementhq app..."
+cd /python-django-achievementhq
+docker compose up -d
+
+echo "All services started!"
+
+```
+
+Save and close the VIM editor
+
+Make the script executable by running:
+
+```sh
+chmod +x start-all.sh
+
+```
+
+Run the script
+
+```sh
+start-all.sh
+
+```
+
+### Create a Stop Script
+
+Navigate to your home directory
+
+```sh
+cd ~
+```
+
+Create a new shell script, `stop-all.sh`
+
+```sh
+touch stop-all.sh
+```
+
+Open the shell script
+
+```sh
+vi stop-all.sh
+```
+
+Add the following lines to the start-all.sh file. Replace the paths with the actual paths to your docker-compose.yml files:
+
+```sh
+#!/bin/bash
+
+echo "Stopping python-django-achievementhq app..."
+cd /python-django-achievementhq
+docker compose down
+
+echo "Stopping svelte-counter app..."
+cd /svelte-counter
+docker compose down
+
+echo "Stopping centralized proxy..."
+cd /shared-proxy
+docker compose down
+
+echo "All services stopped!"
+
+```
+
+Save and close the VIM editor
+
+Make the script executable by running:
+
+```sh
+chmod +x stop-all.sh
+
+```
+
+Run the script
+
+```sh
+stop-all.sh
+
+```
+
+### Create a Reboot Script
+
+Navigate to your home directory
+
+```sh
+cd ~
+```
+
+Create a new shell script, `reboot-all.sh`
+
+```sh
+touch reboot-all.sh
+```
+
+Open the shell script
+
+```sh
+vi reboot-all.sh
+```
+
+Add the following lines to the start-all.sh file. Replace the paths with the actual paths to your docker-compose.yml files:
+
+```sh
+#!/bin/bash
+
+# Navigate to each project directory and restart the services
+cd /path/to/svelte-counter
+docker compose down && docker compose up -d
+
+cd /path/to/python-django-achievementhq
+docker compose down && docker compose up -d
+
+# Add more directories as needed following the same pattern
+
+echo "All services have been restarted successfully."
+
+```
+
+Save and close the VIM editor
+
+Make the script executable by running:
+
+```sh
+chmod +x reboot-all.sh
+
+```
+
+Run the script
+
+```sh
+reboot-all.sh
+
+```
+
+### Optional: Run on Server Reboot
+
+If you want this script to run automatically when the server reboots:
+
+edit your crontab
+
+```sh
+crontab -e
+
+```
+
+Add the following line to run the script at startup:
+
+```sh
+@reboot reboot-all.sh
+
+```
+
+_For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- Create Start Script -->
+## Usage
+
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+
+_For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 <!-- Create Start Script -->
 ## Usage
