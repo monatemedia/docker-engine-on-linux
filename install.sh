@@ -5,6 +5,7 @@ TMP_SCRIPT_PATH="/tmp/denlin-installer.sh"
 REPO_DIR=$(pwd)
 
 # Inform User
+echo
 echo "=== Denlin Bootstrap Installation Script ==="
 echo "This script will generate a new installation script in the /tmp directory."
 echo
@@ -18,6 +19,7 @@ cat > $TMP_SCRIPT_PATH <<EOF
 INSTALL_DIR="/usr/local/bin/denlin-cli"
 SYMLINK_PATH="/usr/local/bin/denlin"
 
+echo
 echo "=== Denlin Installer ==="
 echo "Installing Denlin from repository at $REPO_DIR"
 echo "Target installation directory: \$INSTALL_DIR"
@@ -27,7 +29,9 @@ echo
 echo "Copying files to \$INSTALL_DIR..."
 sudo rm -rf "\$INSTALL_DIR" # Remove any previous installation
 sudo mkdir -p "\$INSTALL_DIR"
-sudo cp -r "$REPO_DIR/denlin-cli" "\$INSTALL_DIR" || {
+
+# Ensure we copy the contents of the denlin-cli folder directly, not the folder itself
+sudo cp -r "$REPO_DIR/denlin-cli/." "\$INSTALL_DIR" || {
     echo "Error: Failed to copy files to \$INSTALL_DIR."
     exit 1
 }
@@ -74,14 +78,17 @@ rm -f "$TMP_SCRIPT_PATH" || {
     echo "Warning: Failed to remove the installer script. Please delete it manually."
 }
 
+echo
 echo "=== Installation Complete ==="
 echo "You can now run 'denlin' to start using the tool."
 EOF
 
 # Step 2: Make the New Script Executable
 chmod +x "$TMP_SCRIPT_PATH"
+echo
 echo "New installation script created and made executable."
 
 # Step 3: Run the New Script
+echo
 echo "Running the new installation script..."
 "$TMP_SCRIPT_PATH"
