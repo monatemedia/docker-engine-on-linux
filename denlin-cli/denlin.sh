@@ -9,7 +9,7 @@ display_banner() {
     echo -e " _____     ______     __   __     __         __     __   __   "
     echo -e "/\\  __-.  /\\  ___\\   /\\ \"-.\\ \\   /\\ \\       /\\ \\   /\\ \"-.\\ \\  "
     echo -e "\\ \\ \\/\\ \\ \\ \\  __\\   \\ \\ \\-.  \\  \\ \\ \\____  \\ \\ \\  \\ \\ \\-.  \\ "
-    echo -e " \\ \\____-  \\ \\_____\\  \\ \\_\\\"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\\"\\_\\"
+    echo -e " \\ \\____-  \\ \\_____\\  \\ \\_\\\ "\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\\"\\_\\"
     echo -e "  \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                              "
     echo -e "                                                              "
@@ -55,17 +55,22 @@ interactive_menu() {
     done
 }
 
+# Path to the update script
+UPDATE_SCRIPT="/usr/local/bin/denlin-cli/modules/update.sh"
+
 # Update Functionality
 update() {
-    REPO_URL="https://github.com/monatemedia/docker-engine-on-linux"
-    INSTALL_DIR="/usr/local/bin/denlin-cli"
-
-    if [ -d "$INSTALL_DIR/.git" ]; then
-        echo "Updating Denlin tool from $REPO_URL..."
-        git -C "$INSTALL_DIR" pull origin main || echo "Failed to update. Ensure Git is installed and the repo is properly set up."
+    echo "=== Denlin Update ==="
+    if [ -f "$UPDATE_SCRIPT" ]; then
+        echo "Running the update script located at $UPDATE_SCRIPT..."
+        bash "$UPDATE_SCRIPT" || {
+            echo "Failed to execute the update script. Please check for errors."
+            exit 1
+        }
     else
-        echo "Cloning Denlin tool from $REPO_URL..."
-        sudo git clone "$REPO_URL" "$INSTALL_DIR" || echo "Failed to clone the repository. Check your network connection."
+        echo "Update script not found at $UPDATE_SCRIPT."
+        echo "Please ensure the update script exists and try again."
+        exit 1
     fi
 }
 
