@@ -13,7 +13,7 @@ display_banner() {
     echo -e "  \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                              "
     echo -e "                                                              "
-    echo -e "     Denlin: Docker Engine on Linux CLI Tool Version Alpha    "
+    echo -e "     Denlin: Docker Engine on Linux CLI Tool Version Beta    "
     echo -e "                                                              "
     echo -e "                                                              "
 }
@@ -60,6 +60,7 @@ UPDATE_SCRIPT="/usr/local/bin/denlin-cli/modules/update.sh"
 
 # Update Functionality
 update() {
+    echo
     echo "=== Denlin Update ==="
     if [ -f "$UPDATE_SCRIPT" ]; then
         echo "Running the update script located at $UPDATE_SCRIPT..."

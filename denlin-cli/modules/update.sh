@@ -7,6 +7,7 @@ INSTALL_DIR="/usr/local/bin/denlin-cli"
 SYMLINK_PATH="/usr/local/bin/denlin"
 
 # Step 1: Inform User About the Update
+echo
 echo "=== Denlin Update Script ==="
 echo "This script will update Denlin to the latest version from $REPO_URL."
 echo "Temporary files will be stored in $TEMP_DIR."
@@ -68,11 +69,12 @@ rm -rf "$TEMP_DIR" || {
 echo "Temporary files successfully removed."
 echo
 
-echo
+# Step 8: Installation Complete
+echo "Denlin has been updated to the latest version!"
 echo "=== Update Completed ==="
-echo "Denlin has been updated to the latest version and successfully tested!"
 echo
 
-# Step 8: Test Denlin Installation
+# Step 9: Test Denlin Installation
 echo "Testing the updated Denlin installation..."
+echo
 denlin
