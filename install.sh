@@ -86,8 +86,12 @@ cd ~ || {
 }
 echo "Returned to home directory successfully."
 
+# Final check to ensure the current directory is correct
+echo "Ensuring the current working directory is valid..."
+cd ~ || exit 1
+
 echo "=== Installation Complete ==="
-echo "You can now run 'denlin' to start using the tool."
+echo "You can now run 'cd ~' to return to root directory and run 'denlin' to start using the tool."
 EOF
 
 # Step 2: Make the New Script Executable
