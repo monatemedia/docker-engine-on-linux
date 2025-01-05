@@ -13,7 +13,7 @@ display_banner() {
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
     echo -e "                                                                 "
-    echo -e "        Denlin: Docker Engine on Linux CLI Tool Version 0.0.1    "
+    echo -e "        Denlin: Docker Engine on Linux CLI Tool Version Charlie    "
     echo -e "                                                                 "
     echo -e "                                                                 "
 }
@@ -45,6 +45,7 @@ interactive_menu() {
             4)
                 echo
                 echo "Exiting Denlin. Goodbye!"
+                echo
                 exit 0
                 ;;
             *)

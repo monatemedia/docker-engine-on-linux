@@ -27,7 +27,7 @@ echo
 # Step 3: Copy Files to the Installation Directory
 echo "Installing files to $INSTALL_DIR..."
 sudo rm -rf "$INSTALL_DIR" # Remove the old installation directory
-sudo cp -r "$TEMP_DIR/denlin-cli" "$INSTALL_DIR" || {
+sudo cp -r "$TEMP_DIR" "$INSTALL_DIR" || {
     echo "Failed to copy files to $INSTALL_DIR."
     exit 1
 }
@@ -43,12 +43,17 @@ ls -l "$INSTALL_DIR/" || {
 echo
 
 # Step 5: Make the Main Script Executable
-echo "Making the main script executable..."
-sudo chmod +x "$INSTALL_DIR/denlin.sh" || {
-    echo "Failed to make the main script executable."
+if [ -f "$INSTALL_DIR/denlin.sh" ]; then
+    echo "Making the main script executable..."
+    sudo chmod +x "$INSTALL_DIR/denlin.sh" || {
+        echo "Failed to make the main script executable."
+        exit 1
+    }
+    echo "Main script is now executable."
+else
+    echo "Main script not found at $INSTALL_DIR/denlin.sh."
     exit 1
-}
-echo "Main script is now executable."
+fi
 echo
 
 # Step 6: Create or Update the Symlink
@@ -61,12 +66,14 @@ echo "'denlin' command successfully created/updated."
 echo
 
 # Step 7: Clean Up Temporary Files
-echo "Cleaning up temporary files..."
-rm -rf "$TEMP_DIR" || {
-    echo "Failed to clean up temporary files."
-    exit 1
-}
-echo "Temporary files successfully removed."
+if [ -d "$TEMP_DIR" ]; then
+    echo "Cleaning up temporary files..."
+    rm -rf "$TEMP_DIR" || {
+        echo "Failed to clean up temporary files."
+        exit 1
+    }
+    echo "Temporary files successfully removed."
+fi
 echo
 
 # Step 8: Installation Complete
@@ -76,5 +83,9 @@ echo
 
 # Step 9: Test Denlin Installation
 echo "Testing the updated Denlin installation..."
-echo
-denlin
+if command -v denlin >/dev/null 2>&1; then
+    denlin
+else
+    echo "Denlin command not found. Ensure $SYMLINK_PATH is in your PATH."
+    exit 1
+fi
