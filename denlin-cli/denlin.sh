@@ -44,7 +44,7 @@ interactive_menu() {
         echo "4. Uninstall Denlin"
         echo "5. Exit"
         echo ""
-        read -p "Enter your choice [1-4]: " choice
+        read -p "Enter your choice [1-5]: " choice
 
         case "$choice" in
             1)
