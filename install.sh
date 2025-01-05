@@ -80,7 +80,11 @@ rm -f "$TMP_SCRIPT_PATH" || {
 
 # Step 7: Return to the user's home directory safely
 echo "Returning to your home directory..."
-cd ~ 2>/dev/null || echo "Warning: Failed to return to the home directory. Please ensure you are in a valid directory."
+cd ~ || {
+    echo "Warning: Failed to return to the home directory. You may be in an invalid directory."
+    exit 1
+}
+echo "Returned to home directory successfully."
 
 echo "=== Installation Complete ==="
 echo "You can now run 'denlin' to start using the tool."
