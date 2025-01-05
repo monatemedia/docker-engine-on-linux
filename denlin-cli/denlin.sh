@@ -57,7 +57,7 @@ interactive_menu() {
 # Update Functionality
 update() {
     REPO_URL="https://github.com/monatemedia/docker-engine-on-linux"
-    INSTALL_DIR="/usr/local/bin/denlin"
+    INSTALL_DIR="/usr/local/bin/denlin-cli"
 
     if [ -d "$INSTALL_DIR/.git" ]; then
         echo "Updating Denlin tool from $REPO_URL..."
