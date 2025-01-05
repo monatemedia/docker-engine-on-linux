@@ -43,7 +43,6 @@ interactive_menu() {
             3)
                 echo "Docker management module not yet implemented."
                 ;;
-            case $OPTION in
             4)
                 bash /usr/local/bin/denlin-cli/modules/uninstall.sh
                 ;;
