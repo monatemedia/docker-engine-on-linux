@@ -5,18 +5,19 @@
 # ==========================
 # ASCII Art Banner
 display_banner() {
-    echo "                                                               "
-    echo " _____     ______     __   __     __         __     __   __    "
-    echo "/\  __-.  /\  ___\   /\ "-.\ \   /\ \       /\ \   /\ "-.\ \   "
-    echo "\ \ \/\ \ \ \  __\   \ \ \-.  \  \ \ \____  \ \ \  \ \ \-.  \  "
-    echo " \ \____-  \ \_____\  \ \_\\"\_\  \ \_____\  \ \_\  \ \_\\"\_\ "
-    echo "  \/____/   \/_____/   \/_/ \/_/   \/_____/   \/_/   \/_/ \/_/ "
-    echo "                                                               "
-    echo "                                                               "
-    echo "     Denlin: Docker Engine on Linux CLI Tool Version Alpha     "
-    echo "                                                               "
-    echo "                                                               "
+    echo -e "                                                              "
+    echo -e " _____     ______     __   __     __         __     __   __   "
+    echo -e "/\\  __-.  /\\  ___\\   /\\ \"-.\\ \\   /\\ \\       /\\ \\   /\\ \"-.\\ \\  "
+    echo -e "\\ \\ \\/\\ \\ \\ \\  __\\   \\ \\ \\-.  \\  \\ \\ \\____  \\ \\ \\  \\ \\ \\-.  \\ "
+    echo -e " \\ \\____-  \\ \\_____\\  \\ \\_\\\"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\\"\\_\\"
+    echo -e "  \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
+    echo -e "                                                              "
+    echo -e "                                                              "
+    echo -e "     Denlin: Docker Engine on Linux CLI Tool Version Alpha    "
+    echo -e "                                                              "
+    echo -e "                                                              "
 }
+
 
 # Interactive Menu
 interactive_menu() {
