@@ -3,6 +3,16 @@
 # ==========================
 # Denlin CLI Tool
 # ==========================
+
+# Ensure the script is running from a valid directory
+if ! pwd &>/dev/null; then
+    echo "Error: The current working directory is no longer accessible. Switching to home directory..."
+    cd ~ || {
+        echo "Failed to switch to home directory. Exiting."
+        exit 1
+    }
+fi
+
 # ASCII Art Banner
 display_banner() {
     echo -e "                                                                 "
