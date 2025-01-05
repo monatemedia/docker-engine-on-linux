@@ -62,9 +62,10 @@ sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
     echo "Failed to create the symbolic link."
     exit 1
 }
-hash -r # Refresh the shell command cache
+exec "$SHELL" # Reload shell to refresh environment variables and command paths
 echo "'denlin' command successfully created/updated."
 echo
+
 
 # Step 8: Installation Complete
 echo "Denlin has been updated to the latest version!"
