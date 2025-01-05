@@ -28,7 +28,8 @@ interactive_menu() {
         echo "1. Update Denlin"
         echo "2. Configure VPS"
         echo "3. Docker Management"
-        echo "4. Exit"
+        echo "4. Uninstall Denlin"
+        echo "5. Exit"
         echo ""
         read -p "Enter your choice [1-4]: " choice
 
@@ -42,7 +43,12 @@ interactive_menu() {
             3)
                 echo "Docker management module not yet implemented."
                 ;;
+            case $OPTION in
             4)
+                bash /usr/local/bin/denlin-cli/modules/uninstall.sh
+                ;;
+
+            5)
                 echo
                 echo "Exiting Denlin. Goodbye!"
                 echo
