@@ -74,22 +74,16 @@ sudo rm -rf "$REPO_DIR" || {
 
 # Step 6: Remove the installer script
 echo "Removing the installer script..."
-echo
 rm -f "$TMP_SCRIPT_PATH" || {
     echo "Warning: Failed to remove the installer script. Please delete it manually."
 }
 
-# Step 7: Return to the user's home directory
+# Step 7: Return to the user's home directory safely
 echo "Returning to your home directory..."
-cd ~ || {
-    echo "Error: Failed to change to the home directory. Run command 'cd ~' first and then 'denlin'."
-    exit 1
-}
+cd ~ 2>/dev/null || echo "Warning: Failed to return to the home directory. Please ensure you are in a valid directory."
 
-echo
 echo "=== Installation Complete ==="
 echo "You can now run 'denlin' to start using the tool."
-echo
 EOF
 
 # Step 2: Make the New Script Executable
