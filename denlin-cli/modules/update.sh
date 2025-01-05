@@ -62,18 +62,8 @@ sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
     echo "Failed to create the symbolic link."
     exit 1
 }
+hash -r # Refresh the shell command cache
 echo "'denlin' command successfully created/updated."
-echo
-
-# Step 7: Clean Up Temporary Files
-if [ -d "$TEMP_DIR" ]; then
-    echo "Cleaning up temporary files..."
-    rm -rf "$TEMP_DIR" || {
-        echo "Failed to clean up temporary files."
-        exit 1
-    }
-    echo "Temporary files successfully removed."
-fi
 echo
 
 # Step 8: Installation Complete
@@ -83,9 +73,10 @@ echo
 
 # Step 9: Test Denlin Installation
 echo "Testing the updated Denlin installation..."
-if command -v denlin >/dev/null 2>&1; then
-    denlin
-else
-    echo "Denlin command not found. Ensure $SYMLINK_PATH is in your PATH."
+"$SYMLINK_PATH" || {
+    echo "Failed to execute the updated Denlin installation."
     exit 1
-fi
+}
+
+# Step 10: Run Denlin
+denlin
