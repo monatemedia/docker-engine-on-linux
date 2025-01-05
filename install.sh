@@ -50,6 +50,9 @@ else
 fi
 echo
 
+# Change directory to the user's home to avoid errors
+cd ~ || exit
+
 # Step 6: Leave User Instructions
 echo "=== Installation Complete ==="
 echo "Denlin has been successfully installed."

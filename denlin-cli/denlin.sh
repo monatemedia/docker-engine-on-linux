@@ -47,7 +47,6 @@ interactive_menu() {
             4)
                 bash /usr/local/bin/denlin-cli/modules/uninstall.sh
                 ;;
-
             5)
                 echo
                 echo "Exiting Denlin. Goodbye!"
