@@ -24,6 +24,7 @@ interactive_menu() {
     while true; do
         display_banner
         echo "Main Menu:"
+        echo
         echo "1. Update Denlin"
         echo "2. Configure VPS"
         echo "3. Docker Management"
@@ -42,6 +43,7 @@ interactive_menu() {
                 echo "Docker management module not yet implemented."
                 ;;
             4)
+                echo
                 echo "Exiting Denlin. Goodbye!"
                 exit 0
                 ;;
@@ -51,7 +53,7 @@ interactive_menu() {
         esac
 
         echo ""
-        read -p "Press Enter to return to the menu..."
+        read -p "Press Enter to return to the main menu..."
     done
 }
 
