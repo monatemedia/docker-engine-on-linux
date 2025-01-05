@@ -13,7 +13,7 @@ display_banner() {
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
     echo -e "                                                                 "
-    echo -e "        Denlin: Docker Engine on Linux CLI Tool Version Charlie    "
+    echo -e "      Denlin: Docker Engine on Linux CLI Tool Version Delta      "
     echo -e "                                                                 "
     echo -e "                                                                 "
 }
