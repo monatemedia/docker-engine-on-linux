@@ -1,84 +1,82 @@
 #!/bin/bash
 
-# Define Constants
+# Define constants
 REPO_URL="https://github.com/monatemedia/docker-engine-on-linux.git"
 TEMP_DIR="/tmp/denlin-update"
 INSTALL_DIR="/usr/local/bin/denlin-cli"
 SYMLINK_PATH="/usr/local/bin/denlin"
 
-# Step 1: Inform User About the Update
+# Step 1: Inform User
 echo
 echo "=== Denlin Update Script ==="
 echo "This script will update Denlin to the latest version from $REPO_URL."
 echo "Temporary files will be stored in $TEMP_DIR."
-echo "Starting update process..."
 echo
 
-# Step 2: Clone the Repository to a Temporary Directory
+# Step 2: Clone Repository to Temporary Directory
 echo "Cloning the repository to $TEMP_DIR..."
-rm -rf "$TEMP_DIR" # Ensure the temp directory is clean
+rm -rf "$TEMP_DIR" # Ensure a clean temp directory
 git clone "$REPO_URL" "$TEMP_DIR" || {
-    echo "Failed to clone the repository. Check your network connection."
+    echo "Error: Failed to clone the repository. Check your network connection."
     exit 1
 }
 echo "Repository successfully cloned."
 echo
 
-# Step 3: Copy Files to the Installation Directory
-echo "Installing files to $INSTALL_DIR..."
+# Step 3: Copy Files to Installation Directory
+echo "Updating files in $INSTALL_DIR..."
 sudo rm -rf "$INSTALL_DIR" # Remove the old installation directory
-sudo cp -r "$TEMP_DIR/denlin-cli/"* "$INSTALL_DIR" || {
-    echo "Failed to copy files to $INSTALL_DIR."
+sudo mkdir -p "$INSTALL_DIR"
+sudo cp -r "$TEMP_DIR/." "$INSTALL_DIR" || {
+    echo "Error: Failed to update files in $INSTALL_DIR."
     exit 1
 }
-echo "Files successfully installed."
-
+echo "Files successfully updated."
 echo
 
-# Step 4: Verify the Installation Directory
-echo "Verifying files in $INSTALL_DIR..."
-ls -l "$INSTALL_DIR/" || {
-    echo "Verification failed. Ensure $INSTALL_DIR exists and contains the correct files."
-    exit 1
-}
-echo
-
-# Step 5: Make the Main Script Executable
+# Step 4: Make Main Script Executable
+echo "Making the main script executable..."
 if [ -f "$INSTALL_DIR/denlin.sh" ]; then
-    echo "Making the main script executable..."
     sudo chmod +x "$INSTALL_DIR/denlin.sh" || {
-        echo "Failed to make the main script executable."
+        echo "Error: Failed to make the main script executable."
         exit 1
     }
     echo "Main script is now executable."
 else
-    echo "Main script not found at $INSTALL_DIR/denlin.sh."
+    echo "Error: Main script not found at $INSTALL_DIR/denlin.sh."
     exit 1
 fi
 echo
 
-# Step 6: Create or Update the Symlink
-echo "Creating or updating the global 'denlin' command..."
+# Step 5: Create or Update the Global Symbolic Link
+echo "Updating the global 'denlin' command..."
 sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
-    echo "Failed to create the symbolic link."
+    echo "Error: Failed to update the symbolic link."
     exit 1
 }
-exec "$SHELL" # Reload shell to refresh environment variables and command paths
-echo "'denlin' command successfully created/updated."
+echo "'denlin' command successfully updated."
 echo
 
-
-# Step 8: Installation Complete
-echo "Denlin has been updated to the latest version!"
-echo "=== Update Completed ==="
-echo
-
-# Step 9: Test Denlin Installation
-echo "Testing the updated Denlin installation..."
-"$SYMLINK_PATH" || {
-    echo "Failed to execute the updated Denlin installation."
+# Step 6: Test the Updated Installation
+echo "Testing the updated installation..."
+if command -v denlin &>/dev/null; then
+    echo "'denlin' command is available globally."
+else
+    echo "Error: 'denlin' command is not available globally. Check your setup."
     exit 1
-}
+fi
+echo
 
-# Step 10: Run Denlin
-denlin
+# Step 7: Cleanup Temporary Files
+echo "Cleaning up temporary files..."
+rm -rf "$TEMP_DIR" || {
+    echo "Warning: Failed to remove temporary files. Please delete $TEMP_DIR manually."
+}
+echo "Temporary files removed."
+echo
+
+# Step 8: Completion
+echo "=== Update Complete ==="
+echo "Denlin has been successfully updated to the latest version."
+echo "You can now use 'denlin' to run the updated tool."
+echo
