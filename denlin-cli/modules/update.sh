@@ -23,18 +23,27 @@ git clone "$REPO_URL" "$TEMP_DIR" || {
 echo "Repository successfully cloned."
 echo
 
-# Step 3: Copy Files to Installation Directory
+# Step 3: Locate denlin-cli Directory
+echo "Checking for 'denlin-cli' folder in the cloned repository..."
+if [ ! -d "$TEMP_DIR/denlin-cli" ]; then
+    echo "Error: 'denlin-cli' folder not found in the repository."
+    exit 1
+fi
+echo "'denlin-cli' folder found."
+echo
+
+# Step 4: Copy Files to Installation Directory
 echo "Updating files in $INSTALL_DIR..."
 sudo rm -rf "$INSTALL_DIR" # Remove the old installation directory
 sudo mkdir -p "$INSTALL_DIR"
-sudo cp -r "$TEMP_DIR/." "$INSTALL_DIR" || {
+sudo cp -r "$TEMP_DIR/denlin-cli/." "$INSTALL_DIR" || {
     echo "Error: Failed to update files in $INSTALL_DIR."
     exit 1
 }
 echo "Files successfully updated."
 echo
 
-# Step 4: Make Main Script Executable
+# Step 5: Make Main Script Executable
 echo "Making the main script executable..."
 if [ -f "$INSTALL_DIR/denlin.sh" ]; then
     sudo chmod +x "$INSTALL_DIR/denlin.sh" || {
@@ -43,12 +52,12 @@ if [ -f "$INSTALL_DIR/denlin.sh" ]; then
     }
     echo "Main script is now executable."
 else
-    echo "Error: Main script not found at $INSTALL_DIR/denlin.sh."
+    echo "Error: 'denlin.sh' not found in $INSTALL_DIR."
     exit 1
 fi
 echo
 
-# Step 5: Create or Update the Global Symbolic Link
+# Step 6: Create or Update the Global Symbolic Link
 echo "Updating the global 'denlin' command..."
 sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
     echo "Error: Failed to update the symbolic link."
@@ -57,7 +66,7 @@ sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
 echo "'denlin' command successfully updated."
 echo
 
-# Step 6: Test the Updated Installation
+# Step 7: Test the Updated Installation
 echo "Testing the updated installation..."
 if command -v denlin &>/dev/null; then
     echo "'denlin' command is available globally."
@@ -67,7 +76,7 @@ else
 fi
 echo
 
-# Step 7: Cleanup Temporary Files
+# Step 8: Cleanup Temporary Files
 echo "Cleaning up temporary files..."
 rm -rf "$TEMP_DIR" || {
     echo "Warning: Failed to remove temporary files. Please delete $TEMP_DIR manually."
@@ -75,7 +84,7 @@ rm -rf "$TEMP_DIR" || {
 echo "Temporary files removed."
 echo
 
-# Step 8: Completion
+# Step 9: Completion
 echo "=== Update Complete ==="
 echo "Denlin has been successfully updated to the latest version."
 echo "You can now use 'denlin' to run the updated tool."
