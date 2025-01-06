@@ -27,11 +27,12 @@ echo
 # Step 3: Copy Files to the Installation Directory
 echo "Installing files to $INSTALL_DIR..."
 sudo rm -rf "$INSTALL_DIR" # Remove the old installation directory
-sudo cp -r "$TEMP_DIR" "$INSTALL_DIR" || {
+sudo cp -r "$TEMP_DIR/denlin-cli/"* "$INSTALL_DIR" || {
     echo "Failed to copy files to $INSTALL_DIR."
     exit 1
 }
 echo "Files successfully installed."
+
 echo
 
 # Step 4: Verify the Installation Directory
