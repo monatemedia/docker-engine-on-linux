@@ -43,3 +43,4 @@ echo
 echo "=== Uninstallation Complete ==="
 echo "Denlin has been completely uninstalled from your system."
 echo "If you wish to reinstall, you can do so by following the installation instructions."
+echo
