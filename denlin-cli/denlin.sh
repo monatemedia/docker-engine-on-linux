@@ -13,7 +13,7 @@ display_banner() {
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
     echo -e "                                                                 "
-    echo -e "      Denlin: Docker Engine on Linux CLI Tool Version Delta      "
+    echo -e "      Denlin: Docker Engine on Linux CLI Tool Version Echo      "
     echo -e "                                                                 "
     echo -e "                                                                 "
 }
@@ -58,6 +58,7 @@ interactive_menu() {
                 ;;
             4)
                 bash /usr/local/bin/denlin-cli/modules/uninstall.sh
+                exit 0  # Exit the script immediately after uninstall
                 ;;
             5)
                 echo
