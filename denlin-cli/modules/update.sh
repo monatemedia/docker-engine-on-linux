@@ -36,7 +36,8 @@ echo
 echo "Updating files in $INSTALL_DIR..."
 sudo rm -rf "$INSTALL_DIR" # Remove the old installation directory
 sudo mkdir -p "$INSTALL_DIR"
-sudo cp -r "$TEMP_DIR/denlin-cli/." "$INSTALL_DIR" || {
+# Copy only the contents of the denlin-cli folder, not the folder itself
+sudo cp -r "$TEMP_DIR/denlin-cli/"* "$INSTALL_DIR" || {
     echo "Error: Failed to update files in $INSTALL_DIR."
     exit 1
 }
