@@ -13,7 +13,7 @@ display_banner() {
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
     echo -e "                                                                 "
-    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version Foxtrot      "
+    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version Golf      "
     echo -e "                                                                 "
     echo -e "                                                                 "
 }
@@ -49,6 +49,7 @@ interactive_menu() {
         case "$choice" in
             1)
                 update
+                exit 0  # Exit the script immediately after uninstall
                 ;;
             2)
                 echo "Configuration module not yet implemented."
