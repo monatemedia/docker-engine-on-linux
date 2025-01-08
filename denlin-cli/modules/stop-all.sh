@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Menu: Main Menu
 # Submenu: Docker Management
 # Description: Stops all Docker containers.

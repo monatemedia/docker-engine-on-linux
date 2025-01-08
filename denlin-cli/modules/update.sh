@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Menu: Main Menu
 # Submenu: Denlin Management
 # Description: Updates the Denlin CLI tool.

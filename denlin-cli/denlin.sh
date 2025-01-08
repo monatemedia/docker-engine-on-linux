@@ -33,6 +33,12 @@ load_menu() {
             submenu=$(sed -n '2s/# Submenu: //p' "$script")
             description=$(sed -n '3s/# Description: //p' "$script")
 
+            # Debugging output to check parsed values
+            echo "Parsing script: $script"
+            echo "Menu: $menu"
+            echo "Submenu: $submenu"
+            echo "Description: $description"
+
             # Check if any header fields are missing
             if [ -z "$menu" ] || [ -z "$submenu" ] || [ -z "$description" ]; then
                 UNASSIGNED_SCRIPTS+=("$script")
@@ -92,6 +98,7 @@ show_submenu() {
 # Show Unassigned Scripts
 show_unassigned_scripts() {
     if [ ${#UNASSIGNED_SCRIPTS[@]} -eq 0 ]; then
+        echo "No unassigned scripts."
         return  # No unassigned scripts, don't show this submenu
     fi
 
@@ -113,6 +120,13 @@ show_unassigned_scripts() {
 # Main Menu
 main_menu() {
     load_menu  # Load the menu options dynamically
+    echo "Loading main menu..."
+
+    if [ ${#MENU_ITEMS[@]} -eq 0 ] && [ ${#UNASSIGNED_SCRIPTS[@]} -eq 0 ]; then
+        echo "No scripts found in the /modules folder."
+        exit 1
+    fi
+
     PS3="Select a menu option: "
     select opt in "${MENU_ITEMS[@]}" "Unassigned Scripts" "Exit"; do
         if [ "$opt" == "Exit" ]; then
