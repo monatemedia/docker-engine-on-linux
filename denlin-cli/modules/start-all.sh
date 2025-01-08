@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# Menu: Main Menu
+# Submenu: Docker Management
+# Description: Starts all Docker containers.
+
 while read -r project_dir; do
     if [ -d "$project_dir" ]; then
         echo "Starting services in $project_dir..."

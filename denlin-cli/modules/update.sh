@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Menu: Main Menu
+# Submenu: Denlin Management
+# Description: Updates the Denlin CLI tool.
+
 # Define constants
 REPO_URL="https://github.com/monatemedia/docker-engine-on-linux.git"
 TEMP_DIR="/tmp/denlin-update"

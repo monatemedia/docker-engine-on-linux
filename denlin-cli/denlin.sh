@@ -35,34 +35,43 @@ load_menu() {
     MENU_ITEMS=()
     MENU_DESCRIPTIONS=()
 
-    while IFS= read -r line; do
-        # Skip empty lines or comments
-        [[ -z "$line" || "$line" =~ ^# ]] && continue
+    for script in /modules/*.sh; do
+        if [ -f "$script" ]; then
+            # Extract menu, submenu, and description from the header
+            menu=$(head -n 1 "$script" | sed 's/# Menu: //')
+            submenu=$(head -n 2 "$script" | tail -n 1 | sed 's/# Submenu: //')
+            description=$(head -n 3 "$script" | tail -n 1 | sed 's/# Description: //')
 
-        # Parse Main Menu Items
-        if [[ "$line" == Menu:* ]]; then
-            MENU_ITEMS+=("${line#Menu:}")
+            MENU_ITEMS+=("$menu:$submenu:$script")
+            MENU_DESCRIPTIONS+=("$description")
         fi
-
-        # Optionally, handle submenu or other configurations here
-    done < "$CONFIG_FILE"
+    done
 }
 
 # Show Submenu
 show_submenu() {
     local submenu="$1"
     local options=()
+    local descriptions=()
     local i=1
 
-    echo "Loading submenu: $submenu..."
-    while IFS= read -r line; do
-        if [[ "$line" == "$submenu"* ]]; then
-            options+=("${line##* }")
+    # Loop through each script in the modules directory
+    for ((i = 0; i < ${#MENU_ITEMS[@]}; i++)); do
+        # Extract the menu and submenu from the item
+        item=${MENU_ITEMS[$i]}
+        menu=$(echo "$item" | cut -d: -f1)
+        sub=$(echo "$item" | cut -d: -f2)
+        script=$(echo "$item" | cut -d: -f3)
+
+        # If the item matches the current submenu, add it to the options
+        if [ "$sub" == "$submenu" ]; then
+            options+=("$menu:$sub:$script")
+            descriptions+=("${MENU_DESCRIPTIONS[$i]}")
         fi
-    done < <(grep -E "^$submenu" "$CONFIG_FILE")
+    done
 
     if [ ${#options[@]} -eq 0 ]; then
-        echo "No options found in submenu: $submenu"
+        echo "No options found for submenu: $submenu"
         return
     fi
 
@@ -72,27 +81,35 @@ show_submenu() {
             main_menu
             return
         fi
-        echo "You selected $opt"
+
+        # Show the selected option and its description
+        index=$(echo "$opt" | cut -d: -f3)
+        description="${descriptions[$index]}"
+        echo "You selected: $opt"
+        echo "Description: $description"
+
+        # Execute the selected script
+        bash "$index"
     done
 }
 
 # Main Menu
-main_menu() {
-    display_banner
-    load_menu
-
-    echo "Main Menu:"
-    PS3="Select an option (or press ENTER to exit): "
+show_main_menu() {
+    PS3="Select a menu option: "
     select opt in "${MENU_ITEMS[@]}" "Exit"; do
-        case "$opt" in
-            "Exit")
-                echo "Goodbye!"
-                exit 0
-                ;;
-            *)
-                show_submenu "$opt"
-                ;;
-        esac
+        if [ "$opt" == "Exit" ]; then
+            exit 0
+        fi
+
+        menu=$(echo "$opt" | cut -d: -f1)
+        submenu=$(echo "$opt" | cut -d: -f2)
+        script=$(echo "$opt" | cut -d: -f3)
+
+        echo "You selected: $menu -> $submenu"
+        description="${MENU_DESCRIPTIONS[$index]}"
+        echo "Description: $description"
+
+        show_submenu "$submenu"
     done
 }
 

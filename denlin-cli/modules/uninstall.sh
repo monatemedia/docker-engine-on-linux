@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Menu: Main Menu
+# Submenu: Denlin Management
+# Description: Uninstalls Denlin
+
 # Define constants
 INSTALL_DIR="/usr/local/bin/denlin-cli"
 SYMLINK_PATH="/usr/local/bin/denlin"
