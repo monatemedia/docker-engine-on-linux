@@ -13,7 +13,7 @@ display_banner() {
     echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_ \\\"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\"
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
-    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version Golf      "
+    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version Hotel     "
     echo -e "                                                                 "
 }
 
