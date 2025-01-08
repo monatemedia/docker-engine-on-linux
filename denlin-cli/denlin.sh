@@ -95,6 +95,7 @@ show_unassigned_scripts() {
     echo "These scripts are not assigned to any menu. To assign a script:"
     echo "1. Open the script in a text editor."
     echo "2. Add a line starting with '# Menu: <desired_menu_name>'."
+    echo "2. Add a line starting with '# Description: <desired_description>'."
     echo
 
     PS3="Select an unassigned script (or press ENTER to go back): "
@@ -115,6 +116,7 @@ main_menu() {
     load_menu
 
     echo "Main Menu:"
+    echo
     local options=()
     local has_unassigned_scripts=0
 
@@ -134,6 +136,7 @@ main_menu() {
 
     # Add "Exit" as the last option
     options+=("Exit")
+    echo
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
@@ -145,6 +148,7 @@ main_menu() {
             show_submenu "$opt"
         else
             echo "Invalid option. Try again."
+        echo
         fi
     done
 }
