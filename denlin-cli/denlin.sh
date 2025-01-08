@@ -30,34 +30,6 @@ display_banner() {
     echo -e "                                                                 "
 }
 
-#!/bin/bash
-
-# ==========================
-# Denlin CLI Tool
-# ==========================
-
-# Global Config File
-CONFIG_FILE="/usr/local/bin/denlin-cli/services.conf"
-
-# Load Config File
-if [ -f "$CONFIG_FILE" ]; then
-    source "$CONFIG_FILE"
-else
-    echo "Configuration file not found. Please run 'install.sh' to initialize."
-    exit 1
-fi
-
-# Display Banner
-display_banner() {
-    echo -e "   ____       _   _       _         "
-    echo -e "  |  _ \  ___| |_| |_   _| | ___    "
-    echo -e "  | | | |/ _ \ __| | | | | |/ _ \   "
-    echo -e "  | |_| |  __/ |_| | |_| | |  __/   "
-    echo -e "  |____/ \___|\__|_|\__,_|_|\___|   "
-    echo -e "   Docker Engine on Linux (Denlin) "
-    echo -e "===================================="
-}
-
 # Parse Scripts and Descriptions Dynamically
 load_menu() {
     MENU_ITEMS=()
@@ -75,7 +47,6 @@ load_menu() {
         # Optionally, handle submenu or other configurations here
     done < "$CONFIG_FILE"
 }
-
 
 # Show Submenu
 show_submenu() {
