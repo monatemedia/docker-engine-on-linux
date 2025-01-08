@@ -1,7 +1,9 @@
 #!/bin/bash
-# Menu: Main Menu
-# Submenu: Docker Management
-# Description: Stops and restarts all Docker containers.
+# Menu: System
+# Submenu: Reboot
+# Description: This script will reboot all systems.
+
+echo "Rebooting all systems..."
 
 while read -r project_dir; do
   if [ -d "$project_dir" ]; then
