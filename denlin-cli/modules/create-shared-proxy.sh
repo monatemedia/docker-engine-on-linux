@@ -59,9 +59,10 @@ EOL
 
 echo "docker-compose.yml created. You need to replace '<yourEmail>' with your email address."
 
-# Step 3: Replace <yourEmail> with user-provided email
+# Step 3: Prompt for email
 user_email=$(prompt_email)
-sed -i "s/<yourEmail>/$user_email/" docker-compose.yml
+escaped_email=$(echo "$user_email" | sed 's/[\/&]/\\&/g')
+sed -i "s/<yourEmail>/$escaped_email/" docker-compose.yml
 echo "Email updated in docker-compose.yml."
 
 # Step 4: Create the Docker proxy network
@@ -70,7 +71,7 @@ docker network create proxy-network 2>/dev/null || echo "Docker network 'proxy-n
 
 # Step 5: Start the nginx-proxy and Let's Encrypt services
 echo "Starting Docker services with 'docker-compose up -d'..."
-docker-compose up -d
+docker compose up -d
 
 if [ $? -eq 0 ]; then
     echo "Proxy setup completed successfully! Your shared proxy is now running."
