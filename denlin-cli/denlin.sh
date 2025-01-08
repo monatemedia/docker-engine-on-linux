@@ -75,13 +75,15 @@ show_submenu() {
 
     echo
     PS3="Select an option (or press ENTER to go back): "
-    select opt in "${options[@]}" "Back\n"; do
+    select opt in "${options[@]}" "Back"; do
         if [ "$opt" == "Back" ]; then
+            echo
             main_menu
             return
         fi
 
         run_script "$opt"
+        echo
         return
     done
 }
@@ -135,7 +137,8 @@ main_menu() {
     fi
 
     # Add "Exit" as the last option
-    options+=("Exit\n")
+    options+=("Exit")
+    echo 
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
