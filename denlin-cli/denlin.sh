@@ -33,18 +33,17 @@ load_menu() {
     # Loop through each script in the modules folder
     for script in "$MODULES_DIR"/*.sh; do
         if [ -f "$script" ]; then
-            # Extract the first three lines of the script for menu, submenu, and description
-            menu=$(sed -n '1s/# Menu: //p' "$script" | tr -d '\r\n')   # Remove carriage return and newline
-            submenu=$(sed -n '2s/# Submenu: //p' "$script" | tr -d '\r\n')
-            description=$(sed -n '3s/# Description: //p' "$script" | tr -d '\r\n')
-
-            # Debugging output to check parsed values
             echo "Parsing script: $script"
+            # Extract the first three lines of the script for menu, submenu, and description
+            menu=$(sed -n 's/^# Menu: \(.*\)/\1/p' "$script" | tr -d '\r')
+            submenu=$(sed -n 's/^# Submenu: \(.*\)/\1/p' "$script" | tr -d '\r')
+            description=$(sed -n 's/^# Description: \(.*\)/\1/p' "$script" | tr -d '\r')
+
+            # Debugging output
             echo "Menu: '$menu'"
             echo "Submenu: '$submenu'"
             echo "Description: '$description'"
 
-            # Check if any header fields are missing
             if [ -z "$menu" ] || [ -z "$submenu" ] || [ -z "$description" ]; then
                 UNASSIGNED_SCRIPTS+=("$script")
             else
