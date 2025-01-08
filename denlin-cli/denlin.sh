@@ -77,13 +77,11 @@ show_submenu() {
     PS3="Select an option (or press ENTER to go back): "
     select opt in "${options[@]}" "Back"; do
         if [ "$opt" == "Back" ]; then
-        echo -e "\n"  # Ensure a newline after "Back"
             main_menu
             return
         fi
 
         run_script "$opt"
-        echo -e "\n"  # Ensure a newline after running a script
         return
     done
 }
@@ -118,7 +116,7 @@ main_menu() {
     display_banner
     load_menu
 
-    echo -e "Main Menu:"
+    echo -e "Main Menu:\n"
     local options=()
     local has_unassigned_scripts=0
 
@@ -138,7 +136,6 @@ main_menu() {
 
     # Add "Exit" as the last option
     options+=("Exit")
-    echo -e "\n"  # Add a newline after "Exit"
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
