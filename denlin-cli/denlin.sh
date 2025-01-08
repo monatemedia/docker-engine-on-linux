@@ -3,6 +3,18 @@
 # ==========================
 # Denlin CLI Tool
 # ==========================
+
+# Global Config File
+CONFIG_FILE="/usr/local/bin/denlin-cli/services.conf"
+
+# Load Config File
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+else
+    echo "Configuration file not found. Please run 'install.sh' to initialize."
+    exit 1
+fi
+
 # ASCII Art Banner
 display_banner() {
     echo -e "                                                                 "
@@ -18,93 +30,91 @@ display_banner() {
     echo -e "                                                                 "
 }
 
-# Check if current directory is valid
-validate_directory() {
-    if ! pwd &>/dev/null; then
-        echo "Error: The current working directory is no longer accessible."
-        echo "Switching to home directory..."
-        if cd ~ &>/dev/null; then
-            echo "Successfully switched to home directory."
-        else
-            echo "Failed to switch to home directory. Exiting Denlin."
-            exit 1
-        fi
-    fi
+#!/bin/bash
+
+# ==========================
+# Denlin CLI Tool
+# ==========================
+
+# Global Config File
+CONFIG_FILE="/usr/local/bin/denlin-cli/services.conf"
+
+# Load Config File
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+else
+    echo "Configuration file not found. Please run 'install.sh' to initialize."
+    exit 1
+fi
+
+# Display Banner
+display_banner() {
+    echo -e "   ____       _   _       _         "
+    echo -e "  |  _ \  ___| |_| |_   _| | ___    "
+    echo -e "  | | | |/ _ \ __| | | | | |/ _ \   "
+    echo -e "  | |_| |  __/ |_| | |_| | |  __/   "
+    echo -e "  |____/ \___|\__|_|\__,_|_|\___|   "
+    echo -e "   Docker Engine on Linux (Denlin) "
+    echo -e "===================================="
 }
 
-# Interactive Menu
-interactive_menu() {
-    while true; do
-        display_banner
-        echo "Main Menu:"
-        echo
-        echo "1. Update Denlin"
-        echo "2. Configure VPS"
-        echo "3. Docker Management"
-        echo "4. Uninstall Denlin"
-        echo "5. Exit"
-        echo ""
-        read -p "Enter your choice [1-5]: " choice
+# Parse Scripts and Descriptions Dynamically
+load_menu() {
+    MENU_ITEMS=()
+    MENU_DESCRIPTIONS=()
 
-        case "$choice" in
-            1)
-                update
-                exit 0  # Exit the script immediately after uninstall
-                ;;
-            2)
-                echo "Configuration module not yet implemented."
-                ;;
-            3)
-                echo "Docker management module not yet implemented."
-                ;;
-            4)
-                bash /usr/local/bin/denlin-cli/modules/uninstall.sh
-                exit 0  # Exit the script immediately after uninstall
-                ;;
-            5)
-                echo
-                echo "Exiting Denlin. Goodbye!"
-                echo
-                exit 0
-                ;;
-            *)
-                echo "Invalid choice. Please select a valid option."
-                ;;
-        esac
+    while IFS= read -r line; do
+        MENU_ITEMS+=("${line%%:*}")
+        MENU_DESCRIPTIONS+=("${line#*:}")
+    done < <(grep -E "^Menu:" "$CONFIG_FILE")
+}
 
-        echo ""
-        read -p "Press Enter to return to the main menu..."
+# Show Submenu
+show_submenu() {
+    local submenu="$1"
+    local options=()
+    local i=1
+
+    echo "Loading submenu: $submenu..."
+    while IFS= read -r line; do
+        if [[ "$line" == "$submenu"* ]]; then
+            options+=("${line##* }")
+        fi
+    done < <(grep -E "^$submenu" "$CONFIG_FILE")
+
+    if [ ${#options[@]} -eq 0 ]; then
+        echo "No options found in submenu: $submenu"
+        return
+    fi
+
+    PS3="Select an option (or press ENTER to go back): "
+    select opt in "${options[@]}" "Back"; do
+        if [[ "$opt" == "Back" ]]; then
+            main_menu
+            return
+        fi
+        echo "You selected $opt"
     done
 }
 
-# Path to the update script
-UPDATE_SCRIPT="/usr/local/bin/denlin-cli/modules/update.sh"
+# Main Menu
+main_menu() {
+    display_banner
+    load_menu
 
-# Update Functionality
-update() {
-    echo
-    echo "=== Denlin Update ==="
-    if [ -f "$UPDATE_SCRIPT" ]; then
-        echo "Running the update script located at $UPDATE_SCRIPT..."
-        bash "$UPDATE_SCRIPT" || {
-            echo "Failed to execute the update script. Please check for errors."
-            exit 1
-        }
-    else
-        echo "Update script not found at $UPDATE_SCRIPT."
-        echo "Please ensure the update script exists and try again."
-        exit 1
-    fi
+    echo "Main Menu:"
+    PS3="Select an option (or press ENTER to exit): "
+    select opt in "${MENU_ITEMS[@]}" "Exit"; do
+        case "$opt" in
+            "Exit")
+                echo "Goodbye!"
+                exit 0
+                ;;
+            *)
+                show_submenu "$opt"
+                ;;
+        esac
+    done
 }
 
-
-# Command Parsing
-case "$1" in
-    update)
-        update
-        ;;
-    *)
-        # Launch interactive menu if no valid arguments are provided
-        interactive_menu
-        ;;
-esac
+main_menu
