@@ -1,3 +1,3 @@
 #!/bin/bash
-# Menu: Configure VPS
+# Menu: Linux Commands
 # Description: Create a new linux user with write permissions
