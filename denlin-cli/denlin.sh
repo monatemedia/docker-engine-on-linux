@@ -99,7 +99,7 @@ show_unassigned_scripts() {
     echo -e "  2. Add a line starting with '# Menu: <desired_menu_name>'."
     echo -e "  3. Add a line starting with '# Description: <desired_description>'."
 
-    PS3="\nSelect an unassigned script (or press ENTER to go back): "
+    PS3="Select an unassigned script (or press ENTER to go back): "
     select script in "${UNASSIGNED_SCRIPTS[@]}" "Back"; do
         if [[ "$script" == "Back" ]]; then
             main_menu
@@ -137,7 +137,7 @@ main_menu() {
     # Add "Exit" as the last option
     options+=("Exit")
 
-    PS3="\nSelect a menu option: "
+    PS3="Select a menu option: "
     select opt in "${options[@]}"; do
         if [ "$opt" == "Exit" ]; then
             echo -e "\nGoodbye!\n"
