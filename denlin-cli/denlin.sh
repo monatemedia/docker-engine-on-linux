@@ -4,17 +4,6 @@
 # Denlin CLI Tool
 # ==========================
 
-# Global Config File
-CONFIG_FILE="/usr/local/bin/denlin-cli/services.conf"
-
-# Load Config File
-if [ -f "$CONFIG_FILE" ]; then
-    source "$CONFIG_FILE"
-else
-    echo "Configuration file not found. Please run 'install.sh' to initialize."
-    exit 1
-fi
-
 # ASCII Art Banner
 display_banner() {
     echo -e "                                                                 "
@@ -34,6 +23,7 @@ display_banner() {
 load_menu() {
     MENU_ITEMS=()
     MENU_DESCRIPTIONS=()
+    UNASSIGNED_SCRIPTS=()
 
     for script in /modules/*.sh; do
         if [ -f "$script" ]; then
@@ -42,8 +32,13 @@ load_menu() {
             submenu=$(head -n 2 "$script" | tail -n 1 | sed 's/# Submenu: //')
             description=$(head -n 3 "$script" | tail -n 1 | sed 's/# Description: //')
 
-            MENU_ITEMS+=("$menu:$submenu:$script")
-            MENU_DESCRIPTIONS+=("$description")
+            # Check if header fields are missing
+            if [ -z "$menu" ] || [ -z "$submenu" ] || [ -z "$description" ]; then
+                UNASSIGNED_SCRIPTS+=("$script")
+            else
+                MENU_ITEMS+=("$menu:$submenu:$script")
+                MENU_DESCRIPTIONS+=("$description")
+            fi
         fi
     done
 }
@@ -93,12 +88,39 @@ show_submenu() {
     done
 }
 
+# Show Unassigned Scripts
+show_unassigned_scripts() {
+    if [ ${#UNASSIGNED_SCRIPTS[@]} -eq 0 ]; then
+        return  # No unassigned scripts, don't show this submenu
+    fi
+
+    echo "Unassigned Scripts:"
+
+    PS3="Select an unassigned script (or press ENTER to go back): "
+    select script in "${UNASSIGNED_SCRIPTS[@]}" "Back"; do
+        if [[ "$script" == "Back" ]]; then
+            main_menu
+            return
+        fi
+
+        echo "You selected: $script"
+        # Execute the unassigned script
+        bash "$script"
+    done
+}
+
 # Main Menu
 main_menu() {
+    load_menu  # Load the menu options dynamically
     PS3="Select a menu option: "
-    select opt in "${MENU_ITEMS[@]}" "Exit"; do
+    select opt in "${MENU_ITEMS[@]}" "Unassigned Scripts" "Exit"; do
         if [ "$opt" == "Exit" ]; then
             exit 0
+        fi
+
+        if [ "$opt" == "Unassigned Scripts" ]; then
+            show_unassigned_scripts
+            return
         fi
 
         menu=$(echo "$opt" | cut -d: -f1)
@@ -113,4 +135,5 @@ main_menu() {
     done
 }
 
+# Start the Menu
 main_menu
