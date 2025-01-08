@@ -94,7 +94,7 @@ show_submenu() {
 }
 
 # Main Menu
-show_main_menu() {
+main_menu() {
     PS3="Select a menu option: "
     select opt in "${MENU_ITEMS[@]}" "Exit"; do
         if [ "$opt" == "Exit" ]; then
