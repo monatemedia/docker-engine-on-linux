@@ -118,7 +118,7 @@ main_menu() {
     display_banner
     load_menu
 
-    echo -e "Main Menu:\n"
+    echo -e "Main Menu:"
     local options=()
     local has_unassigned_scripts=0
 
@@ -138,9 +138,7 @@ main_menu() {
 
     # Add "Exit" as the last option
     options+=("Exit")
-
-    # Add a newline for visual clarity
-    echo -e "\n"
+    echo -e "\n"  # Add a newline after "Exit"
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
