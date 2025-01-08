@@ -64,10 +64,18 @@ load_menu() {
     MENU_DESCRIPTIONS=()
 
     while IFS= read -r line; do
-        MENU_ITEMS+=("${line%%:*}")
-        MENU_DESCRIPTIONS+=("${line#*:}")
-    done < <(grep -E "^Menu:" "$CONFIG_FILE")
+        # Skip empty lines or comments
+        [[ -z "$line" || "$line" =~ ^# ]] && continue
+
+        # Parse Main Menu Items
+        if [[ "$line" == Menu:* ]]; then
+            MENU_ITEMS+=("${line#Menu:}")
+        fi
+
+        # Optionally, handle submenu or other configurations here
+    done < "$CONFIG_FILE"
 }
+
 
 # Show Submenu
 show_submenu() {
