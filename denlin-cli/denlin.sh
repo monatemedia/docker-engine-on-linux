@@ -25,14 +25,15 @@ load_menu() {
     MENU_DESCRIPTIONS=()
     UNASSIGNED_SCRIPTS=()
 
+    # Loop through each script in the /modules folder
     for script in /modules/*.sh; do
         if [ -f "$script" ]; then
-            # Extract menu, submenu, and description from the header
-            menu=$(head -n 1 "$script" | sed 's/# Menu: //')
-            submenu=$(head -n 2 "$script" | tail -n 1 | sed 's/# Submenu: //')
-            description=$(head -n 3 "$script" | tail -n 1 | sed 's/# Description: //')
+            # Extract the first three lines of the script for menu, submenu, and description
+            menu=$(sed -n '1s/# Menu: //p' "$script")
+            submenu=$(sed -n '2s/# Submenu: //p' "$script")
+            description=$(sed -n '3s/# Description: //p' "$script")
 
-            # Check if header fields are missing
+            # Check if any header fields are missing
             if [ -z "$menu" ] || [ -z "$submenu" ] || [ -z "$description" ]; then
                 UNASSIGNED_SCRIPTS+=("$script")
             else
