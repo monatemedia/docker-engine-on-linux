@@ -33,9 +33,9 @@ load_menu() {
     for script in "$MODULES_DIR"/*.sh; do
         if [ -f "$script" ]; then
             # Extract the first three lines of the script for menu, submenu, and description
-            menu=$(sed -n '1s/# Menu: //p' "$script")
-            submenu=$(sed -n '2s/# Submenu: //p' "$script")
-            description=$(sed -n '3s/# Description: //p' "$script")
+            menu=$(sed -n '1s/# Menu: //p' "$script" | tr -d '\r')
+            submenu=$(sed -n '2s/# Submenu: //p' "$script" | tr -d '\r')
+            description=$(sed -n '3s/# Description: //p' "$script" | tr -d '\r')
 
             # Debugging output to check parsed values
             echo "Parsing script: $script"
