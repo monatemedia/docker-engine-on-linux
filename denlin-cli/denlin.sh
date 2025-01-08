@@ -24,6 +24,7 @@ display_banner() {
 MODULES_DIR="/usr/local/bin/denlin-cli/modules"
 
 # Refactor the load_menu function to use this directory
+# Refactor the load_menu function to use this directory
 load_menu() {
     MENU_ITEMS=()
     MENU_DESCRIPTIONS=()
@@ -33,15 +34,15 @@ load_menu() {
     for script in "$MODULES_DIR"/*.sh; do
         if [ -f "$script" ]; then
             # Extract the first three lines of the script for menu, submenu, and description
-            menu=$(sed -n '1s/# Menu: //p' "$script" | tr -d '\r')
-            submenu=$(sed -n '2s/# Submenu: //p' "$script" | tr -d '\r')
-            description=$(sed -n '3s/# Description: //p' "$script" | tr -d '\r')
+            menu=$(sed -n '1s/# Menu: //p' "$script" | tr -d '\r\n')   # Remove carriage return and newline
+            submenu=$(sed -n '2s/# Submenu: //p' "$script" | tr -d '\r\n')
+            description=$(sed -n '3s/# Description: //p' "$script" | tr -d '\r\n')
 
             # Debugging output to check parsed values
             echo "Parsing script: $script"
-            echo "Menu: $menu"
-            echo "Submenu: $submenu"
-            echo "Description: $description"
+            echo "Menu: '$menu'"
+            echo "Submenu: '$submenu'"
+            echo "Description: '$description'"
 
             # Check if any header fields are missing
             if [ -z "$menu" ] || [ -z "$submenu" ] || [ -z "$description" ]; then
