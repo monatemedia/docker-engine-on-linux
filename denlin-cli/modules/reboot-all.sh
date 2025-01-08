@@ -1,6 +1,5 @@
 #!/bin/bash
 # Menu: System
-# Submenu: Reboot
 # Description: This script will reboot all systems.
 
 echo "Rebooting all systems..."
