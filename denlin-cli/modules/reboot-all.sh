@@ -1,5 +1,5 @@
 #!/bin/bash
-# Menu: System
+# Menu: Docker Management
 # Description: This script will reboot all systems.
 
 echo "Rebooting all systems..."

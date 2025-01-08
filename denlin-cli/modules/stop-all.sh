@@ -1,6 +1,5 @@
 #!/bin/bash
-# Menu: Main Menu
-# Submenu: Docker Management
+# Menu: Docker Management
 # Description: Stops all Docker containers.
 
 while read -r project_dir; do

@@ -17,120 +17,109 @@ display_banner() {
     echo -e "                                                                 "
 }
 
-# Parse Scripts and Descriptions Dynamically
-MODULES_DIR="/usr/local/bin/denlin-cli/modules"
+# Directory containing scripts
+MODULES_DIR="./modules"
 
-load_menu() {
-    MENU_ITEMS=()
-    MENU_DESCRIPTIONS=()
-    UNASSIGNED_SCRIPTS=()
+# Function to display the main menu
+display_main_menu() {
+    local menu_items=()
+    local unassigned_scripts=()
 
-    for script in "$MODULES_DIR"/*.sh; do
-        if [ -f "$script" ]; then
-            # Extract menu and description
-            menu=$(sed -n 's/^# Menu: \(.*\)/\1/p' "$script" | tr -d '\r')
-            description=$(sed -n 's/^# Description: \(.*\)/\1/p' "$script" | tr -d '\r')
-
-            # Default to "Unassigned Scripts" if no menu is defined
-            if [ -z "$menu" ]; then
-                menu="Unassigned Scripts"
-            fi
-
-            # Add to menu items or unassigned scripts
-            basename=$(basename "$script" .sh)
-            if [ "$menu" == "Unassigned Scripts" ]; then
-                UNASSIGNED_SCRIPTS+=("$basename:$description")
+    # Parse scripts for menu items
+    for script in "$MODULES_DIR"/*; do
+        if [[ -f "$script" && -x "$script" ]]; then
+            menu=$(grep -m1 '^# Menu:' "$script" | cut -d: -f2 | xargs)
+            description=$(grep -m1 '^# Description:' "$script" | cut -d: -f2 | xargs)
+            if [[ -n "$menu" ]]; then
+                menu_items+=("$menu")
             else
-                MENU_ITEMS+=("$menu:$basename:$description")
+                unassigned_scripts+=("$script")
+            fi
+        fi
+    done
+
+    # Sort and remove duplicates from menu_items
+    menu_items=($(printf "%s\n" "${menu_items[@]}" | sort -u))
+
+    # Display menu
+    echo "Main Menu:"
+    local idx=1
+    for item in "${menu_items[@]}"; do
+        echo "$idx) $item"
+        idx=$((idx + 1))
+    done
+
+    # Handle unassigned scripts
+    if [[ ${#unassigned_scripts[@]} -gt 0 ]]; then
+        echo "$idx) Unassigned Scripts"
+        idx=$((idx + 1))
+    fi
+
+    echo "$idx) Exit"
+}
+
+# Function to display submenu
+display_submenu() {
+    local menu_name="$1"
+    local idx=1
+
+    echo "Submenu: $menu_name"
+    for script in "$MODULES_DIR"/*; do
+        if [[ -f "$script" && -x "$script" ]]; then
+            menu=$(grep -m1 '^# Menu:' "$script" | cut -d: -f2 | xargs)
+            description=$(grep -m1 '^# Description:' "$script" | cut -d: -f2 | xargs)
+            if [[ "$menu" == "$menu_name" ]]; then
+                script_name=$(basename "$script")
+                echo "$idx) $script_name - $description"
+                idx=$((idx + 1))
+            fi
+        fi
+    done
+    echo "$idx) Back"
+}
+
+# Function to handle unassigned scripts
+handle_unassigned_scripts() {
+    echo "Unassigned Scripts:"
+    echo "The following scripts do not have a 'Menu:' comment."
+    echo "To assign a script to a menu, add the following comment to the top of the script:"
+    echo "    # Menu: <menu_name>"
+    echo "    # Description: <description>"
+
+    for script in "$MODULES_DIR"/*; do
+        if [[ -f "$script" && -x "$script" ]]; then
+            menu=$(grep -m1 '^# Menu:' "$script" | cut -d: -f2 | xargs)
+            if [[ -z "$menu" ]]; then
+                echo " - $(basename "$script")"
             fi
         fi
     done
 }
 
-run_script() {
-    script_name="$1"
-    script_path="$MODULES_DIR/$script_name.sh"
-    if [ -f "$script_path" ]; then
-        bash "$script_path"
-    else
-        echo "Script '$script_name' not found."
-        exit 1
-    fi
-}
+# Main script loop
+while true; do
+    clear
+    display_main_menu
+    echo -n "Select a menu option: "
+    read -r choice
 
-show_submenu() {
-    local menu="$1"
-    echo "Submenu: $menu"
-    local options=()
-    for item in "${MENU_ITEMS[@]}"; do
-        item_menu=$(echo "$item" | cut -d: -f1)
-        if [ "$item_menu" == "$menu" ]; then
-            basename=$(echo "$item" | cut -d: -f2)
-            options+=("$basename")
-        fi
-    done
-
-    PS3="Select an option (or press ENTER to go back): "
-    select opt in "${options[@]}" "Back"; do
-        if [ "$opt" == "Back" ]; then
-            main_menu
-            return
-        fi
-
-        run_script "$opt"
-        return
-    done
-}
-
-show_unassigned_scripts() {
-    if [ ${#UNASSIGNED_SCRIPTS[@]} -eq 0 ]; then
-        echo "No unassigned scripts."
-        return
-    fi
-
-    echo "Unassigned Scripts:"
-    PS3="Select an unassigned script (or press ENTER to go back): "
-    select script in "${UNASSIGNED_SCRIPTS[@]}" "Back"; do
-        if [[ "$script" == "Back" ]]; then
-            main_menu
-            return
-        fi
-
-        script_name=$(echo "$script" | cut -d: -f1)
-        run_script "$script_name"
-        return
-    done
-}
-
-main_menu() {
-    display_banner
-    load_menu
-
-    echo "Main Menu:"
-    local options=("Exit")
-    for item in "${MENU_ITEMS[@]}"; do
-        menu=$(echo "$item" | cut -d: -f1)
-        if [[ ! " ${options[@]} " =~ " $menu " ]]; then
-            options+=("$menu")
-        fi
-    done
-    options+=("Unassigned Scripts")
-
-    PS3="Select a menu option: "
-    select opt in "${options[@]}"; do
-        if [ "$opt" == "Exit" ]; then
-            exit 0
-        elif [ "$opt" == "Unassigned Scripts" ]; then
-            show_unassigned_scripts
-        elif [[ " ${options[@]} " =~ " $opt " ]]; then
-            show_submenu "$opt"
-        fi
-    done
-}
-
-# Direct Script Execution
-if [ "$1" ]; then
-    run_script "$1"
-else
-    main_menu
-fi
+    case "$choice" in
+        [1-9]*)
+            clear
+            menu_name=$(display_main_menu | sed -n "${choice}p" | cut -d')' -f2 | xargs)
+            if [[ "$menu_name" == "Exit" ]]; then
+                echo "Goodbye!"
+                break
+            elif [[ "$menu_name" == "Unassigned Scripts" ]]; then
+                handle_unassigned_scripts
+            else
+                display_submenu "$menu_name"
+            fi
+            echo "Press ENTER to continue..."
+            read -r
+            ;;
+        *)
+            echo "Invalid option. Try again."
+            ;;
+    esac
+done

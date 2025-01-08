@@ -1,6 +1,5 @@
 #!/bin/bash
-# Menu: Main Menu
-# Submenu: Denlin Management
+# Menu: Denlin Management
 # Description: Uninstalls Denlin
 
 # Define constants
