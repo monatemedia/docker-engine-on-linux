@@ -13,7 +13,7 @@ show_example() {
     echo "example_function() {"
     echo -e "    echo \"This is an example function in the script.\"\n"
     echo "    # Add your logic here"
-    echo "}\n"
+    echo "}\\n"
     echo -e "# Call the function\n"
     echo "example_function"
     echo -e "\n=========================\n"
