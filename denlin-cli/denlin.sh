@@ -20,13 +20,17 @@ display_banner() {
 }
 
 # Parse Scripts and Descriptions Dynamically
+# Update the script directory reference
+MODULES_DIR="/usr/local/bin/denlin-cli/modules"
+
+# Refactor the load_menu function to use this directory
 load_menu() {
     MENU_ITEMS=()
     MENU_DESCRIPTIONS=()
     UNASSIGNED_SCRIPTS=()
 
-    # Loop through each script in the /modules folder
-    for script in /modules/*.sh; do
+    # Loop through each script in the modules folder
+    for script in "$MODULES_DIR"/*.sh; do
         if [ -f "$script" ]; then
             # Extract the first three lines of the script for menu, submenu, and description
             menu=$(sed -n '1s/# Menu: //p' "$script")
