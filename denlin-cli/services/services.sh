@@ -1,32 +1,11 @@
 #!/bin/bash
 
-# Load common functions and configuration
-source ../modules/common.sh
+# Load configuration
 source ../services.conf
 
-# ASCII Art Banner
-display_banner() {
-    echo -e "                                                                 "
-    echo -e "         _____     ______     __   __     __         __     __   __   "
-    echo -e "        /\\  __-.  /\\  ___\\   /\\ \"-.\\ \\   /\\ \\       /\\ \\   /\\ \"-.\\ \\  "
-    echo -e "        \\ \\ \\/\\ \\ \\ \\  __\\   \\ \\ \\-.  \\  \\ \\ \\____  \\ \\ \\  \\ \\ \\-.  \\ "
-    echo -e "         \\ \\____-  \\ \\_____\\  \\ \\_ \\\"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\"
-    echo -e "          \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
-    echo -e ""
-    echo -e "   ______     ______     ______     __   __   __     ______     ______     ______    "
-    echo -e "  /\  ___\   /\  ___\   /\  == \   /\ \ / /  /\ \   /\  ___\   /\  ___\   /\  ___\   "
-    echo -e "  \ \___  \  \ \  __\   \ \  __<   \ \ \'/   \ \ \  \ \ \____  \ \  __\   \ \___  \  "
-    echo -e "   \/\_____\  \ \_____\  \ \_\ \_\  \ \__|    \ \_\  \ \_____\  \ \_____\  \/\_____\ "
-    echo -e "    \/_____/   \/_____/   \/_/ /_/   \/_/      \/_/   \/_____/   \/_____/   \/_____/ "
-    echo -e "                                                                 "                  
-    echo -e "                                                                 "
-}
-
-# Main entry point for the script
+# Main entry point for services setup
 main() {
-    display_banner
     echo "Welcome to the Docker Services Setup!"
-    validate_docker
 
     # Get the service name
     read -p "Enter a name for your service (e.g., 'shared-proxy'): " SERVICE_NAME
