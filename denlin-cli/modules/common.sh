@@ -3,14 +3,14 @@
 # Menu: Services
 # Description: Entry point for reusable commands and integration with services.sh
 
-# Resolve the directory of the script
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# Resolve the project root directory
+PROJECT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 # Load configuration file
-if [ -f "$SCRIPT_DIR/../services.conf" ]; then
-    source "$SCRIPT_DIR/../services.conf"
+if [ -f "$PROJECT_ROOT/services/services.conf" ]; then
+    source "$PROJECT_ROOT/services/services.conf"
 else
-    echo "Error: services.conf not found at $SCRIPT_DIR/../services.conf"
+    echo "Error: services.conf not found at $PROJECT_ROOT/services/services.conf"
     exit 1
 fi
 
@@ -68,15 +68,11 @@ call_services() {
 
 # Main entry point for common.sh
 main() {
-    case "$1" in
-        "services")
-            call_services
-            ;;
-        *)
-            echo "Usage: $0 {services}"
-            exit 1
-            ;;
-    esac
+    if [[ "$1" == "services" ]]; then
+        "$PROJECT_ROOT/services/services.sh"
+    else
+        echo "Usage: $0 {services}"
+    fi
 }
 
 main "$@"
