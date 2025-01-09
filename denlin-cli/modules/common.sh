@@ -3,11 +3,6 @@
 # Menu: Services
 # Description: Create Docker Compose YAML files with a wizard
 
-
-
-
-display_banner
-
 # Check if Docker is installed
 validate_docker() {
     if ! command -v docker &> /dev/null; then
