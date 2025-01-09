@@ -3,8 +3,16 @@
 # Menu: Services
 # Description: Entry point for reusable commands and integration with services.sh
 
-# Load configuration
-source ../services.conf
+# Resolve the directory of the script
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# Load configuration file
+if [ -f "$SCRIPT_DIR/../services.conf" ]; then
+    source "$SCRIPT_DIR/../services.conf"
+else
+    echo "Error: services.conf not found at $SCRIPT_DIR/../services.conf"
+    exit 1
+fi
 
 # ASCII Art Banner
 display_banner() {
