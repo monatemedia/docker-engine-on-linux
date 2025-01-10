@@ -55,6 +55,16 @@ else
 fi
 echo -e ""
 
+# Step 4: Remove unused packages
+echo -e "Step 4: Removing unused packages...\n"
+sudo apt autoremove -y
+if [[ $? -eq 0 ]]; then
+    echo -e "Unused packages have been removed successfully.\n"
+else
+    echo -e "Error: Failed to remove unused packages.\n"
+    exit 1
+fi
+
 # Final message
 echo -e "Docker has been uninstalled successfully from your system.\n"
 echo -e "Please note: Any manually edited configuration files must be deleted manually if required.\n"

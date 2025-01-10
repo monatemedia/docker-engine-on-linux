@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Menu: Docker Management
-# Description: Uninstall Docker and all Docker related data including containers
+# Description: Install Docker with default options
 
 # Docker Installation Script
 # ============================
