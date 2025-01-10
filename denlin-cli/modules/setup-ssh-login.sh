@@ -3,10 +3,9 @@
 # Menu: Linux Commands
 # Description: Set Up Automatic Server Login from the Local Computer
 
-# Save the secondary script in the web-accessible directory
-WEB_DIR="/var/www/html"
+# File details
 SCRIPT_NAME="setup-ssh-login.sh"
-SCRIPT_PATH="$WEB_DIR/$SCRIPT_NAME"
+SCRIPT_PATH="$HOME/$SCRIPT_NAME"
 
 # Create the SSH setup script
 cat << 'EOF' > "$SCRIPT_PATH"
@@ -50,11 +49,22 @@ EOF
 # Make the script executable
 chmod +x "$SCRIPT_PATH"
 
-# Provide the download link
+# Get the local user's IP (if possible) for SCP instructions
+CLIENT_IP=$(echo $SSH_CLIENT | awk '{print $1}')
+
 echo "================================================================================"
-echo "The SSH setup script has been saved to the server."
-echo "To download it to your local machine, open a browser and go to:"
-echo "http://$(hostname -I | awk '{print $1}')/$SCRIPT_NAME"
-echo "Save it to your Desktop and then run it using the following command:"
+echo "The SSH setup script has been created at: $SCRIPT_PATH"
+echo ""
+echo "To download it to your local machine, run the following SCP command in your terminal:"
+echo ""
+if [ -n "$CLIENT_IP" ]; then
+    echo "  scp $USER@$(hostname -I | awk '{print $1}'):$SCRIPT_PATH ~/Desktop/$SCRIPT_NAME"
+else
+    echo "  scp $USER@<your-vps-ip>:$SCRIPT_PATH ~/Desktop/$SCRIPT_NAME"
+fi
+echo ""
+echo "Replace '<your-vps-ip>' with the IP address of your VPS if necessary."
+echo ""
+echo "After downloading, navigate to your Desktop and run the following command:"
 echo "  bash ~/Desktop/$SCRIPT_NAME"
 echo "================================================================================"
