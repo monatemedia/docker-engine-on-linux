@@ -1,8 +1,33 @@
 #!/bin/bash
 
-# Set up desktop path
-DESKTOP_PATH="$HOME/Desktop"
-SECONDARY_SCRIPT="$DESKTOP_PATH/setup-ssh-login.sh"
+# Menu: Linux Commands
+# Description: Create a new linux user with write permissions
+
+# Detect the operating system
+OS_TYPE=$(uname)
+
+# Determine the desktop path based on the operating system
+if [[ "$OS_TYPE" == "Linux" ]]; then
+    DESKTOP_PATH="$HOME/Desktop"
+elif [[ "$OS_TYPE" == "Darwin" ]]; then
+    DESKTOP_PATH="$HOME/Desktop" # macOS typically follows this structure
+elif [[ "$OS_TYPE" =~ MINGW|CYGWIN|MSYS ]]; then
+    # For Windows using Git Bash or similar, extract the Windows Desktop path
+    DESKTOP_PATH="$(powershell.exe -NoProfile -Command '[Environment]::GetFolderPath("Desktop")' | sed 's/\r//g')"
+else
+    echo "Unsupported operating system: $OS_TYPE"
+    exit 1
+fi
+
+# Notify the user where the script will be saved
+echo "Detected Operating System: $OS_TYPE"
+echo "The setup script will be saved to: $DESKTOP_PATH"
+
+# Ensure the Desktop directory exists
+if [ ! -d "$DESKTOP_PATH" ]; then
+    echo "The Desktop directory doesn't exist. Creating it..."
+    mkdir -p "$DESKTOP_PATH"
+fi
 
 echo "================================================================================"
 echo "This script will prepare an additional script for setting up SSH login on your VPS."
@@ -10,6 +35,7 @@ echo "The setup script will be saved to your desktop, and you'll be given instru
 echo "================================================================================"
 
 # Create the secondary script
+SECONDARY_SCRIPT="$DESKTOP_PATH/setup-ssh-login.sh"
 cat << 'EOF' > "$SECONDARY_SCRIPT"
 #!/bin/bash
 
@@ -56,5 +82,5 @@ echo "The SSH setup script has been saved to your desktop as 'setup-ssh-login.sh
 echo "To complete the setup:"
 echo "1. Open a terminal."
 echo "2. Run the following command:"
-echo "   bash ~/Desktop/setup-ssh-login.sh"
+echo "   bash \"$DESKTOP_PATH/setup-ssh-login.sh\""
 echo "================================================================================"
