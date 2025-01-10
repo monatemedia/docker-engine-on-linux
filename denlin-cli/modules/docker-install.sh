@@ -65,6 +65,37 @@ if [[ $? -ne 0 ]]; then
 fi
 echo -e ""
 
+# Step 4: Prompt for rootless mode setup
+read -p "Do you want to configure Docker in rootless mode for non-root users? (yes/no): " rootless_confirmation
+if [[ "$rootless_confirmation" == "yes" ]]; then
+    echo -e "\nSetting up Docker in rootless mode...\n"
+
+    # Check if the required package is installed
+    if ! dpkg -s uidmap > /dev/null 2>&1; then
+        echo -e "Installing required package 'uidmap'...\n"
+        sudo apt-get update && sudo apt-get install -y uidmap
+        if [[ $? -ne 0 ]]; then
+            echo -e "Error: Failed to install 'uidmap'.\n"
+            exit 1
+        fi
+    fi
+
+    # Run rootless setup tool
+    if dockerd-rootless-setuptool.sh install; then
+        echo -e "\nDocker rootless mode has been configured successfully."
+    else
+        echo -e "Rootless setup failed. Trying with '--force'...\n"
+        if dockerd-rootless-setuptool.sh install --force; then
+            echo -e "\nDocker rootless mode has been configured successfully with '--force'."
+        else
+            echo -e "Error: Docker rootless setup failed. Please check the system requirements or visit https://docs.docker.com/go/rootless/.\n"
+            exit 1
+        fi
+    fi
+else
+    echo -e "\nSkipping Docker rootless mode configuration.\n"
+fi
+
 # Final message
 echo -e "Docker has been installed successfully on your system."
 echo -e "You can start using Docker. For more details, visit https://docs.docker.com/.\n"
