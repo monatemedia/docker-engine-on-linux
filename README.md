@@ -296,7 +296,7 @@ Before installing Git, ensure your system is up-to-date:
 
 
 ```sh
-sudo apt update && sudo apt up
+sudo apt update && sudo apt upgrade
 ```
 
 
@@ -304,7 +304,7 @@ sudo apt update && sudo apt up
 
 
 ```sh
-sudo apt install git -y
+sudo apt-get install git
 ```
 
 
@@ -348,14 +348,48 @@ denlin create-new-user
 
 ```
 
-### Set Up Automatic Login
-
 After the new user has been created, log out of the VPS and then log in with your new user account.
 
 
+## Set Up Passwordless SSH Login
+
+Whenever logging into your VPS from your local computer, you will always be asked for your username `ssh edward@your_ip_address` and your password. This is fine but can be annoying if you have already secured your personal computer with a strong password.
+
+We have the option to in future be able to log into the VPS with only our username using an SSH key-pair.
 
 
+> [!IMPORTANT]
+> 
+> ## Linux SSH Key Pairs
+> 
+> RSA encryption is **a public-key cryptographic system known for its reliable encryption and decryption method**. Typically, RSA is used for encryption of shared keys exchanged over the internet to establish a secure connection. RSA encryption has different key sizes which range from 1024 to 4096 bits.
+> 
+> A SSH key pair in Linux is **a combination of a public key and a private key that are used to authenticate a remote user to an SSH server.** 
+> 
+> -  Public Key
+> 	-  Used to encrypt data and can be shared with any SSH server
+> - Private Key
+> 	-  Used to decrypt data and should be kept secret and encrypted
 
+
+Run this commad and follow the prompts
+
+
+```sh
+denlin setup-ssh-login
+```
+
+
+## Install Docker Engine
+
+To install Docker Engine, use the following command:
+
+
+```sh
+denlin docker-install
+```
+
+When prompted to configure Docker for rootless mode, select "yes".
 
 
 <!-- CREATE SHARED PROXY -->

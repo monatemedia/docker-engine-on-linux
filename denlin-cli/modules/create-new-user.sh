@@ -26,5 +26,5 @@ usermod -aG sudo "$new_user"
 echo "User '$new_user' created and granted admin rights."
 
 # Exit session
-echo "The terminal session will now close. Please log in as '$new_user'."
+echo "You can now exit this terminal session and log in as '$new_user'."
 exit

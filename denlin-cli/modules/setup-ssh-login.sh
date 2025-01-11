@@ -27,12 +27,15 @@ if [[ "$vps_ip" == "localhost" || "$vps_ip" == "127.0.0.1" ]]; then
 fi
 
 # Confirm or change information
+echo ""
 echo "============================================"
 echo "SSH setup details:"
 echo "Username: $vps_user"
 echo "VPS IP: $vps_ip"
 echo "============================================"
+echo ""
 read -p "Is this information correct? (y/n): " confirm
+echo ""
 if [[ "$confirm" != "y" ]]; then
     echo "Please run the script again to provide the correct details."
     exit 1
@@ -64,7 +67,7 @@ fi
 echo "Cleaning up..."
 rm -f "\$HOME/Desktop/$SCRIPT_NAME"
 ssh "$vps_user@$vps_ip" "rm -f $TMP_PATH"
-echo "Cleanup complete. This terminal will now close."
+echo "Cleanup complete. You can close this terminal window."
 sleep 2
 exit
 EOF
@@ -73,7 +76,7 @@ chmod +x "$TMP_PATH"
 
 # Step 3: Provide instructions to the user
 echo "================================================================================"
-echo "The second SSH setup script has been created and saved in the VPS temp folder: $TMP_PATH"
+echo "A temporary SSH setup script has been created and saved in the VPS temp folder: $TMP_PATH"
 echo ""
 echo "To proceed, follow these steps:"
 echo ""
@@ -81,11 +84,11 @@ echo "1. Open a new terminal window from your desktop."
 echo "2. Download the second script to your desktop using this command:"
 echo "   scp $vps_user@$vps_ip:$TMP_PATH ~/Desktop/$SCRIPT_NAME"
 echo ""
-echo "3. Navigate to your desktop and run the second script using this command:"
+echo "3. Run the script using this command:"
 echo "   bash ~/Desktop/$SCRIPT_NAME"
 echo ""
 echo "4. After completing the above steps, return to this terminal session."
 echo ""
-echo "Note: The second script will delete itself from both your desktop and the VPS after running."
+echo "Note: The temporary script will delete itself from both your desktop and the VPS after running."
 echo "      Passwordless SSH login should now be enabled!"
 echo "================================================================================"
