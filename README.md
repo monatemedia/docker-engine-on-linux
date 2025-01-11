@@ -252,8 +252,8 @@ In your hosting provider's control panel, you'll want to chose an operating syst
 
 > [!TIP]
 > ## Git Bash
-> Git Bash is an application for Microsoft Windows environments which provides an emulation layer for a Git command line experience. Windows users should use the Git Bash terminal client.
-> Mac and Linux users can use their native command line shells, provided you have Git installed.
+> Git Bash is an application which provides an emulation layer for a Git command line experience. Windows users should use the Git Bash terminal client.
+> Mac users can use their native command line shells, provided they have Git installed.
 
 
 Log into your VPS
@@ -286,6 +286,44 @@ root@your_ip_address`s password: your_password_goes_here
 
 
 You should now be logged in.
+
+
+## Install Git
+
+### 1. Update Your Package Index
+
+Before installing Git, ensure your system is up-to-date:
+
+
+```sh
+sudo apt update && sudo apt up
+```
+
+
+### 2. Install Git
+
+
+```sh
+sudo apt install git -y
+```
+
+
+### 3. Verify Installation
+
+Once installed, verify the version of Git to ensure it’s installed correctly:
+
+
+```sh
+git --version
+```
+
+
+You should see an output like:
+
+
+```sh
+git version 2.x.x
+```
 
 
 ## Create New User With Denlin CLI
