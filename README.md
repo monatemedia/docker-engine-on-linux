@@ -226,6 +226,100 @@ WordPress 	![WordPress](https://img.shields.io/badge/WordPress-%23117AC9.svg?sty
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- LOG INTO VPS -->
+## Choose A VPS
+
+I have chosen Hostinger
+
+
+## VPS Settings
+
+In your hosting provider's control panel, you'll want to chose an operating system for your VPS.
+
+-  Choose a location closest to your customers
+-  Choose Plain OS, not an OS with a control panel
+-  Choose Ubuntu for your operating system
+-  Choose a VPS hostname(optional)
+-  Set a secure root password of at least 12 characters
+-  We can skip creating an SSH Key as we will create that later(if provided)
+
+
+## Log Into VPS
+
+-  In your hosting services control panel, find your IP address for your VPS
+-  On your local machine go to your terminal client. 
+ 
+
+> [!TIP]
+> ## Git Bash
+> Git Bash is an application for Microsoft Windows environments which provides an emulation layer for a Git command line experience. Windows users should use the Git Bash terminal client.
+> Mac and Linux users can use their native command line shells, provided you have Git installed.
+
+
+Log into your VPS
+
+
+```sh
+ssh root@your_ip_address
+```
+
+
+If it's your first time logging in, you will get this message that you must accept by typing `yes` followed by the enter button, before being allowed to log in.
+
+
+```sh
+The authenticity of host 'your_ip_address' can`t be established.
+RSA Key fingerprint is SHA265:a_hashed_value_here
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
+
+
+
+After key fingerprint has been added to your local environment, the terminal will ask you for your password.
+
+
+```sh
+Warning: Permanently added 'your_ip_address' (RSA) to the list of known hosts.
+root@your_ip_address`s password: your_password_goes_here
+```
+
+
+You should now be logged in.
+
+
+## Create New User With Denlin CLI
+
+### Clone and install the Denlin repository.
+
+
+```sh
+git clone https://github.com/monatemedia/docker-engine-on-linux.git
+cd docker-engine-on-linux
+bash install.sh
+cd ~
+
+```
+
+
+### Create A New User
+
+
+```sh
+denlin create-new-user
+
+```
+
+### Set Up Automatic Login
+
+After the new user has been created, log out of the VPS and then log in with your new user account.
+
+
+
+
+
+
+
 <!-- CREATE SHARED PROXY -->
 ## Create Shared Proxy
 
