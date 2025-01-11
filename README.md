@@ -86,15 +86,25 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-The Problem: I have one VPS with a single IP Address. I want to be able to host my various side projects on my single VPS. I want to have these additional services.
+The Problem: I have one VPS with a single IP address. I want to be able to experiment with different programming languages and host my various side projects on my single VPS. 
 
-* CI/CD Pipeline
-* Databases
+The technology stack:
+
+* Ubuntu Linux Operating System
+* Docker Containers
+* Github Version Control
+* Github Actions CI/CD Pipeline
+* Nginx Reverse Proxy Server
+* Let's Encrypt SSL Certificate
+* Performance Monitoring Tools
 * Reverse Proxy
-* HTTPS
+* Dockerfile Templates
+* Docker Compose Templates
 
 
-Warning: Self hosting done right, can reduce the cost of hosting, but introduces additionaly complexity and can take longer to get to launch.
+Self hosting done right can reduce the cost of hosting, but introduces additionaly complexity which will cost you taking longer to launch. 
+
+The "Denlin Docker Engine on Linux CLI Tool" is a set of scripts to help DevOps beginners get started quickly, using these scripts.
 
 The Set Up: In my directory root, I have these apps:
 
@@ -106,21 +116,113 @@ I want to be able to run all my apps at the same time on my VPS.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Built With
+## Technology Stack
+
+
+### Hostinger Virtual Private Server Hosting
+
+My VPS hosting is provided by Hostinger, but you may choose any VPS host.
+
+
+### Ubuntu Linux Operating System
+
+Tested on Ubuntu 22.04
 
 [![Ububtu][Ubuntu.com]][Ubuntu-url]
+
+
+### Docker Containers
+
 [![Docker][Docker-hub]][Docker-hub-url]
-[![Github Actions][Github-actions]][Github-actions-url]
+
+
+### Git Bash Terminal Client
+
+[![Git-bash][Git-bash]][Git-bash-url]
+
+
+### Github Version Control
+
+[![Github][Github.com]][Github-url]
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+
+
+### Github Actions CI/CD Pipeline
+
+Github Action for Continuous Integration/Continuous Delivery pipelines
+
+[![Github-Actions][Github-Actions.com]][Github-Actions-url]
+
+
+### Nginx Reverse Proxy Server
+
+Nginx as the HTTP web server, reverse proxy and content cache. 
+
 [![Nginx][Nginx]][Nginx-url]
+
+Gunicorn for Python Django application server.
+
+[![Gunicorn][Gunicorn]][Gunicorn-url]
+![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white)
+
+
+### Let's Encrypt SSL Certificate
+
+[![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
+
+
+### Htop System Monitoring
+
+`htop` provides interactive process viewing and system monitoring.
+
+
+### Client-Side Framework Docker Templates
+
+[![Angular][Angular.dev]][Angular-url]
+![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
+[![React][React.dev]][React-url]
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+[![Vue][Vuejs.org]][Vue-url]
+[![Next][Next.org]][Next-url]
 [![Svelte][Svelte.dev]][Svelte-url]
+![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
+
+
+### Server-Side Framework Docker Templates
+
 [![Python][Python.org]][Python-url]
 [![Django][Djangoproject.com]][Django-url]
-[![Bootstrap][Bootstrap.com]][Bootstrap-url]
+[![FastAPI][FastAPI.dev]][FastAPI-url]
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+[![Flask][Flask.dev]][Flask-url]
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+[![Streamlit][Streamlit.net]][Streamlit-url]
+![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
 [![PHP][Php.net]][Php-url]
+[![WordPress][WordPress.net]][WordPress-url]
+WordPress 	![WordPress](https://img.shields.io/badge/WordPress-%23117AC9.svg?style=for-the-badge&logo=WordPress&logoColor=white)
+[![Next][Next.net]][Next-url]
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+[![Nuxt][Nuxt.net]][Nuxt-url]
+![Nuxtjs](https://img.shields.io/badge/Nuxt-002E3B?style=for-the-badge&logo=nuxtdotjs&logoColor=#00DC82)
 [![Laravel][Laravel.com]][Laravel-url]
-[![JQuery][JQuery.com]][JQuery-url]
-[![Vue][Vuejs.org]][Vue-url]
-[![React][React.dev]][React-url]
+
+
+### SQL Database Docker Templates
+
+
+[![MySQL][MySQL.com]][MySQL-url]
+![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
+[![Postgres][Postgres.com]][Postgres-url]
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+[![MongoDB][MongoDB.com]][MongoDB-url]
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+[![MariaDB][MariaDB.com]][MariaDB-url] 
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+[![Redis][Redis.com]][Redis-url]
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+[![SQLite][SQLite.com]][SQLite-url]
+![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
