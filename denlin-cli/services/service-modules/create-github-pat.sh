@@ -26,11 +26,15 @@ prompt_for_credentials() {
 
     # Prompt the user to confirm or update the PAT
     echo "Current PAT: ${current_pat:+(hidden)}"
-    echo "To create a new token visit: https://github.com/settings/tokens/new"
-    echo "Instructions: Generate a new personal access token (classic) with the following:"
-    echo "- Note: VPS 1"
-    echo "- Scopes: write:packages, delete:packages"
-    echo "- Expiration: 90 days"
+    echo "To generate a **new personal access token (classic)** for a server named 'VPS 1' with 'write:packages' and 'delete:packages' scopes:"
+    echo "- Enter 'VPS 1' in the 'Note' input box"
+    echo "- Select the following scopes:"
+    echo "    [x] write:packages"
+    echo "      [ ] read:packages"
+    echo "    [x] delete:packages"
+    echo "- Select 90 days until expiry"
+    echo "- Then, click 'Generate token'"
+    echo ""
     read -sp "Enter GitHub PAT (press Enter to keep current): " input_pat
     echo ""
     CR_PAT=${input_pat:-$current_pat}
