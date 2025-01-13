@@ -87,37 +87,51 @@ cat <<EOL > "$TEMP_SCRIPT"
 
 # Script to configure PAT on local machine and self-delete
 SCRIPT_NAME="configure-pat-locally.sh"
-TMP_PATH="/tmp/$SCRIPT_NAME"
-
-# Variables
+SCRIPT_PATH="$(realpath "$0")" # Get absolute path of the script
 ENV_FILE=".env"
 GITIGNORE_FILE=".gitignore"
 
-# Step 1: Check or create .env file
+# Step 1: Validate environment variable CR_PAT
+if [[ -z "$CR_PAT" ]]; then
+    echo "Error: The CR_PAT environment variable is not set."
+    echo "Please set the CR_PAT environment variable before running this script."
+    exit 1
+fi
+
+# Step 2: Update or create .env file
 if [ -f "$ENV_FILE" ]; then
     echo "Updating $ENV_FILE with the PAT..."
 else
     echo "Creating $ENV_FILE..."
-    touch "$ENV_FILE"
+    touch "$ENV_FILE" || { echo "Failed to create $ENV_FILE. Check permissions."; exit 1; }
 fi
 
 # Add PAT to .env if not already present
-grep -qxF "export CR_PAT=$CR_PAT" "$ENV_FILE" || echo "export CR_PAT=$CR_PAT" >> "$ENV_FILE"
+if ! grep -qxF "export CR_PAT=$CR_PAT" "$ENV_FILE"; then
+    echo "export CR_PAT=$CR_PAT" >> "$ENV_FILE"
+    echo "PAT added to $ENV_FILE."
+else
+    echo "PAT already exists in $ENV_FILE."
+fi
 
-# Step 2: Check or create .gitignore file
+# Step 3: Update or create .gitignore file
 if [ -f "$GITIGNORE_FILE" ]; then
     echo "Updating $GITIGNORE_FILE to exclude .env..."
 else
     echo "Creating $GITIGNORE_FILE..."
-    touch "$GITIGNORE_FILE"
+    touch "$GITIGNORE_FILE" || { echo "Failed to create $GITIGNORE_FILE. Check permissions."; exit 1; }
 fi
 
 # Add .env to .gitignore if not already present
-grep -qxF ".env" "$GITIGNORE_FILE" || echo ".env" >> "$GITIGNORE_FILE"
+if ! grep -qxF ".env" "$GITIGNORE_FILE"; then
+    echo ".env" >> "$GITIGNORE_FILE"
+    echo ".env added to $GITIGNORE_FILE."
+else
+    echo ".env already exists in $GITIGNORE_FILE."
+fi
 
-# Step 3: Cleanup - Self-delete script
+# Step 4: Cleanup - Self-delete script
 echo "Cleaning up..."
-SCRIPT_PATH="$(realpath "$0")" # Get absolute path of the current script
 if rm -f "$SCRIPT_PATH"; then
     echo "Self-deletion successful. Script removed from: $SCRIPT_PATH"
 else
