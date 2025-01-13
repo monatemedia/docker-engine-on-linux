@@ -107,10 +107,14 @@ else
 fi
 grep -qxF ".env" "\$GITIGNORE_FILE" || echo ".env" >> "\$GITIGNORE_FILE"
 
-# Self-delete the script
+# Attempt self-deletion
 echo "Cleaning up..."
-rm -- "\$0"
-echo "Done! PAT has been saved, and this script has been deleted."
+SCRIPT_PATH="$(realpath "$0")" # Get the absolute path of the script
+if rm -- "$SCRIPT_PATH"; then
+    echo "Self-deletion successful. Script removed."
+else
+    echo "Failed to delete the script. Please remove it manually: $SCRIPT_PATH"
+fi
 EOL
 
 chmod +x "$TEMP_SCRIPT"
