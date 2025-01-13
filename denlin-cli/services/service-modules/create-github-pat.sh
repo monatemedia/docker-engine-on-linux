@@ -10,7 +10,7 @@ TEMP_SCRIPT="/tmp/configure-pat-locally.sh"
 
 # Function to read or prompt for GitHub credentials
 prompt_for_credentials() {
-    local current_username current_pat
+    local current_username current_pat current_ip
 
     # If services.conf exists, retrieve saved username, PAT, and IP
     if [ -f "$SERVICES_CONF" ]; then
@@ -21,8 +21,11 @@ prompt_for_credentials() {
         current_ip="$VPS_IP"
     fi
 
-    # Prompt for or confirm GitHub username
+    # Get the current username
+    current_username="${current_username:-$(whoami)}"
     echo "Current GitHub username: ${current_username:-Not Set}"
+
+    # Prompt for or confirm GitHub username
     read -p "Enter GitHub username (press Enter to keep current): " input_username
     GITHUB_USERNAME=${input_username:-$current_username}
 
@@ -92,50 +95,50 @@ ENV_FILE=".env"
 GITIGNORE_FILE=".gitignore"
 
 # Step 1: Validate environment variable CR_PAT
-if [[ -z "$CR_PAT" ]]; then
+if [[ -z "\$CR_PAT" ]]; then
     echo "Error: The CR_PAT environment variable is not set."
     echo "Please set the CR_PAT environment variable before running this script."
     exit 1
 fi
 
 # Step 2: Update or create .env file
-if [ -f "$ENV_FILE" ]; then
-    echo "Updating $ENV_FILE with the PAT..."
+if [ -f "\$ENV_FILE" ]; then
+    echo "Updating \$ENV_FILE with the PAT..."
 else
-    echo "Creating $ENV_FILE..."
-    touch "$ENV_FILE" || { echo "Failed to create $ENV_FILE. Check permissions."; exit 1; }
+    echo "Creating \$ENV_FILE..."
+    touch "\$ENV_FILE" || { echo "Failed to create \$ENV_FILE. Check permissions."; exit 1; }
 fi
 
 # Add PAT to .env if not already present
-if ! grep -qxF "export CR_PAT=$CR_PAT" "$ENV_FILE"; then
-    echo "export CR_PAT=$CR_PAT" >> "$ENV_FILE"
-    echo "PAT added to $ENV_FILE."
+if ! grep -qxF "export CR_PAT=\$CR_PAT" "\$ENV_FILE"; then
+    echo "export CR_PAT=\$CR_PAT" >> "\$ENV_FILE"
+    echo "PAT added to \$ENV_FILE."
 else
-    echo "PAT already exists in $ENV_FILE."
+    echo "PAT already exists in \$ENV_FILE."
 fi
 
 # Step 3: Update or create .gitignore file
-if [ -f "$GITIGNORE_FILE" ]; then
-    echo "Updating $GITIGNORE_FILE to exclude .env..."
+if [ -f "\$GITIGNORE_FILE" ]; then
+    echo "Updating \$GITIGNORE_FILE to exclude .env..."
 else
-    echo "Creating $GITIGNORE_FILE..."
-    touch "$GITIGNORE_FILE" || { echo "Failed to create $GITIGNORE_FILE. Check permissions."; exit 1; }
+    echo "Creating \$GITIGNORE_FILE..."
+    touch "\$GITIGNORE_FILE" || { echo "Failed to create \$GITIGNORE_FILE. Check permissions."; exit 1; }
 fi
 
 # Add .env to .gitignore if not already present
-if ! grep -qxF ".env" "$GITIGNORE_FILE"; then
-    echo ".env" >> "$GITIGNORE_FILE"
-    echo ".env added to $GITIGNORE_FILE."
+if ! grep -qxF ".env" "\$GITIGNORE_FILE"; then
+    echo ".env" >> "\$GITIGNORE_FILE"
+    echo ".env added to \$GITIGNORE_FILE."
 else
-    echo ".env already exists in $GITIGNORE_FILE."
+    echo ".env already exists in \$GITIGNORE_FILE."
 fi
 
 # Step 4: Cleanup - Self-delete script
 echo "Cleaning up..."
-if rm -f "$SCRIPT_PATH"; then
-    echo "Self-deletion successful. Script removed from: $SCRIPT_PATH"
+if rm -f "\$SCRIPT_PATH"; then
+    echo "Self-deletion successful. Script removed from: \$SCRIPT_PATH"
 else
-    echo "Failed to delete the script. Please remove it manually: $SCRIPT_PATH"
+    echo "Failed to delete the script. Please remove it manually: \$SCRIPT_PATH"
 fi
 
 exit 0
