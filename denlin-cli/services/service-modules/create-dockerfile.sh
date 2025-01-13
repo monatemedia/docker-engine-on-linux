@@ -4,6 +4,7 @@
 # Description: Create a Dockerfile for your project on your local computer
 
 CONF_FILE="/etc/denlin-cli.conf"
+DOCKERFILE_DIR="/usr/local/bin/denlin-cli/services/dockerfile"
 TEMP_SCRIPT="/tmp/create-dockerfile.sh"
 
 # Function to read configuration
@@ -20,7 +21,7 @@ read_conf() {
 list_templates() {
   echo "Available Dockerfile templates:"
   i=1
-  for file in ./dockerfile/*.sh; do
+  for file in "$DOCKERFILE_DIR"/*.sh; do
     if [[ -f "$file" ]]; then
       template_name=$(grep -i "Template:" "$file" | awk -F: '{print $2}' | xargs)
       description=$(grep -i "Description:" "$file" | awk -F: '{print $2}' | xargs)
@@ -29,6 +30,10 @@ list_templates() {
       ((i++))
     fi
   done
+  if [[ $i -eq 1 ]]; then
+    echo "No Dockerfile templates found in $DOCKERFILE_DIR."
+    exit 1
+  fi
 }
 
 # Function to generate temporary script
