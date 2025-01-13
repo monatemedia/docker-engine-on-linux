@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Main script: Configure VPS
+# Description: Create a Docker for your project on your local computer
+
 # Filepath for denlin-cli config
 CONF_FILE="/etc/denlin-cli.conf"
 
