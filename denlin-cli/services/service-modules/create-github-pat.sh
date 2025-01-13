@@ -6,7 +6,6 @@
 # Variables
 SCRIPT_NAME="configure-pat-locally.sh"
 TMP_PATH="/tmp/$SCRIPT_NAME"
-LOCAL_DEST="~/Desktop/$SCRIPT_NAME"
 
 # Step 1: Collect User Information
 if [ ! -f "/usr/local/bin/denlin-cli/services/services.conf" ]; then
@@ -78,10 +77,7 @@ echo "\$GITHUB_PAT" | docker login ghcr.io -u \$GITHUB_USERNAME --password-stdin
 
 # Clean up by deleting the script
 echo "Cleaning up..."
-rm -f \$HOME/Desktop/$SCRIPT_NAME
-ssh \$vps_user@$vps_ip "rm -f $TMP_PATH"
-echo "Cleanup complete. You can close this terminal window."
-sleep 2
+rm -f \$HOME/$SCRIPT_NAME
 exit
 EOF
 
@@ -94,13 +90,13 @@ echo ""
 echo "To proceed, follow these steps:"
 echo ""
 echo "1. Open a new terminal window from your project folder."
-echo "2. Download the second script to your desktop using this command:"
-echo "   scp $USER@$vps_ip:$TMP_PATH ~/Desktop/$SCRIPT_NAME"
+echo "2. Download the second script to the current directory using this command:"
+echo "   scp $USER@$vps_ip:$TMP_PATH $(pwd)/$SCRIPT_NAME"
 echo ""
 echo "3. Run the script using this command:"
-echo "   bash ~/Desktop/$SCRIPT_NAME"
+echo "   bash ./$SCRIPT_NAME"
 echo ""
 echo "4. After completing the above steps, return to this terminal session."
 echo ""
-echo "Note: The temporary script will delete itself from both your desktop and the VPS after running."
+echo "Note: The temporary script will delete itself from the current folder and the VPS after running."
 echo "================================================================================"
