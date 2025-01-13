@@ -4,99 +4,97 @@
 # Description: Configure GitHub PAT on the VPS and local machine
 
 # Variables
-SCRIPT_NAME="configure-pat-locally.sh"
-TMP_PATH="/tmp/$SCRIPT_NAME"
+CONF_FILE="/etc/denlin-cli.conf"
+TMP_SCRIPT="/tmp/configure-pat-locally.sh"
 
-# Step 1: Collect User Information
-if [ ! -f "/usr/local/bin/denlin-cli/services/services.conf" ]; then
-    echo "services.conf not found, creating it..."
-    sudo touch /usr/local/bin/denlin-cli/services/services.conf
-    sudo chmod 666 /usr/local/bin/denlin-cli/services/services.conf  # Give write permission for users to modify
+# Step 1: Check if configuration file exists
+if [ -f "$CONF_FILE" ]; then
+    source "$CONF_FILE"
 fi
 
-# Ensure we're able to write to services.conf
-if [ ! -w "/usr/local/bin/denlin-cli/services/services.conf" ]; then
-    echo "No write permission to services.conf. Please run this script as root (sudo)."
-    exit 1
-fi
+# Step 2: Programmatically get the username of the signed-in user
+current_user=$(whoami)
 
-# Read or Collect the VPS IP Address
-vps_ip=$(grep "VPS_IP=" /usr/local/bin/denlin-cli/services/services.conf | cut -d'=' -f2)
+# Step 3: Ask for VPS IP
 if [ -z "$vps_ip" ]; then
     read -p "Enter your VPS IP address: " vps_ip
-    echo "VPS_IP=$vps_ip" | sudo tee -a /usr/local/bin/denlin-cli/services/services.conf
 else
-    read -p "Current VPS IP is $vps_ip. Is this correct? (y/n): " confirm
-    if [[ "$confirm" != "y" ]]; then
-        read -p "Enter the new VPS IP address: " vps_ip
-        echo "VPS_IP=$vps_ip" | sudo tee -a /usr/local/bin/denlin-cli/services/services.conf
+    read -p "VPS IP ($vps_ip): Do you want to change it? (y/n): " confirm_ip
+    if [ "$confirm_ip" == "y" ]; then
+        read -p "Enter your VPS IP address: " vps_ip
     fi
 fi
 
-# Read or Collect the GitHub Username
-github_username=$(grep "GITHUB_USERNAME=" /usr/local/bin/denlin-cli/services/services.conf | cut -d'=' -f2)
+# Step 4: Ask for GitHub username
 if [ -z "$github_username" ]; then
     read -p "Enter your GitHub username: " github_username
-    echo "GITHUB_USERNAME=$github_username" | sudo tee -a /usr/local/bin/denlin-cli/services/services.conf
 else
-    read -p "Current GitHub username is $github_username. Is this correct? (y/n): " confirm
-    if [[ "$confirm" != "y" ]]; then
-        read -p "Enter your new GitHub username: " github_username
-        echo "GITHUB_USERNAME=$github_username" | sudo tee -a /usr/local/bin/denlin-cli/services/services.conf
+    read -p "GitHub username ($github_username): Do you want to change it? (y/n): " confirm_user
+    if [ "$confirm_user" == "y" ]; then
+        read -p "Enter your GitHub username: " github_username
     fi
 fi
 
-# Ask for GitHub PAT
-read -p "Enter your GitHub Personal Access Token (PAT): " github_pat
+# Step 5: Ask for GitHub PAT
+if [ -z "$CR_PAT" ]; then
+    echo "To create a new PAT, visit: https://github.com/settings/tokens/new"
+    echo "Generate a new personal access token (classic) for server 'VPS 1' with 'write:packages' and 'delete:packages' scopes."
+    read -sp "Enter your GitHub Personal Access Token (PAT): " CR_PAT
+    echo
+else
+    echo "A PAT already exists."
+    read -p "Do you want to change it? (y/n): " confirm_pat
+    if [ "$confirm_pat" == "y" ]; then
+        echo "To create a new PAT, visit: https://github.com/settings/tokens/new"
+        echo "Generate a new personal access token (classic) for server 'VPS 1' with 'write:packages' and 'delete:packages' scopes."
+        read -sp "Enter your new GitHub Personal Access Token (PAT): " CR_PAT
+        echo
+    fi
+fi
 
-# Log in to GitHub Container Registry
-echo $github_pat | docker login ghcr.io -u $github_username --password-stdin
+# Step 6: Save to configuration file
+echo "Saving configuration to $CONF_FILE..."
+cat <<EOL >"$CONF_FILE"
+vps_ip="$vps_ip"
+github_username="$github_username"
+CR_PAT="$CR_PAT"
+EOL
 
-# Step 2: Create the temporary configure-pat-locally.sh script
-cat << EOF > "$TMP_PATH"
+# Step 7: Log in to GitHub Container Registry
+echo "Logging into GitHub Container Registry..."
+echo "$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin
+
+# Step 8: Create the temporary script
+echo "Creating the temporary script to configure PAT locally..."
+cat <<EOL >"$TMP_SCRIPT"
 #!/bin/bash
 
-# Step 1: Add the PAT to the .env file
-if [ ! -f ".env" ]; then
-    echo ".env file not found, creating one..."
-    touch .env
-fi
+# Step 1: Write the PAT to .env
+echo "CR_PAT=$CR_PAT" >> .env
+echo ".env file updated."
 
-echo "GITHUB_PAT=$github_pat" >> .env
-
-# Step 2: Add .env to .gitignore if not already ignored
-if ! grep -q ".env" .gitignore; then
+# Step 2: Ensure .env is in .gitignore
+if ! grep -qxF ".env" .gitignore; then
     echo ".env" >> .gitignore
-    echo ".env has been added to .gitignore."
-else
-    echo ".env is already ignored in .gitignore."
+    echo ".env added to .gitignore."
 fi
 
-# Step 3: Log in to GitHub Container Registry
-echo "\$GITHUB_PAT" | docker login ghcr.io -u \$GITHUB_USERNAME --password-stdin
+# Step 3: Log in to GitHub Container Registry locally
+echo "Logging into GitHub Container Registry from your project folder..."
+echo "\$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin
 
-# Clean up by deleting the script
-echo "Cleaning up..."
-rm -f \$HOME/$SCRIPT_NAME
-exit
-EOF
+# Step 4: Clean up temporary script
+rm -- "\$0"
+ssh "$vps_ip" "rm /tmp/configure-pat-locally.sh"
+echo "Cleanup complete. You may now close this terminal."
+EOL
 
-chmod +x "$TMP_PATH"
+chmod +x "$TMP_SCRIPT"
 
-# Step 3: Provide instructions to the user
-echo "================================================================================"
-echo "A temporary configuration script has been created and saved in the VPS temp folder: $TMP_PATH"
-echo ""
-echo "To proceed, follow these steps:"
-echo ""
-echo "1. Open a new terminal window from your project folder."
-echo "2. Download the second script to the current directory using this command:"
-echo "   scp $USER@$vps_ip:$TMP_PATH $(pwd)/$SCRIPT_NAME"
-echo ""
-echo "3. Run the script using this command:"
-echo "   bash ./$SCRIPT_NAME"
-echo ""
-echo "4. After completing the above steps, return to this terminal session."
-echo ""
-echo "Note: The temporary script will delete itself from the current folder and the VPS after running."
-echo "================================================================================"
+# Step 9: Provide instructions to the user
+echo "To configure PAT locally, do the following:"
+echo "1. Open a terminal in the root of your project folder on your local computer."
+echo "2. Download the script using the following command:"
+echo "   scp $vps_ip:$TMP_SCRIPT ./configure-pat-locally.sh"
+echo "3. Run the script using:"
+echo "   ./configure-pat-locally.sh"
