@@ -85,38 +85,46 @@ echo "Creating secondary script at $TEMP_SCRIPT..."
 cat <<EOL > "$TEMP_SCRIPT"
 #!/bin/bash
 
-# Script to configure PAT on local machine
+# Script to configure PAT on local machine and self-delete
+SCRIPT_NAME="configure-pat-locally.sh"
+TMP_PATH="/tmp/$SCRIPT_NAME"
+
+# Variables
 ENV_FILE=".env"
 GITIGNORE_FILE=".gitignore"
 
-# Check if .env exists or create it
-if [ -f "\$ENV_FILE" ]; then
-    echo "Updating \$ENV_FILE with the PAT..."
+# Step 1: Check or create .env file
+if [ -f "$ENV_FILE" ]; then
+    echo "Updating $ENV_FILE with the PAT..."
 else
-    echo "Creating \$ENV_FILE..."
-    touch "\$ENV_FILE"
+    echo "Creating $ENV_FILE..."
+    touch "$ENV_FILE"
 fi
-grep -qxF "export CR_PAT=$CR_PAT" "\$ENV_FILE" || echo "export CR_PAT=$CR_PAT" >> "\$ENV_FILE"
 
-# Update or create .gitignore to exclude .env
-if [ -f "\$GITIGNORE_FILE" ]; then
-    echo "Updating \$GITIGNORE_FILE to exclude .env..."
+# Add PAT to .env if not already present
+grep -qxF "export CR_PAT=$CR_PAT" "$ENV_FILE" || echo "export CR_PAT=$CR_PAT" >> "$ENV_FILE"
+
+# Step 2: Check or create .gitignore file
+if [ -f "$GITIGNORE_FILE" ]; then
+    echo "Updating $GITIGNORE_FILE to exclude .env..."
 else
-    echo "Creating \$GITIGNORE_FILE..."
-    touch "\$GITIGNORE_FILE"
+    echo "Creating $GITIGNORE_FILE..."
+    touch "$GITIGNORE_FILE"
 fi
-grep -qxF ".env" "\$GITIGNORE_FILE" || echo ".env" >> "\$GITIGNORE_FILE"
 
-# Attempt self-deletion
+# Add .env to .gitignore if not already present
+grep -qxF ".env" "$GITIGNORE_FILE" || echo ".env" >> "$GITIGNORE_FILE"
+
+# Step 3: Cleanup - Self-delete script
 echo "Cleaning up..."
-SCRIPT_PATH="$(realpath "$0")" # Get the absolute path of the script
-echo "Attempting to delete: $SCRIPT_PATH"
-ls -l "$SCRIPT_PATH"
-if rm -- "$SCRIPT_PATH"; then
-    echo "Self-deletion successful. Script removed."
+SCRIPT_PATH="$(realpath "$0")" # Get absolute path of the current script
+if rm -f "$SCRIPT_PATH"; then
+    echo "Self-deletion successful. Script removed from: $SCRIPT_PATH"
 else
     echo "Failed to delete the script. Please remove it manually: $SCRIPT_PATH"
 fi
+
+exit 0
 EOL
 
 chmod +x "$TEMP_SCRIPT"
