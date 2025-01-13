@@ -110,6 +110,8 @@ grep -qxF ".env" "\$GITIGNORE_FILE" || echo ".env" >> "\$GITIGNORE_FILE"
 # Attempt self-deletion
 echo "Cleaning up..."
 SCRIPT_PATH="$(realpath "$0")" # Get the absolute path of the script
+echo "Attempting to delete: $SCRIPT_PATH"
+ls -l "$SCRIPT_PATH"
 if rm -- "$SCRIPT_PATH"; then
     echo "Self-deletion successful. Script removed."
 else
