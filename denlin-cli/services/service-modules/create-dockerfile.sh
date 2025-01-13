@@ -30,30 +30,25 @@ echo "-----------------------------"
 
 # Loop through dockerfile directory and display templates with descriptions
 template_files=()
+counter=1
 for template in /usr/local/bin/denlin-cli/services/dockerfile/*.sh; do
     # Get template name and description
     template_name=$(grep -m 1 "^# Template:" "$template" | cut -d ':' -f2- | xargs)
     description=$(grep -m 1 "^# Description:" "$template" | cut -d ':' -f2- | xargs)
-    echo "$template_name: $description"
+    echo "$counter) $template_name: $description"
     template_files+=("$template")
+    ((counter++))
 done
 
-# Step 5: Prompt user to select a template
-echo "Please select a template from the list above by entering the corresponding name:"
-read selected_template
+# Step 5: Prompt user to select a template by number
+echo "Please select a template by number:"
+read selected_number
 
-# Step 6: Verify selected template exists
-selected_template_path=""
-for template_path in "${template_files[@]}"; do
-    template_name=$(grep -m 1 "^# Template:" "$template_path" | cut -d ':' -f2- | xargs)
-    if [[ "$template_name" == "$selected_template" ]]; then
-        selected_template_path="$template_path"
-        break
-    fi
-done
+# Step 6: Verify selected template number is valid
+selected_template_path="${template_files[$selected_number-1]}"
 
 if [[ -z "$selected_template_path" ]]; then
-    echo "Invalid template name. Exiting."
+    echo "Invalid selection. Exiting."
     exit 1
 fi
 
@@ -90,7 +85,7 @@ EOL
 # Step 8: Provide download instructions for the temporary script
 echo "The script to create your Dockerfile has been created in $temp_script."
 echo "To download and execute the script, run the following command:"
-echo "scp $vps_user@$vps_ip:$temp_script ./create-dockerfile.sh"
+echo "scp -o StrictHostKeyChecking=no $vps_user@$vps_ip:$temp_script ./create-dockerfile.sh"
 echo "Once downloaded, run the script in your project folder to generate the Dockerfile."
 
 # Step 9: Clean up the temporary script from the VPS
