@@ -84,11 +84,16 @@ fi
 
 # Step 3: Log in to GitHub Container Registry locally
 echo "Logging into GitHub Container Registry from your project folder..."
-echo "\$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin
+if echo "$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin; then
+  echo "Successfully logged in to GitHub Container Registry."
+else
+  echo "Failed to log in to GitHub Container Registry. Please check your PAT and username."
+  exit 1
+fi
 
 # Step 4: Clean up temporary script
 rm -- "\$0"
-ssh "$vps_ip" "rm /tmp/configure-pat-locally.sh"
+ssh "${vps_user}@${vps_ip}" "rm /tmp/configure-pat-locally.sh"
 echo "Cleanup complete. You may now close this terminal."
 EOL
 
@@ -96,10 +101,12 @@ chmod +x "$TMP_SCRIPT"
 
 # Step 9: Provide instructions to the user
 echo "To configure PAT locally, do the following:"
+echo ""
 echo "1. Open a terminal in the root of your project folder on your local computer."
 echo ""
 echo "2. Download the script using the following command:"
-echo "      scp ${vps_user}@${vps_ip}:/tmp/configure-pat-locally.sh ./configure-pat-locally.sh"
+echo "   scp ${vps_user}@${vps_ip}:/tmp/configure-pat-locally.sh ./configure-pat-locally.sh"
 echo ""
 echo "3. Run the script using:"
 echo "   ./configure-pat-locally.sh"
+echo ""
