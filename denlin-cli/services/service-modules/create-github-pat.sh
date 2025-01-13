@@ -3,6 +3,9 @@
 # Main script: Configure VPS
 # Description: Configure GitHub PAT on the VPS and local machine
 
+# Get the username of the logged-in user on the VPS
+vps_user=$(whoami)
+
 # Variables
 CONF_FILE="/etc/denlin-cli.conf"
 TMP_SCRIPT="/tmp/configure-pat-locally.sh"
@@ -94,7 +97,9 @@ chmod +x "$TMP_SCRIPT"
 # Step 9: Provide instructions to the user
 echo "To configure PAT locally, do the following:"
 echo "1. Open a terminal in the root of your project folder on your local computer."
+echo ""
 echo "2. Download the script using the following command:"
-echo "   scp $vps_ip:$TMP_SCRIPT ./configure-pat-locally.sh"
+echo "      scp ${vps_user}@${vps_ip}:/tmp/configure-pat-locally.sh ./configure-pat-locally.sh"
+echo ""
 echo "3. Run the script using:"
 echo "   ./configure-pat-locally.sh"
