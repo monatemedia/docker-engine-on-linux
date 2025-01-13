@@ -54,11 +54,11 @@ fi
 
 # Step 6: Save to configuration file
 echo "Saving configuration to $CONF_FILE..."
-cat <<EOL >"$CONF_FILE"
-vps_ip="$vps_ip"
-github_username="$github_username"
-CR_PAT="$CR_PAT"
-EOL
+sudo bash -c "cat <<EOL > $CONF_FILE
+vps_ip=\"$vps_ip\"
+github_username=\"$github_username\"
+CR_PAT=\"$CR_PAT\"
+EOL"
 
 # Step 7: Log in to GitHub Container Registry
 echo "Logging into GitHub Container Registry..."
