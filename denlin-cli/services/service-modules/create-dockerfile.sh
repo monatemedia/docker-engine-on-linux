@@ -69,7 +69,8 @@ echo "Dockerfile, .dockerignore, and .gitignore have been created successfully."
 # Clean up
 echo "Cleaning up temporary script..."
 rm -- "\$0"
-echo "Temporary script has been deleted."
+ssh "${vps_user}@${vps_ip}" "rm /tmp/create-dockerfile.sh"
+echo "Cleanup complete. You may now close this terminal."
 EOL
 
   chmod +x "$TEMP_SCRIPT"
