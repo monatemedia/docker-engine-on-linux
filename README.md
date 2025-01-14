@@ -449,6 +449,13 @@ denlin common
 
 From services menu select `create-dockerfile`
 
+> [!IMPORTANT]
+> 
+> ## What is a Dockerfile?
+> 
+> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our application.
+
+
 
 ## Create a GitHub Personal Access Token (PAT)
 
@@ -461,6 +468,12 @@ denlin common
 ```
 
 From services menu select `create-github-pat`
+
+> [!NOTE]
+> 
+> ## Github Registry Login
+>
+> The `create-github-pat` will automatically log your VPS and local computer into the GitHub Registry using the PAT.
 
 
 > [!TIP]
@@ -577,6 +590,19 @@ Open this URL to continue in your web browser: https://github.com/login/device
 ```
 
 ## Initialize GitHub Repository
+
+To initialize your GitHub repository, use `initialize-git-repository` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `initialize-git-repository`.
+
+
+## Create and Store Docker Image to GitHub Registry
 
 
 
