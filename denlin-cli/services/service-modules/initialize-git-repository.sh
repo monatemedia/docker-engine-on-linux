@@ -22,11 +22,11 @@ fi
 source "$CONF_FILE"
 
 # Prompt for VPS IP
-read -p "Enter VPS IP (current: ${vps_ip:-not set}): " input_vps_ip
+read -p "Enter VPS IP or hit ENTER to accept (current: ${vps_ip:-not set}): " input_vps_ip
 vps_ip="${input_vps_ip:-$vps_ip}"
 
 # Prompt for GitHub username
-read -p "Enter GitHub username (current: ${github_username:-not set}): " input_github_username
+read -p "Enter GitHub username or hit ENTER to accept (current: ${github_username:-not set}): " input_github_username
 github_username="${input_github_username:-$github_username}"
 
 # Update the configuration file
@@ -41,46 +41,22 @@ echo "Creating temporary script at $TEMP_SCRIPT..."
 cat > "$TEMP_SCRIPT" <<'EOF'
 #!/bin/bash
 
-# Step 1: Check if GitHub CLI is installed
-echo "Checking for GitHub CLI..."
-if ! command -v gh &> /dev/null; then
-    echo "GitHub CLI is not installed."
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Installing GitHub CLI on macOS..."
-        if ! command -v brew &> /dev/null; then
-            echo "Homebrew is not installed. Please install it first."
-            exit 1
-        fi
-        brew install gh
-    elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
-        echo "Installing GitHub CLI on Windows..."
-        winget install --id GitHub.cli
-        echo "The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect."
-        exit 0
-    else
-        echo "Unsupported operating system for automatic installation. Please install GitHub CLI manually."
-        exit 1
-    fi
-else
-    echo "GitHub CLI is already installed."
-fi
-
-# Step 2: Initialize Git repository
+# Step 1: Initialize Git repository
 PROJECT_NAME=$(basename "$PWD")
 echo "Initializing a Git repository for project: $PROJECT_NAME"
 git init
 git add .
 git commit -m "Initial commit"
 
-# Step 3: Create GitHub repository
+# Step 2: Create GitHub repository
 echo "Creating GitHub repository..."
 gh repo create "$PROJECT_NAME" --source=. --public --remote=origin
 
-# Step 4: Push changes to GitHub
+# Step 3: Push changes to GitHub
 echo "Pushing changes to GitHub..."
 git push -u origin main
 
-# Step 5: Cleanup
+# Step 4: Cleanup
 echo "Cleaning up temporary script..."
 rm -- "$0"
 ssh "${vps_user}@${vps_ip}" "rm /tmp/initialize-git-repository-temp.sh"
