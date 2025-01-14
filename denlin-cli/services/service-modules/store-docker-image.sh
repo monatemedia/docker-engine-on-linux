@@ -32,7 +32,7 @@ read -p "Enter GitHub username (current: ${github_username:-not set}): " input_g
 github_username="${input_github_username:-$github_username}"
 
 # Prompt for VPS IP
-read -p "Enter GitHub PAT (current: ${CR_PAT:-not set}): " input_CR_PAT
+read -p -s "Enter GitHub PAT (current: ${CR_PAT:-not set}): " input_CR_PAT
 CR_PAT="${input_vps_ip:-$CR_PAT}"
 
 # Update the configuration file
@@ -58,12 +58,19 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Step 2: Log in to GitHub Container Registry
+if [[ -z "$CR_PAT" ]]; then
+    echo "GitHub Personal Access Token (CR_PAT) is not set. Exiting..."
+    exit 1
+fi
+
 echo "Logging into GitHub Container Registry..."
-echo "\$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin
-if [[ \$? -ne 0 ]]; then
+if echo "$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin; then
+    echo "Successfully logged in to GitHub Container Registry."
+else
     echo "Failed to log in to GitHub Container Registry. Please ensure your CR_PAT is valid."
     exit 1
 fi
+
 
 # Step 3: Build and push the Docker image
 echo "Building and pushing the Docker image..."
