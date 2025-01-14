@@ -467,7 +467,7 @@ From services menu select `create-github-pat`
 > To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new) 
 
 
-To generate a **new personal access token (classic)** for a server named `VPS 1` with `write:packages` and `delete:packages` scopes, enter the name in the `Note` input box, select the corresponding boxes, then select `Generate token`
+To generate a **new personal access token (classic)** for a server named `VPS 1` with `write:packages`, `delete:packages`, `read:org` and `admin:public_key` scopes, enter the name in the `Note` input box, select the corresponding boxes, then select `Generate token`
 
 Note: **VPS 1**
 
@@ -479,27 +479,43 @@ Scope:
 - [ ] `admin:org`
   - [ ] `write:org`
   - [x] `read:org`
-  - [ ] `manage_runners:org
+  - [ ] `manage_runners:org`
 - [x] `admin:public_key`
 
 ## Install the GitHub CLI (`gh`)
 
-1. Installation
+### 1. Installation
+
+On your local computer, check if you have the GitHub CLI installed.
+
+```sh
+gh --version
+```
+
+You should recieve an output like this:
+
+```sh
+gh version 2.65.0 (2025-01-06)
+https://github.com/cli/cli/releases/tag/v2.65.0
+```
+
+If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/). You may also install it using the command line.
  
-If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/)
- 
-On Windows, you can install with:
+On Windows, you can it install with:
+
 ```sh
 winget install --id GitHub.cli
 ```
+
 The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
 
 On Mac, you can install with Homebrew:
+
 ```sh
 brew install gh
 ```
 
-2. Test Installation
+### 2. Test Installation
 
 ```sh
 gh --version
@@ -515,9 +531,9 @@ https://github.com/cli/cli/releases/tag/v2.65.0
 If you you get an error, close the terminal window and try again with a new terminal window.
 
    
-3. Authentication
+### 3. Authentication
 
-To use the `gh` CLI, you need to authenticate:
+To use the `gh` CLI, you need to authenticate the user on your local machine.
 
 ```bash
 gh auth login
@@ -533,9 +549,23 @@ Generate a new SSH key to add to your GitHub account? (Y/n) Y
 Enter a passphrase for your new SSH key (Optional)
 Title for your SSH key: (GitHub CLI)
 How would you like to authenticate GitHub CLI? Paste an authentication token
-
-Generate a PAT here: [[Create GitHub Personal Access Token For Repositories]]
 Paste your authentication token: `****` 
+```
+
+> [!TIP]
+> 
+> You will find the PAT saved in the `.env` file in the root of your project as the variable `CR_PAT` from using the `create-github-pat` function in the previous step.
+
+Authorize github
+
+```sh
+Lenovo@DESKTOP-UQBI21I MINGW64 ~/OneDrive/Coding Projects/react-counter
+$ gh auth login
+
+! First copy your one-time code: E90B-9AAA
+Open this URL to continue in your web browser: https://github.com/login/device
+✓ Authentication complete.
+✓ Logged in as monatemedia
 ```
 
 ## Push to GitHub Repository
