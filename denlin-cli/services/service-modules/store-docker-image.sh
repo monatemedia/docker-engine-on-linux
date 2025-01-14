@@ -49,7 +49,8 @@ echo "Creating temporary script at $TEMP_SCRIPT..."
 cat > "$TEMP_SCRIPT" <<EOF
 #!/bin/bash
 
-# Export the CR_PAT variable to be accessible in the script
+# Export github_username and CR_PAT variables
+export github_username="$github_username"
 export CR_PAT="$CR_PAT"
 
 # Automatically get the name of the current directory
