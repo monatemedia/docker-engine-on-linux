@@ -5,9 +5,9 @@
 
 CONF_FILE="/etc/denlin-cli.conf"
 DOCKERFILE_DIR="/usr/local/bin/denlin-cli/services/dockerfile"
-GITIGNORE_DIR="/usr/local/bin/denlin-cli/gitignore"
-DOCKERIGNORE_DIR="/usr/local/bin/denlin-cli/dockerignore"
-TEMP_SCRIPT="/tmp/create-dockerfile.sh"
+GITIGNORE_DIR="/usr/local/bin/denlin-cli/services/gitignore"
+DOCKERIGNORE_DIR="/usr/local/bin/denlin-cli/services/dockerignore"
+TEMP_SCRIPT="/tmp/create-dockerfile-temp.sh"
 
 # Function to read configuration
 read_conf() {
@@ -69,7 +69,7 @@ echo "Dockerfile, .dockerignore, and .gitignore have been created successfully."
 # Clean up
 echo "Cleaning up temporary script..."
 rm -- "\$0"
-ssh "${vps_user}@${vps_ip}" "rm /tmp/create-dockerfile.sh"
+ssh "${vps_user}@${vps_ip}" "rm /tmp/create-dockerfile-temp.sh"
 echo "Cleanup complete. You may now close this terminal."
 EOL
 
@@ -80,9 +80,9 @@ EOL
 provide_download_instructions() {
   echo "Temporary script has been created at $TEMP_SCRIPT"
   echo "To download it to your local computer, run the following command:"
-  echo "scp ${vps_user}@${vps_ip}:/tmp/create-dockerfile.sh ./create-dockerfile.sh"
+  echo "scp ${vps_user}@${vps_ip}:/tmp/create-dockerfile-temp.sh ./create-dockerfile-temp.sh"
   echo "Then, navigate to the root of your project directory and run the script:"
-  echo "./create-dockerfile.sh"
+  echo "./create-dockerfile-temp.sh"
 }
 
 # Main script logic
