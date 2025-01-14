@@ -17,6 +17,7 @@ if [[ ! -f "$CONF_FILE" ]]; then
     sudo bash -c "cat > $CONF_FILE" <<EOF
 vps_ip=
 github_username=
+CR_PAT=
 EOF
 fi
 
@@ -30,11 +31,16 @@ vps_ip="${input_vps_ip:-$vps_ip}"
 read -p "Enter GitHub username (current: ${github_username:-not set}): " input_github_username
 github_username="${input_github_username:-$github_username}"
 
+# Prompt for VPS IP
+read -p "Enter GitHub PAT (current: ${CR_PAT:-not set}): " input_CR_PAT
+CR_PAT="${input_vps_ip:-$CR_PAT}"
+
 # Update the configuration file
 echo "Updating configuration file..."
 sudo bash -c "cat > $CONF_FILE" <<EOF
 vps_ip=$vps_ip
 github_username=$github_username
+CR_PAT=$$CR_PAT
 EOF
 
 # Step 2: Create the temporary script
