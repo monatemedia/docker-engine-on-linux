@@ -107,3 +107,4 @@ echo "  ./initialize-git-repository.sh"
 echo
 echo "This action will initialize a Git repository, set up a GitHub repository, and push your code to GitHub."
 echo "Once the script finishes, it will delete itself from both the VPS and the local computer."
+echo

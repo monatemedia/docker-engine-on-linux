@@ -394,7 +394,7 @@ When prompted to configure Docker for rootless mode, select "yes".
 
 ## Create Your Project
 
-If you have not as yet created your project, you can create a new project on your local computer by opening a terminal in the file folder where you intend to create the application folder. 
+If you have not as yet created your project, you can create a new project on your local computer by opening a terminal in the file folder where you intend to create the application's file folder. 
 
 ```sh
 npm create vite@latest
@@ -450,24 +450,96 @@ denlin common
 From services menu select `create-dockerfile`
 
 
-## Push to GitHub Repository
+## Create a GitHub Personal Access Token (PAT)
+
+To create a GitHub PAT, use `create-github-pat` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `create-github-pat`
+
 
 > [!TIP]
-> 
-> ## Install the GitHub CLI (`gh`)
-> 
-> If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/)
-> 
-> On Windows, you can install with:
-> ```sh
-> winget install --id GitHub.cli
-> ```
-> The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
-> 
-> On Mac, you can install with Homebrew:
-> ```sh
-> brew install gh
-> ```
+> To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new) 
+
+
+To generate a **new personal access token (classic)** for a server named `VPS 1` with `write:packages` and `delete:packages` scopes, enter the name in the `Note` input box, select the corresponding boxes, then select `Generate token`
+
+Note: **VPS 1**
+
+Select 90 days till expiry
+
+Scope:
+- [x] `write:packages`
+- [x] `delete:packages`
+- [ ] `admin:org`
+  - [ ] `write:org`
+  - [x] `read:org`
+  - [ ] `manage_runners:org
+- [x] `admin:public_key`
+
+## Install the GitHub CLI (`gh`)
+
+1. Installation
+ 
+If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/)
+ 
+On Windows, you can install with:
+```sh
+winget install --id GitHub.cli
+```
+The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
+
+On Mac, you can install with Homebrew:
+```sh
+brew install gh
+```
+
+2. Test Installation
+
+```sh
+gh --version
+```
+
+You should recieve an output like this:
+
+```sh
+gh version 2.65.0 (2025-01-06)
+https://github.com/cli/cli/releases/tag/v2.65.0
+```
+
+If you you get an error, close the terminal window and try again with a new terminal window.
+
+   
+3. Authentication
+
+To use the `gh` CLI, you need to authenticate:
+
+```bash
+gh auth login
+```
+
+Follow the interactive prompts to log in using your GitHub account.
+
+```MarkDown
+What account do you want to log into? GitHub.com
+What is your preferred protocol for Git operations? SSH
+Generate a new SSH key to add to your GitHub account? (Y/n) Y
+(If the key already exists, use that one)
+Enter a passphrase for your new SSH key (Optional)
+Title for your SSH key: (GitHub CLI)
+How would you like to authenticate GitHub CLI? Paste an authentication token
+
+Generate a PAT here: [[Create GitHub Personal Access Token For Repositories]]
+Paste your authentication token: `****` 
+```
+
+## Push to GitHub Repository
+
 
 
 <!-- CREATE SHARED PROXY -->
