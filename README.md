@@ -453,18 +453,21 @@ From services menu select `create-dockerfile`
 ## Push to GitHub Repository
 
 > [!TIP]
-> **Install the GitHub CLI (`gh`)**
+> 
+> ## Install the GitHub CLI (`gh`)
+> 
 > If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/)
+> 
 > On Windows, you can install with:
 > ```sh
 > winget install --id GitHub.cli
 > ```
 > The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
-> ```sh
-> On Mac, you can install with Homebrew:
-> ```
-> brew install gh
 > 
+> On Mac, you can install with Homebrew:
+> ```sh
+> brew install gh
+> ```
 
 
 <!-- CREATE SHARED PROXY -->
