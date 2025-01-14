@@ -1,4 +1,4 @@
-# Template: Node
+# Template: Node Dockerfile
 # Description: Dockerfile template for JavaScript applications
 
 # build stage

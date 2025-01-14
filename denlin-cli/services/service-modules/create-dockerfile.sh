@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Main script: Configure VPS
-# Description: Create a Dockerfile for your project on your local computer
+# Description: Create a Dockerfile, .dockerignore, and .gitignore for your project
 
 CONF_FILE="/etc/denlin-cli.conf"
-DOCKERFILE_DIR="/usr/local/bin/denlin-cli/services/dockerfile"
+DOCKERFILE_DIR="/usr/local/bin/denlin-cli/dockerfile"
+DOCKERIGNORE_DIR="/usr/local/bin/denlin-cli/dockerignore"
+GITIGNORE_DIR="/usr/local/bin/denlin-cli/gitignore"
 TEMP_SCRIPT="/tmp/create-dockerfile.sh"
 
 # Function to read configuration
@@ -36,10 +38,46 @@ list_templates() {
   fi
 }
 
+# Function to append missing content to a file
+append_if_missing() {
+  local file="$1"
+  local content="$2"
+  if ! grep -Fxq "$content" "$file"; then
+    echo "$content" >> "$file"
+  fi
+}
+
+# Function to create or update .dockerignore and .gitignore
+create_or_update_ignore_files() {
+  local project_type="$1"
+
+  # Generate .dockerignore
+  local dockerignore_template="$DOCKERIGNORE_DIR/${project_type}-dockerignore-template.sh"
+  if [[ -f "$dockerignore_template" ]]; then
+    echo "Creating or updating .dockerignore..."
+    while IFS= read -r line; do
+      append_if_missing ".dockerignore" "$line"
+    done < <(grep -v '^#' "$dockerignore_template") # Exclude comments
+  else
+    echo "Dockerignore template for $project_type not found."
+  fi
+
+  # Generate .gitignore
+  local gitignore_template="$GITIGNORE_DIR/${project_type}-gitignore-template.sh"
+  if [[ -f "$gitignore_template" ]]; then
+    echo "Creating or updating .gitignore..."
+    while IFS= read -r line; do
+      append_if_missing ".gitignore" "$line"
+    done < <(grep -v '^#' "$gitignore_template") # Exclude comments
+  else
+    echo "Gitignore template for $project_type not found."
+  fi
+}
+
 # Function to generate temporary script
 generate_temp_script() {
-  selected_template="$1"
-  template_content=$(cat "$selected_template")
+  local selected_template="$1"
+  local template_content=$(cat "$selected_template")
 
   cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
@@ -91,6 +129,7 @@ while :; do
   read -p "Enter the number of the template you want to use: " choice
   if [[ -n "${templates[$choice]}" ]]; then
     selected_template="${templates[$choice]}"
+    project_type=$(basename "$selected_template" | cut -d- -f1) # Extract project type
     echo "You selected: $(grep -i "Template:" "$selected_template" | awk -F: '{print $2}' | xargs)"
     break
   else
@@ -100,6 +139,9 @@ done
 
 # Generate temporary script
 generate_temp_script "$selected_template"
+
+# Create or update .dockerignore and .gitignore
+create_or_update_ignore_files "$project_type"
 
 # Provide download instructions
 provide_download_instructions
