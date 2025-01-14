@@ -31,16 +31,17 @@ vps_ip="${input_vps_ip:-$vps_ip}"
 read -p "Enter GitHub username (current: ${github_username:-not set}): " input_github_username
 github_username="${input_github_username:-$github_username}"
 
-# Prompt for VPS IP
-read -p "Enter GitHub PAT (current: ${CR_PAT:-(Hidden)}): " -s input_CR_PAT
-CR_PAT="${input_vps_ip:-$CR_PAT}"
+# Prompt for GitHub PAT
+read -s -p "Enter GitHub PAT (current: ${CR_PAT:+(Hidden)}): " input_CR_PAT
+echo
+CR_PAT="${input_CR_PAT:-$CR_PAT}"
 
 # Update the configuration file
 echo "Updating configuration file..."
 sudo bash -c "cat > $CONF_FILE" <<EOF
 vps_ip=$vps_ip
 github_username=$github_username
-CR_PAT=$$CR_PAT
+CR_PAT=$CR_PAT
 EOF
 
 # Step 2: Create the temporary script
@@ -49,7 +50,7 @@ cat > "$TEMP_SCRIPT" <<EOF
 #!/bin/bash
 
 # Automatically get the name of the current directory
-application_name=$(basename "$(pwd)")
+application_name=\$(basename "\$(pwd)")
 
 # Step 1: Ensure Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -58,24 +59,23 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Step 2: Log in to GitHub Container Registry
-if [[ -z "$CR_PAT" ]]; then
+if [[ -z "\$CR_PAT" ]]; then
     echo "GitHub Personal Access Token (CR_PAT) is not set. Exiting..."
     exit 1
 fi
 
 echo "Logging into GitHub Container Registry..."
-if echo "$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin; then
+if echo "\$CR_PAT" | docker login ghcr.io -u "\$github_username" --password-stdin; then
     echo "Successfully logged in to GitHub Container Registry."
 else
     echo "Failed to log in to GitHub Container Registry. Please ensure your CR_PAT is valid."
     exit 1
 fi
 
-
 # Step 3: Build and push the Docker image
 echo "Building and pushing the Docker image..."
-docker build . -t ghcr.io/$github_username/$application_name:latest && \
-docker push ghcr.io/$github_username/$application_name:latest
+docker build . -t ghcr.io/\$github_username/\$application_name:latest && \
+docker push ghcr.io/\$github_username/\$application_name:latest
 
 if [[ \$? -eq 0 ]]; then
     echo "Docker image successfully pushed to GitHub Container Registry."
