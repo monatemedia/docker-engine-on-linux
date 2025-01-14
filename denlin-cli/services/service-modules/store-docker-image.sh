@@ -49,6 +49,9 @@ echo "Creating temporary script at $TEMP_SCRIPT..."
 cat > "$TEMP_SCRIPT" <<EOF
 #!/bin/bash
 
+# Export the CR_PAT variable to be accessible in the script
+export CR_PAT="$CR_PAT"
+
 # Automatically get the name of the current directory
 application_name=\$(basename "\$(pwd)")
 
