@@ -392,6 +392,80 @@ denlin docker-install
 When prompted to configure Docker for rootless mode, select "yes".
 
 
+## Create Your Project
+
+If you have not as yet created your project, you can create a new project on your local computer by opening a terminal in the file folder where you intend to create the application folder. 
+
+```sh
+npm create vite@latest
+```
+
+Complete the flow by selecting (y) to install packages, choose a `Project name`, `framework` and options like `variant`. Change into your directory, run `npm install` and `npm run dev`. 
+
+```sh
+Need to install the following packages:
+create-vite@6.1.1
+Ok to proceed? (y) y
+
+
+> npx
+> create-vite
+
+√ Project name: ... react-counter
+√ Select a framework: » React
+√ Select a variant: » TypeScript
+
+Scaffolding project in C:\Users\Lenovo\Coding Projects\react-counter...
+
+Done. Now run:
+
+  cd react-counter
+  npm install
+  npm run dev
+
+
+Lenovo@DESKTOP MINGW64 ~/Coding Projects/
+$ cd react-counter
+
+Lenovo@DESKTOP MINGW64 ~/Coding Projects/react-counter
+$ npm install
+
+Lenovo@DESKTOP MINGW64 ~/Coding Projects/react-counter
+$ code .
+
+Lenovo@DESKTOP MINGW64 ~/Coding Projects/react-counter
+$ npm run dev
+```
+
+## Create Dockerfile
+
+To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `create-dockerfile`
+
+
+## Push to GitHub Repository
+
+> [!TIP]
+> **Install the GitHub CLI (`gh`)**
+> If the GitHub CLI isn't already installed on your local computer, you can install it by following the [official instructions](https://cli.github.com/)
+> On Windows, you can install with:
+> ```sh
+> winget install --id GitHub.cli
+> ```
+> The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
+> On Mac, you can install with Homebrew:
+> ```sh
+> brew install gh
+> ```
+
+
 <!-- CREATE SHARED PROXY -->
 ## Create Shared Proxy
 
