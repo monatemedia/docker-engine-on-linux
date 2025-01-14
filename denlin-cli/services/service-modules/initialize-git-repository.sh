@@ -3,6 +3,9 @@
 # Main script: Configure VPS
 # Description: Initializes git repo for your project on your local computer
 
+# Get the username of the logged-in user on the VPS
+vps_user=$(whoami)
+
 CONF_FILE="/etc/denlin-cli.conf"
 TEMP_SCRIPT="/tmp/initialize-git-repository-temp.sh"
 
@@ -80,13 +83,15 @@ git push -u origin main
 # Step 5: Cleanup
 echo "Cleaning up temporary script..."
 rm -- "$0"
+ssh "${vps_user}@${vps_ip}" "rm /tmp/initialize-git-repository-temp.sh"
+echo "Cleanup complete. You may now close this terminal."
 EOF
 
 # Step 3: Add instructions for the user
 echo "Temporary script created."
 echo "To use it, download the script to your local computer and run it from your project root folder:"
 echo
-echo "scp ${vps_ip}:/tmp/initialize-git-repository-temp.sh ./initialize-git-repository.sh"
+echo "scp ${vps_user}@${vps_ip}:/tmp/initialize-git-repository-temp.sh ./initialize-git-repository.sh"
 echo
 echo "Then run:"
 echo "./initialize-git-repository.sh"
