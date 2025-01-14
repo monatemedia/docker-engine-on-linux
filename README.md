@@ -507,7 +507,8 @@ On Windows, you can it install with:
 winget install --id GitHub.cli
 ```
 
-The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
+> [!NOTE]
+> The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
 
 On Mac, you can install with Homebrew:
 
