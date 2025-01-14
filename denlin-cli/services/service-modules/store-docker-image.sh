@@ -49,12 +49,12 @@ echo "Creating temporary script at $TEMP_SCRIPT..."
 cat > "$TEMP_SCRIPT" <<EOF
 #!/bin/bash
 
-# Export github_username and CR_PAT variables
+# Export GitHub username and CR_PAT variables
 export github_username="$github_username"
 export CR_PAT="$CR_PAT"
 
 # Automatically get the name of the current directory
-application_name=\$(basename "\$(pwd)")
+application_name=$(basename "$(pwd)")
 
 # Step 1: Ensure Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -62,35 +62,43 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Step 2: Log in to GitHub Container Registry
-if [[ -z "\$CR_PAT" ]]; then
+# Step 2: Wait for Docker to be ready
+echo "Checking if Docker is running..."
+while ! docker info &> /dev/null; do
+    echo "Waiting for Docker Desktop to start..."
+    sleep 5
+done
+echo "Docker Desktop is running."
+
+# Step 3: Log in to GitHub Container Registry
+if [[ -z "$CR_PAT" ]]; then
     echo "GitHub Personal Access Token (CR_PAT) is not set. Exiting..."
     exit 1
 fi
 
 echo "Logging into GitHub Container Registry..."
-if echo "\$CR_PAT" | docker login ghcr.io -u "\$github_username" --password-stdin; then
+if echo "$CR_PAT" | docker login ghcr.io -u "$github_username" --password-stdin; then
     echo "Successfully logged in to GitHub Container Registry."
 else
     echo "Failed to log in to GitHub Container Registry. Please ensure your CR_PAT is valid."
     exit 1
 fi
 
-# Step 3: Build and push the Docker image
+# Step 4: Build and push the Docker image
 echo "Building and pushing the Docker image..."
-docker build . -t ghcr.io/\$github_username/\$application_name:latest && \
-docker push ghcr.io/\$github_username/\$application_name:latest
+docker build . -t ghcr.io/$github_username/$application_name:latest && \
+docker push ghcr.io/$github_username/$application_name:latest
 
-if [[ \$? -eq 0 ]]; then
+if [[ $? -eq 0 ]]; then
     echo "Docker image successfully pushed to GitHub Container Registry."
 else
     echo "Failed to push Docker image to GitHub Container Registry."
     exit 1
 fi
 
-# Step 4: Cleanup
+# Step 5: Cleanup
 echo "Cleaning up temporary script..."
-rm -- "\$0"
+rm -- "$0"
 ssh "${vps_user}@${vps_ip}" "rm /tmp/store-docker-image-temp.sh"
 echo "Cleanup complete. You may now close this terminal."
 EOF
