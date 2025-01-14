@@ -32,7 +32,7 @@ read -p "Enter GitHub username (current: ${github_username:-not set}): " input_g
 github_username="${input_github_username:-$github_username}"
 
 # Prompt for VPS IP
-read -p -s "Enter GitHub PAT (current: ${CR_PAT:-not set}): " input_CR_PAT
+read -p "Enter GitHub PAT (current: ${CR_PAT:-(Hidden)}): " -s input_CR_PAT
 CR_PAT="${input_vps_ip:-$CR_PAT}"
 
 # Update the configuration file
