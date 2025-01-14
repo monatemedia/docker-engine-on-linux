@@ -45,37 +45,30 @@ echo "Creating temporary script at $TEMP_SCRIPT..."
 cat > "$TEMP_SCRIPT" <<'EOF'
 #!/bin/bash
 
-# Step 1: Check if GitHub CLI is installed
-echo "Checking for GitHub CLI..."
-if ! command -v gh &> /dev/null; then
-    echo "GitHub CLI is not installed."
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Installing GitHub CLI on macOS..."
-        if ! command -v brew &> /dev/null; then
-            echo "Homebrew is not installed. Please install it first."
-            exit 1
-        fi
-        brew install gh
-    elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
-        echo "Installing GitHub CLI on Windows..."
-        winget install --id GitHub.cli
-        echo "The Windows installer modifies your PATH. After installation, you will need close this window and to open a new window for the changes to take effect."
-        echo
-        echo "You will need to rerun this script for all the jobs to complete."
-        echo
-        exit 1
-    else
-        echo "Unsupported operating system for automatic installation. Please install GitHub CLI manually."
-        exit 1
-    fi
+# Step 1: Check for or create a .gitignore file and add .env and node_modules
+echo "Checking for or creating .gitignore file..."
+if [ ! -f .gitignore ]; then
+    echo ".gitignore file not found. Creating one..."
+    touch .gitignore
 else
-    echo "GitHub CLI is already installed."
+    echo ".gitignore file already exists."
 fi
 
-# Step 2: Initialize Git repository
+# Add .env and node_modules to .gitignore if not already present
+if ! grep -qx ".env" .gitignore; then
+    echo ".env" >> .gitignore
+    echo "Added .env to .gitignore."
+fi
+
+if ! grep -qx "node_modules" .gitignore; then
+    echo "node_modules" >> .gitignore
+    echo "Added node_modules to .gitignore."
+fi
+
+# Step 2: Initialize Git repository with 'main' as the default branch
 PROJECT_NAME=$(basename "$PWD")
 echo "Initializing a Git repository for project: $PROJECT_NAME"
-git init
+git init --initial-branch=main
 git add .
 git commit -m "Initial commit"
 

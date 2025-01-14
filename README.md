@@ -507,7 +507,7 @@ On Windows, you can it install with:
 winget install --id GitHub.cli
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > The Windows installer modifies your PATH. When using Windows Terminal, you will need to open a new window for the changes to take effect. (Simply opening a new tab will not be sufficient.)
 
 On Mac, you can install with Homebrew:
@@ -557,7 +557,14 @@ Paste your authentication token: `****`
 > 
 > You will find the PAT saved in the `.env` file in the root of your project as the variable `CR_PAT` from using the `create-github-pat` function in the previous step.
 
-Authorize github
+If your GitHub authorization fails, please try again. 
+
+```sh
+gh auth logout
+gh auth login
+```
+
+GitHub CLI may ask you to authenticate your device with the browser, by giving you a one-time code and asking you to log into GitHub with `https://github.com/login/device`
 
 ```sh
 Lenovo@DESKTOP-UQBI21I MINGW64 ~/OneDrive/Coding Projects/react-counter
@@ -569,7 +576,7 @@ Open this URL to continue in your web browser: https://github.com/login/device
 ✓ Logged in as monatemedia
 ```
 
-## Push to GitHub Repository
+## Initialize GitHub Repository
 
 
 
