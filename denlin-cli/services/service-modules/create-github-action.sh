@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Menu: Configure VPS
+# Main script: Configure VPS
+# Description: Create a GitHub Action like Docker Publish
+
 # Variables
 GITHUB_ACTIONS_DIR="/usr/local/bin/denlin-cli/services/github-actions"
 TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
