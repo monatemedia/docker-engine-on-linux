@@ -32,8 +32,16 @@ read -p "Enter GitHub username (current: ${github_username:-not set}): " input_g
 github_username="${input_github_username:-$github_username}"
 
 # Prompt for GitHub PAT
-read -s -p "Enter GitHub PAT (current: ${CR_PAT:+(Hidden)}): " input_CR_PAT
+if [[ -z "$CR_PAT" ]]; then
+    prompt_message="Enter GitHub PAT (current: Not Set)"
+else
+    prompt_message="Enter GitHub PAT (current: Hidden)"
+fi
+
+read -s -p "$prompt_message: " input_CR_PAT
 echo
+
+# If the user provides a new PAT, use it; otherwise, keep the current CR_PAT
 CR_PAT="${input_CR_PAT:-$CR_PAT}"
 
 # Update the configuration file
