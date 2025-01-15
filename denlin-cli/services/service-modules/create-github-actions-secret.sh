@@ -114,7 +114,7 @@ fi
 # Cleanup: Delete the script
 echo "Cleaning up temporary script..."
 rm -- "\$0"
-ssh "${USER}@${vps_ip}" "rm /tmp/create-github-secret.sh"
+ssh "${USER}@${vps_ip}" "rm /tmp/create-github-secret-temp.sh"
 echo "Cleanup complete. You may now close this terminal."
 EOF
 
