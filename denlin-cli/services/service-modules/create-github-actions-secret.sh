@@ -99,10 +99,8 @@ fi
 
 cat >> "$TEMP_SCRIPT" <<EOF
 
-# Debugging statement for repository and secret inputs
-echo "Debug Info: Repository = '\$full_repo', Secret Name = '\$secret_name', Secret Value = '[hidden]'."
-
 # Set the secret in GitHub Actions
+echo
 echo "Creating GitHub Actions secret '\$secret_name' for repository '\$full_repo'..."
 if gh secret set "\$secret_name" --body "\$secret_value" --repo "\$full_repo"; then
     echo "Success: Secret '\$secret_name' added to repository '\$full_repo'."
@@ -110,6 +108,8 @@ else
     echo "Error: Failed to add the secret. Please check your inputs and try again."
     exit 1
 fi
+
+echo
 
 # Inform the user where the secret has been saved
 echo "You can find your GitHub Actions secret saved to the repository here:"
