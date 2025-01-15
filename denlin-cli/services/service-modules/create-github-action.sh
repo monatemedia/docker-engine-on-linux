@@ -1,45 +1,108 @@
 #!/bin/bash
 
-# Path to the temporary script
-TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
-TEMPLATE_DIR="/usr/local/bin/denlin-cli/services/github-actions"  # Template directory on VPS
+# Main script: Create GitHub Action
+# Description: Generates a temporary script that creates a GitHub Action in the user's local project directory
 
-# Check if configuration file exists
 CONF_FILE="/etc/denlin-cli.conf"
-if [[ ! -f "$CONF_FILE" ]]; then
-    echo "Error: Configuration file $CONF_FILE does not exist. Please create it first."
+GITHUB_ACTIONS_DIR="/usr/local/bin/denlin-cli/services/github-actions"
+TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
+
+# Function to read configuration
+read_conf() {
+  if [[ -f "$CONF_FILE" ]]; then
+    source "$CONF_FILE"
+  else
+    echo "Configuration file not found: $CONF_FILE"
     exit 1
-fi
+  fi
+}
 
-source "$CONF_FILE"
-
-# List available templates from the predefined directory
-echo "Scanning for templates in $TEMPLATE_DIR..."
-templates=($(find "$TEMPLATE_DIR" -type f \( -name "*.yml" -o -name "*.yaml" \)))
-
-if [[ ${#templates[@]} -eq 0 ]]; then
-    echo "Error: No templates found in $TEMPLATE_DIR."
+# Function to display available templates
+list_templates() {
+  echo "Available GitHub Action templates:"
+  i=1
+  for file in "$GITHUB_ACTIONS_DIR"/*.yml; do
+    if [[ -f "$file" ]]; then
+      template_name=$(grep -i "Template:" "$file" | awk -F: '{print $2}' | xargs)
+      description=$(grep -i "Description:" "$file" | awk -F: '{print $2}' | xargs)
+      templates[$i]="$file"
+      echo "[$i] $template_name - $description"
+      ((i++))
+    fi
+  done
+  if [[ $i -eq 1 ]]; then
+    echo "No GitHub Action templates found in $GITHUB_ACTIONS_DIR."
     exit 1
-fi
+  fi
+}
 
-# Select template from available options (just showing the first one for simplicity)
-selected_template="${templates[0]}"
+# Function to generate temporary script for GitHub Action
+generate_temp_script() {
+  selected_template="$1"
+  template_content=$(cat "$selected_template")
 
-echo "Selected template: $selected_template"
-
-# Create a temporary script for the user to download
-cat <<EOL > "$TEMP_SCRIPT"
+  cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
 
-# This is a temporary script for setting up a GitHub Action on your local machine
-echo "This script will add a GitHub Action to your repository."
+# Create .github/workflows directory if it doesn't exist
+mkdir -p .github/workflows
 
-# Copy selected GitHub Action template to the local repository
-cp "$selected_template" .github/workflows/
+# Copy the selected GitHub Action template to the workflows directory
+echo "Creating GitHub Action in .github/workflows..."
+cat <<GITHUB_ACTION > .github/workflows/$(basename "$selected_template")
+$template_content
+GITHUB_ACTION
 
-echo "GitHub Action template has been copied to your repository."
+echo "GitHub Action template has been copied to .github/workflows."
 
+# Clean up
+echo "Cleaning up temporary script..."
+rm -- "\$0"
+echo "Cleanup complete. You may now close this terminal."
 EOL
 
-# Notify the user where to download the script
-echo "Temporary script created at $TEMP_SCRIPT. Download this file and run it locally in your project directory."
+  chmod +x "$TEMP_SCRIPT"
+}
+
+# Function to provide download instructions
+provide_download_instructions() {
+  echo "Temporary script has been created at $TEMP_SCRIPT"
+  echo "To download it to your local computer, run the following command:"
+  echo "scp ${vps_user}@${vps_ip}:/tmp/create-github-action-temp.sh ./create-github-action-temp.sh"
+  echo "Then, navigate to the root of your project directory and run the script:"
+  echo "./create-github-action-temp.sh"
+}
+
+# Main script logic
+read_conf
+
+# Ensure required variables are present
+if [[ -z "$vps_ip" ]]; then
+  echo "VPS IP address is not configured. Please update $CONF_FILE."
+  exit 1
+fi
+
+vps_user=$(whoami)
+
+# List available templates
+declare -A templates
+list_templates
+
+# Get user selection
+while :; do
+  echo
+  read -p "Enter the number of the template you want to use: " choice
+  if [[ -n "${templates[$choice]}" ]]; then
+    selected_template="${templates[$choice]}"
+    echo "You selected: $(grep -i "Template:" "$selected_template" | awk -F: '{print $2}' | xargs)"
+    break
+  else
+    echo "Invalid choice. Please try again."
+  fi
+done
+
+# Generate temporary script
+generate_temp_script "$selected_template"
+
+# Provide download instructions
+provide_download_instructions
