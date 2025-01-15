@@ -55,6 +55,20 @@ GITHUB_ACTION
 
 echo "GitHub Action template has been copied to .github/workflows."
 
+# Run Git commands to add, commit, and push changes
+echo "Adding changes to git..."
+git add .
+
+echo "Committing changes..."
+git commit -m "feat: ci"
+
+echo "Pushing changes to the remote repository..."
+git push
+
+# Provide the link to the GitHub Actions page for tracking progress
+echo "You can track the progress of this action at the following link:"
+echo "https://github.com/$(basename $(pwd))/actions"
+
 # Clean up
 echo "Cleaning up temporary script..."
 rm -- "\$0"
