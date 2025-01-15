@@ -124,7 +124,7 @@ chmod +x "$TEMP_SCRIPT"
 echo "Temporary script created at $TEMP_SCRIPT."
 echo "To use it, download the script to your local computer and run it from your project root folder:"
 echo
-echo "scp ${USER}@${vps_ip}:$TEMP_SCRIPT ./create-github-secret.sh"
+echo "scp ${USER}@${vps_ip}:$TEMP_SCRIPT ./create-github-secret-temp.sh"
 echo
 echo "Then run:"
 echo "./create-github-secret.sh"
