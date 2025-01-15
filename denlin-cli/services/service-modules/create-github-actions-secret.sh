@@ -50,9 +50,21 @@ if ! gh auth status &> /dev/null; then
     gh auth login
 fi
 
-# Variables
-repo_name="$current_repo"
-github_username="$github_username"
+# Determine the repository name
+if [[ "$current_repo" == "not-a-git-repo" ]]; then
+    echo "Error: This is not a Git repository. Please run this script from within a Git repository."
+    exit 1
+fi
+
+# Combine GitHub username and repo name into full repo identifier
+full_repo="${github_username}/${current_repo}"
+
+# Validate full repository format
+if [[ "$full_repo" == "/" ]]; then
+    echo "Error: Repository name could not be determined. Please check your configuration."
+    exit 1
+fi
+
 EOF
 
 if [[ "$use_cr_pat" == true ]]; then
@@ -75,9 +87,12 @@ fi
 
 cat >> "$TEMP_SCRIPT" <<EOF
 
+# Debugging Statement
+echo "Debug Info: full_repo = '\$full_repo', secret_name = '\$secret_name', secret_value = '[hidden]'."
+
 # Set the secret in GitHub Actions
-echo "Creating GitHub Actions secret '\$secret_name' for repository '\$github_username/\$repo_name'..."
-if gh secret set "\$secret_name" --body "\$secret_value" --repo "\$github_username/\$repo_name"; then
+echo "Creating GitHub Actions secret '\$secret_name' for repository '\$full_repo'..."
+if gh secret set "\$secret_name" --body "\$secret_value" --repo "\$full_repo"; then
     echo "Success: Secret '\$secret_name' added to repository '\$github_username/\$repo_name'."
 else
     echo "Error: Failed to add the secret. Please check your inputs and try again."
