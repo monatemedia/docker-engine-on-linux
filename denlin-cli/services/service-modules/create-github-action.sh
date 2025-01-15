@@ -4,13 +4,12 @@
 # Main script: Configure VPS
 # Description: Create a GitHub Action like Docker Publish
 
-# Variables
-GITHUB_ACTIONS_DIR="/usr/local/bin/denlin-cli/services/github-actions"
-TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
+# Configuration
 CONF_FILE="/etc/denlin-cli.conf"
-current_repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" || echo "not-a-git-repo")
+TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
+TEMPLATE_DIR="$(dirname "$0")/github-actions" # Ensure this points to the folder containing templates.
 
-# Step 1: Load configuration from `denlin-cli.conf`
+# Check if configuration file exists
 if [[ ! -f "$CONF_FILE" ]]; then
     echo "Error: Configuration file $CONF_FILE does not exist. Please create it first."
     exit 1
@@ -18,71 +17,92 @@ fi
 
 source "$CONF_FILE"
 
-# Step 2: Validate repository name
-if [[ "$current_repo" == "not-a-git-repo" ]]; then
-    echo "Error: This script must be run inside a Git repository."
+# Validate current working directory
+current_dir=$(pwd 2>/dev/null)
+if [[ -z "$current_dir" ]]; then
+    echo "Error: Unable to retrieve current working directory. Ensure you are running this script in a valid directory."
     exit 1
 fi
 
-# Step 3: Find and display template options
-templates=()
-descriptions=()
-
-while IFS= read -r -d '' file; do
-    template=$(grep -m 1 '^# Template:' "$file" | sed 's/# Template: //')
-    description=$(grep -m 1 '^# Description:' "$file" | sed 's/# Description: //')
-
-    if [[ -n "$template" && -n "$description" ]]; then
-        templates+=("$template")
-        descriptions+=("$description")
-    fi
-done < <(find "$GITHUB_ACTIONS_DIR" -type f \( -name '*.yml' -o -name '*.yaml' \) -print0)
+# List available templates
+echo "Scanning for templates in $TEMPLATE_DIR..."
+templates=($(find "$TEMPLATE_DIR" -type f \( -name "*.yml" -o -name "*.yaml" \)))
 
 if [[ ${#templates[@]} -eq 0 ]]; then
-    echo "No templates found in $GITHUB_ACTIONS_DIR."
+    echo "Error: No templates found in $TEMPLATE_DIR."
     exit 1
 fi
 
 echo "Available templates:"
 for i in "${!templates[@]}"; do
-    echo "$((i + 1))) ${templates[$i]} - ${descriptions[$i]}"
+    template_name=$(grep -m1 '^# Template:' "${templates[$i]}" | sed 's/# Template: //')
+    template_desc=$(grep -m1 '^# Description:' "${templates[$i]}" | sed 's/# Description: //')
+    echo "$((i + 1))) $template_name - $template_desc"
 done
 
-# Step 4: Prompt user to choose a template
+# Prompt user for selection
 read -rp "Enter the number of the template you want to use: " choice
 
 if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > ${#templates[@]})); then
-    echo "Invalid choice. Exiting."
+    echo "Error: Invalid choice."
     exit 1
 fi
 
+# Selected template
 selected_template="${templates[$((choice - 1))]}"
-selected_file=$(find "$GITHUB_ACTIONS_DIR" -type f \( -name '*.yml' -o -name '*.yaml' \) -exec grep -l "# Template: $selected_template" {} +)
+template_name=$(grep -m1 '^# Template:' "$selected_template" | sed 's/# Template: //')
 
-# Step 5: Create the workflow file
-mkdir -p .github/workflows
-cp "$selected_file" ".github/workflows/$(basename "$selected_file")"
+# Create the temporary script
+echo "Creating temporary script at $TEMP_SCRIPT..."
+cat > "$TEMP_SCRIPT" <<EOF
+#!/bin/bash
+# Temporary script: Create GitHub Action Workflow
+# Description: Creates a workflow based on the selected template ($template_name).
 
-git add .github/workflows
-git commit -m "feat: add ${selected_template}.yml workflow"
-git push
-
-repo_owner=$(git config --get remote.origin.url | sed -n 's|.*github\.com[:/]\(.*\)/.*|\1|p')
-repo_name=$(git config --get remote.origin.url | sed -n 's|.*/\(.*\)\.git|\1|p')
-
-if [[ -n "$repo_owner" && -n "$repo_name" ]]; then
-    actions_link="https://github.com/$repo_owner/$repo_name/actions"
-    echo "Your changes have been pushed. Visit the Actions tab in your repository to see the workflow triggered."
-    echo "Actions tab: $actions_link"
-else
-    echo "Error: Unable to determine repository owner or name. Ensure this is a valid Git repository."
+# Ensure the script is run in a Git repository
+if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo "Error: This is not a Git repository. Please run this script from within a Git project."
+    exit 1
 fi
 
-# Step 6: Cleanup SSH usage warnings
-ssh_cleanup() {
-    ssh -o LogLevel=QUIET -o BatchMode=yes "${USER}@${vps_ip}" "rm -f $TEMP_SCRIPT" &>/dev/null
-}
+# Create .github/workflows directory if it doesn't exist
+mkdir -p .github/workflows
 
-echo "Cleaning up temporary script from the local machine..."
-ssh_cleanup
-echo "Cleanup complete. You may now close this terminal."
+# Copy the selected template
+cp "$selected_template" .github/workflows/
+
+# Add and commit the workflow
+git add .github/workflows/$(basename "$selected_template")
+git commit -m "feat: add $(basename "$selected_template") workflow"
+
+# Push changes to the remote repository
+git push
+
+# Provide GitHub Actions link
+repo_url=\$(git config --get remote.origin.url)
+repo_url=\$(echo "\$repo_url" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git\$||')
+if [[ -n "\$repo_url" ]]; then
+    echo "Your changes have been pushed. Open the 'Actions' tab in your repository to see the workflow triggered."
+    echo "\$repo_url/actions"
+else
+    echo "Error: Unable to determine repository URL."
+fi
+
+# Cleanup
+echo "Cleaning up temporary script..."
+rm -- "\$0"
+EOF
+
+# Make the temporary script executable
+chmod +x "$TEMP_SCRIPT"
+
+# Provide instructions to the user
+echo "Temporary script created at $TEMP_SCRIPT."
+echo "To use it, download the script to your local computer and run it from your project root directory:"
+echo
+echo "scp ${USER}@${vps_ip}:$TEMP_SCRIPT ./create-github-action-temp.sh"
+echo
+echo "Then run:"
+echo "./create-github-action-temp.sh"
+echo
+echo "Once the script finishes, it will delete itself."
