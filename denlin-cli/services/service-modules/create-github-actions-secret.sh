@@ -111,6 +111,12 @@ else
     exit 1
 fi
 
+# Inform the user where the secret has been saved
+echo "You can find your GitHub Actions secret saved to the repository here:"
+echo
+echo "  https://github.com/\$repo_owner/\$repo_name/settings/secrets/actions"
+echo
+
 # Cleanup: Delete the script
 echo "Cleaning up temporary script..."
 rm -- "\$0"
@@ -127,7 +133,7 @@ echo
 echo "scp ${USER}@${vps_ip}:$TEMP_SCRIPT ./create-github-secret-temp.sh"
 echo
 echo "Then run:"
-echo "./create-github-secret.sh"
+echo "./create-github-secret-temp.sh"
 echo
 echo "Once the script finishes, it will delete itself from both the project folder and the VPS."
 echo "You may now close this terminal window."
