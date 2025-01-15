@@ -50,18 +50,30 @@ if ! gh auth status &> /dev/null; then
     gh auth login
 fi
 
-# Determine the repository name
-if [[ "$current_repo" == "not-a-git-repo" ]]; then
-    echo "Error: This is not a Git repository. Please run this script from within a Git repository."
+# Extract the GitHub repository name from the remote URL
+remote_url=\$(git config --get remote.origin.url)
+
+# Ensure remote_url is not empty
+if [[ -z "\$remote_url" ]]; then
+    echo "Error: No remote URL found. Please ensure this is a Git repository with a remote origin."
+    exit 1
+fi
+
+# Parse remote URL to get the repository name
+if [[ "\$remote_url" =~ github\.com[:/](.+)/(.+)\.git ]]; then
+    repo_owner="\${BASH_REMATCH[1]}"
+    repo_name="\${BASH_REMATCH[2]}"
+else
+    echo "Error: Unable to parse the remote URL '\$remote_url'. Ensure it points to a valid GitHub repository."
     exit 1
 fi
 
 # Combine GitHub username and repo name into full repo identifier
-full_repo="${github_username}/${current_repo}"
+full_repo="\${repo_owner}/\${repo_name}"
 
-# Validate full repository format
-if [[ "$full_repo" == "/" ]]; then
-    echo "Error: Repository name could not be determined. Please check your configuration."
+# Validate the full repository format
+if [[ ! "\$full_repo" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
+    echo "Error: The repository identifier '\$full_repo' is invalid. Please ensure your GitHub username and repository name are correct."
     exit 1
 fi
 
@@ -87,13 +99,13 @@ fi
 
 cat >> "$TEMP_SCRIPT" <<EOF
 
-# Debugging Statement
-echo "Debug Info: full_repo = '\$full_repo', secret_name = '\$secret_name', secret_value = '[hidden]'."
+# Debugging statement for repository and secret inputs
+echo "Debug Info: Repository = '\$full_repo', Secret Name = '\$secret_name', Secret Value = '[hidden]'."
 
 # Set the secret in GitHub Actions
 echo "Creating GitHub Actions secret '\$secret_name' for repository '\$full_repo'..."
 if gh secret set "\$secret_name" --body "\$secret_value" --repo "\$full_repo"; then
-    echo "Success: Secret '\$secret_name' added to repository '\$github_username/\$repo_name'."
+    echo "Success: Secret '\$secret_name' added to repository '\$full_repo'."
 else
     echo "Error: Failed to add the secret. Please check your inputs and try again."
     exit 1
