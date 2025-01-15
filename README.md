@@ -616,7 +616,12 @@ From services menu select `store-docker-image`.
 
 
 > [!IMPORTANT]
-> Docker Desktop should be running on your local machine to store your Docker image to the Registry.
+> Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
+
+
+## Create A GitHub Action
+
+
 
 
 
