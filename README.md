@@ -604,6 +604,20 @@ From services menu select `initialize-git-repository`.
 
 ## Create and Store Docker Image to GitHub Registry
 
+To create and store your Docker image to the GitHub Registry, use `store-docker-image` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `store-docker-image`.
+
+
+> [!IMPORTANT]
+> Docker Desktop should be running on your local machine to store your Docker image to the Registry.
+
 
 
 <!-- CREATE SHARED PROXY -->
