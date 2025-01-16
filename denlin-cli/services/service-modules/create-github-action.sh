@@ -41,7 +41,7 @@ generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
-  # Get GitHub repository name and username
+  # Get the repository name and GitHub user from the local git configuration
   repo_name=$(basename "$(git rev-parse --show-toplevel)")
   github_user=$(git config --get remote.origin.url | sed 's/.*github.com[:\/]\(.*\)\.git/\1/')
 
