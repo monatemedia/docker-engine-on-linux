@@ -54,9 +54,9 @@ echo "Repo name resolved as: \$repo_name"
 echo "GitHub user resolved as: \$github_user"
 
 # Update placeholders in the template content
-template_content="$template_content"
-template_content=\$(echo "\$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/\$repo_name|g")
-template_content=\$(echo "\$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/\$repo_name|g")
+template_content="\$template_content"
+template_content=\$(echo "\$template_content" | sed "s|{{ github.actor }}/\$current_repo|{{ github.actor }}/\$repo_name|g")
+template_content=\$(echo "\$template_content" | sed "s|ghcr.io/{{ github.actor }}/\$current_repo|ghcr.io/{{ github.actor }}/\$repo_name|g")
 
 # Create .github/workflows directory if it doesn't exist
 mkdir -p .github/workflows
