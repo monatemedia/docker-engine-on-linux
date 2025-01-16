@@ -37,52 +37,44 @@ list_templates() {
 }
 
 # Function to generate a temporary script for GitHub Action
-# Function to generate a temporary script for GitHub Action
 generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
-  # Create the temporary script that will be downloaded to the local machine
-  cat <<EOL >"$TEMP_SCRIPT"
-#!/bin/bash
+  # Get GitHub repo name and username from the remote URL
+  repo_name=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1#p')
+  github_user=$(git config --get remote.origin.url | sed -n 's#.*[:/]\([^/]*\)/.*#\1#p')
 
-# Get GitHub repo name and username from the remote URL
-repo_name=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1#p')
-github_user=$(git config --get remote.origin.url | sed -n 's#.*[:/]\([^/]*\)/.*#\1#p')
+  # Debugging statements (optional, for troubleshooting)
+  echo "Repo name resolved as: \$repo_name"
+  echo "GitHub user resolved as: \$github_user"
 
-# Debugging statements (optional, for troubleshooting)
-echo "Repo name resolved as: \$repo_name"
-echo "GitHub user resolved as: \$github_user"
+  # Update placeholders in the template
+  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$repo_name|\${{ github.actor }}/$repo_name|g")
+  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$repo_name|ghcr.io/\${{ github.actor }}/$repo_name|g")
 
-# Update placeholders in the template
-template_content=\$(echo "\$template_content" | sed "s|\${{ github.actor }}/\$repo_name|\${{ github.actor }}/\$repo_name|g")
-template_content=\$(echo "\$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$repo_name|ghcr.io/\${{ github.actor }}/\$repo_name|g")
+  # Create .github/workflows directory if it doesn't exist
+  mkdir -p .github/workflows
 
-# Create .github/workflows directory if it doesn't exist
-mkdir -p .github/workflows
-
-# Add the GitHub Action template
-cat <<GITHUB_ACTION > .github/workflows/$(basename "$selected_template")
-\$template_content
+  # Add the GitHub Action template
+  cat <<GITHUB_ACTION > .github/workflows/$(basename "$selected_template")
+$template_content
 GITHUB_ACTION
 
-echo "GitHub Action template created in .github/workflows/$(basename "$selected_template")."
+  echo "GitHub Action template created in .github/workflows/$(basename "$selected_template")."
 
-# Git operations
-git add .github/workflows/$(basename "$selected_template")
-git commit -m "feat: Add GitHub Action for Docker publish"
-git push
+  # Git operations
+  git add .github/workflows/$(basename "$selected_template")
+  git commit -m "feat: Add GitHub Action for Docker publish"
+  git push
 
-# Provide the GitHub Actions link for tracking progress
-echo "GitHub Action created. Track it here:"
-echo "https://github.com/\$github_user/\$repo_name/actions"
+  # Provide the GitHub Actions link for tracking progress
+  echo "GitHub Action created. Track it here:"
+  echo "https://github.com/$github_user/$repo_name/actions"
 
-# Cleanup: Remove the temporary script locally and on the VPS
-rm -- "\$0"
-ssh ${USER}@${vps_ip} "rm -f $TEMP_SCRIPT"
-EOL
-
-  chmod +x "$TEMP_SCRIPT"
+  # Cleanup: Remove the temporary script locally and on the VPS
+  rm -- "$0"
+  ssh ${USER}@${vps_ip} "rm -f $TEMP_SCRIPT"
 }
 
 # Function to provide download instructions
