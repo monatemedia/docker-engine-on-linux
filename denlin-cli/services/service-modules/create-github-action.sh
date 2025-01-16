@@ -75,6 +75,12 @@ git push
 # Provide the GitHub Actions link for tracking progress
 echo "GitHub Action created. Track it here:"
 echo "https://github.com/\$github_user/\$repo_name/actions"
+
+# Clean up temporary script
+echo "Cleaning up scripts..."
+rm -- "\$0"
+ssh "${USER}@${vps_ip}" "rm /tmp/create-github-action-temp.sh"
+echo "Cleanup complete. You may now close this terminal."
 EOF
 
   chmod +x $TEMP_SCRIPT
