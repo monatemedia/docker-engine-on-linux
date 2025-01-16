@@ -37,6 +37,7 @@ list_templates() {
 }
 
 # Function to generate a temporary script for GitHub Action
+# Function to generate a temporary script for GitHub Action
 generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
@@ -54,8 +55,8 @@ echo "Repo name resolved as: \$repo_name"
 echo "GitHub user resolved as: \$github_user"
 
 # Update placeholders in the template
-template_content=\$(echo "\$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/\$repo_name|g")
-template_content=\$(echo "\$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/\$repo_name|g")
+template_content=\$(echo "\$template_content" | sed "s|\${{ github.actor }}/\$repo_name|\${{ github.actor }}/\$repo_name|g")
+template_content=\$(echo "\$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$repo_name|ghcr.io/\${{ github.actor }}/\$repo_name|g")
 
 # Create .github/workflows directory if it doesn't exist
 mkdir -p .github/workflows
