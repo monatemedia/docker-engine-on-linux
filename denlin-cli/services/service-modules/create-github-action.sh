@@ -41,6 +41,15 @@ generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
+  # Get GitHub repository name and username
+  repo_name=$(basename "$(git rev-parse --show-toplevel)")
+  github_user=$(git config --get remote.origin.url | sed 's/.*github.com[:\/]\(.*\)\.git/\1/')
+
+  # Update IMAGE_NAME and GitHub Actions link in the template
+  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/$current_repo|\${{ github.actor }}/$repo_name|g")
+  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
+  
+  # Create the temporary script
   cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
 
@@ -67,7 +76,7 @@ git push
 
 # Provide the link to the GitHub Actions page for tracking progress
 echo "You can track the progress of this action at the following link:"
-echo "https://github.com/$(basename $(pwd))/actions"
+echo "https://github.com/$github_user/$repo_name/actions"
 
 # Clean up
 echo "Cleaning up temporary script..."
