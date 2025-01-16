@@ -46,7 +46,7 @@ generate_temp_script() {
 #!/bin/bash
 
 # Automatically fetch the repository name and GitHub user from git config
-repo_name=\$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1#p')
+repo_name=\$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git#\1#p')
 github_user=\$(git config --get remote.origin.url | sed -n 's#.*[:/]\([^/]*\)/.*#\1#p')
 
 # Debugging statements (optional)
@@ -55,8 +55,8 @@ echo "GitHub user resolved as: \$github_user"
 
 # Update placeholders in the template content
 template_content="\$template_content"
-template_content=\$(echo "\$template_content" | sed "s|{{ github.actor }}/\$current_repo|{{ github.actor }}/\$repo_name|g")
-template_content=\$(echo "\$template_content" | sed "s|ghcr.io/{{ github.actor }}/\$current_repo|ghcr.io/{{ github.actor }}/\$repo_name|g")
+template_content=\$(echo "\$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/\$repo_name|g")
+template_content=\$(echo "\$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/\$repo_name|g")
 
 # Create .github/workflows directory if it doesn't exist
 mkdir -p .github/workflows
