@@ -61,8 +61,8 @@ repo_name=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1
 github_user=$(git config --get remote.origin.url | sed -n 's#.*[:/]\([^/]*\)/.*#\1#p')
 
 # Debugging statements (optional, for troubleshooting)
-echo "Repo name resolved as: \$repo_name"
-echo "GitHub user resolved as: \$github_user"
+echo "Repo name resolved as: $repo_name"
+echo "GitHub user resolved as: $github_user"
 
 # Update placeholders in the template
 template_content=$(cat .github/workflows/$(basename "$selected_template"))
