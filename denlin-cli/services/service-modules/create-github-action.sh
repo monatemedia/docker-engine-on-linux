@@ -48,7 +48,10 @@ generate_temp_script() {
   # Update IMAGE_NAME and GitHub Actions link in the template
   template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/$current_repo|\${{ github.actor }}/$repo_name|g")
   template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
-  
+
+  # Update the GitHub Actions link properly
+  template_content=$(echo "$template_content" | sed "s|https://github.com///actions|https://github.com/$github_user/$repo_name/actions|g")
+
   # Create the temporary script
   cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
