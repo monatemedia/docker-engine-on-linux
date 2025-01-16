@@ -9,56 +9,61 @@ TEMP_SCRIPT="/tmp/create-github-action-temp.sh"
 
 # Function to read configuration
 read_conf() {
-if [[ -f "$CONF_FILE" ]]; then
-  source "$CONF_FILE"
- else
-  echo "Configuration file not found: $CONF_FILE"
-  exit 1
- fi
+  if [[ -f "$CONF_FILE" ]]; then
+    source "$CONF_FILE"
+  else
+    echo "Configuration file not found: $CONF_FILE"
+    exit 1
+  fi
 }
 
 # Function to display available templates
 list_templates() {
- echo "Available GitHub Action templates:"
- i=1
- for file in "$GITHUB_ACTIONS_DIR"/*.yml; do
- if [[ -f "$file" ]]; then
- template_name=$(grep -i "Template:" "$file" | awk -F: '{print $2}' | xargs)
- description=$(grep -i "Description:" "$file" | awk -F: '{print $2}' | xargs)
- templates[$i]="$file"
- echo "[$i] $template_name - $description"
- ((i++))
- fi
- done
- if [[ $i -eq 1 ]]; then
- echo "No GitHub Action templates found in $GITHUB_ACTIONS_DIR."
- exit 1
- fi
+  echo "Available GitHub Action templates:"
+  i=1
+  for file in "$GITHUB_ACTIONS_DIR"/*.yml; do
+    if [[ -f "$file" ]]; then
+      template_name=$(grep -i "Template:" "$file" | awk -F: '{print $2}' | xargs)
+      description=$(grep -i "Description:" "$file" | awk -F: '{print $2}' | xargs)
+      templates[$i]="$file"
+      echo "[$i] $template_name - $description"
+      ((i++))
+    fi
+  done
+  if [[ $i -eq 1 ]]; then
+    echo "No GitHub Action templates found in $GITHUB_ACTIONS_DIR."
+    exit 1
+  fi
 }
 
-# Function to generate a temporary script for GitHub Action
 # Function to generate a temporary script for GitHub Action
 generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
-  # Fix repo_name and github_user resolution
-  repo_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo 'default-repo')")
-  github_user=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)/[^/]*\.git$#\1#p')
-
-  # Debugging statements (optional, for troubleshooting)
-  echo "Repo name resolved as: $repo_name"
-  echo "GitHub user resolved as: $github_user"
-
   # Update placeholders in the template
-  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/$repo_name|g")
-  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
+  template_content=$(echo "$template_content" | sed "s|\$current_repo|\$(basename \$(git rev-parse --show-toplevel 2>/dev/null))|g")
+  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/\$(basename \$(git rev-parse --show-toplevel 2>/dev/null))|g")
 
   # Create the temporary script
   cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
 
 # Temporary script to create GitHub Action in the local project
+
+# Ensure the script is being run in a Git repository
+if ! git rev-parse --show-toplevel > /dev/null 2>&1; then
+  echo "Error: This script must be run in a Git repository."
+  exit 1
+fi
+
+# Resolve repository name and GitHub user
+repo_name=\$(basename \$(git rev-parse --show-toplevel))
+github_user=\$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)/[^/]*\.git\$#\1#p')
+
+# Debugging statements (optional)
+echo "Repo name resolved as: \$repo_name"
+echo "GitHub user resolved as: \$github_user"
 
 # Create .github/workflows directory if it doesn't exist
 mkdir -p .github/workflows
@@ -77,7 +82,7 @@ git push
 
 # Provide the GitHub Actions link for tracking progress
 echo "GitHub Action created. Track it here:"
-echo "https://github.com/$github_user/$repo_name/actions"
+echo "https://github.com/\$github_user/\$repo_name/actions"
 
 # Cleanup: Remove the temporary script locally and on the VPS
 rm -- "\$0"
@@ -89,11 +94,11 @@ EOL
 
 # Function to provide download instructions
 provide_download_instructions() {
- echo "Temporary script has been created at $TEMP_SCRIPT"
- echo "To download it to your local computer, run the following command:"
- echo "scp ${vps_user}@${vps_ip}:$TEMP_SCRIPT ./create-github-action-temp.sh"
- echo "Then, navigate to the root of your project directory and run the script:"
- echo "./create-github-action-temp.sh"
+  echo "Temporary script has been created at $TEMP_SCRIPT"
+  echo "To download it to your local computer, run the following command:"
+  echo "scp ${vps_user}@${vps_ip}:$TEMP_SCRIPT ./create-github-action-temp.sh"
+  echo "Then, navigate to the root of your project directory and run the script:"
+  echo "./create-github-action-temp.sh"
 }
 
 # Main script logic
@@ -101,8 +106,8 @@ read_conf
 
 # Ensure required variables are present
 if [[ -z "$vps_ip" ]]; then
- echo "VPS IP address is not configured. Please update $CONF_FILE."
- exit 1
+  echo "VPS IP address is not configured. Please update $CONF_FILE."
+  exit 1
 fi
 
 vps_user=$(whoami)
@@ -113,15 +118,15 @@ list_templates
 
 # Get user selection
 while :; do
- echo
- read -p "Enter the number of the template you want to use: " choice
- if [[ -n "${templates[$choice]}" ]]; then
- selected_template="${templates[$choice]}"
- echo "You selected: $(grep -i "Template:" "$selected_template" | awk -F: '{print $2}' | xargs)"
- break
- else
- echo "Invalid choice. Please try again."
- fi
+  echo
+  read -p "Enter the number of the template you want to use: " choice
+  if [[ -n "${templates[$choice]}" ]]; then
+    selected_template="${templates[$choice]}"
+    echo "You selected: $(grep -i "Template:" "$selected_template" | awk -F: '{print $2}' | xargs)"
+    break
+  else
+    echo "Invalid choice. Please try again."
+  fi
 done
 
 # Generate temporary script
