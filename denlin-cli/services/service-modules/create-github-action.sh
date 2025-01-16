@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Main script: Create GitHub Action
-# Description: Generates a temporary script that creates a GitHub Action in the user's local project directory
+# Description: Generates a temporary script to create a GitHub Action in the user's local project directory
 
 CONF_FILE="/etc/denlin-cli.conf"
 GITHUB_ACTIONS_DIR="/usr/local/bin/denlin-cli/services/github-actions"
@@ -36,55 +36,47 @@ list_templates() {
   fi
 }
 
-# Function to generate temporary script for GitHub Action
+# Function to generate a temporary script for GitHub Action
 generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
-  # Get the repository name and GitHub user from the local git configuration
+  # Replace placeholders dynamically based on the user's project
   repo_name=$(basename "$(git rev-parse --show-toplevel)")
-  github_user=$(git config --get remote.origin.url | sed 's/.*github.com[:\/]\(.*\)\.git/\1/')
+  github_user=$(git config --get remote.origin.url | sed 's/.*github.com[:\/]\(.*\)\/.*/\1/')
 
-  # Update IMAGE_NAME and GitHub Actions link in the template
-  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/$current_repo|\${{ github.actor }}/$repo_name|g")
-  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
-
-  # Update the GitHub Actions link properly
-  template_content=$(echo "$template_content" | sed "s|https://github.com///actions|https://github.com/$github_user/$repo_name/actions|g")
+  # Update placeholders in the template
+  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/$repo_name|g")
+  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
 
   # Create the temporary script
   cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
 
+# Temporary script to create GitHub Action in the local project
+
 # Create .github/workflows directory if it doesn't exist
 mkdir -p .github/workflows
 
-# Copy the selected GitHub Action template to the workflows directory
-echo "Creating GitHub Action in .github/workflows..."
+# Add the GitHub Action template
 cat <<GITHUB_ACTION > .github/workflows/$(basename "$selected_template")
 $template_content
 GITHUB_ACTION
 
-echo "GitHub Action template has been copied to .github/workflows."
+echo "GitHub Action template created in .github/workflows/$(basename "$selected_template")."
 
-# Run Git commands to add, commit, and push changes
-echo "Adding changes to git..."
-git add .
-
-echo "Committing changes..."
-git commit -m "feat: ci"
-
-echo "Pushing changes to the remote repository..."
+# Git operations
+git add .github/workflows/$(basename "$selected_template")
+git commit -m "feat: Add GitHub Action for Docker publish"
 git push
 
-# Provide the link to the GitHub Actions page for tracking progress
-echo "You can track the progress of this action at the following link:"
+# Provide the GitHub Actions link for tracking progress
+echo "GitHub Action created. Track it here:"
 echo "https://github.com/$github_user/$repo_name/actions"
 
-# Clean up
-echo "Cleaning up temporary script..."
+# Cleanup: Remove the temporary script locally and on the VPS
 rm -- "\$0"
-echo "Cleanup complete. You may now close this terminal."
+ssh ${vps_user}@${vps_ip} "rm -f $TEMP_SCRIPT"
 EOL
 
   chmod +x "$TEMP_SCRIPT"
@@ -94,7 +86,7 @@ EOL
 provide_download_instructions() {
   echo "Temporary script has been created at $TEMP_SCRIPT"
   echo "To download it to your local computer, run the following command:"
-  echo "scp ${vps_user}@${vps_ip}:/tmp/create-github-action-temp.sh ./create-github-action-temp.sh"
+  echo "scp ${vps_user}@${vps_ip}:$TEMP_SCRIPT ./create-github-action-temp.sh"
   echo "Then, navigate to the root of your project directory and run the script:"
   echo "./create-github-action-temp.sh"
 }
