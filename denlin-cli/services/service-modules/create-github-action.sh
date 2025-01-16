@@ -37,21 +37,25 @@ list_templates() {
 }
 
 # Function to generate a temporary script for GitHub Action
+# Function to generate a temporary script for GitHub Action
 generate_temp_script() {
- selected_template="$1"
- template_content=$(cat "$selected_template")
+  selected_template="$1"
+  template_content=$(cat "$selected_template")
 
- # Replace placeholders dynamically based on the user's project
- repo_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo "default-repo")")
- remote_url=$(git config --get remote.origin.url 2>/dev/null || echo "unknown/unknown")
- github_user=$(echo "$remote_url" | sed -n 's#.*/\([^/]*\)/.*#\1#p' || echo "unknown")
+  # Fix repo_name and github_user resolution
+  repo_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo 'default-repo')")
+  github_user=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)/[^/]*\.git$#\1#p')
 
- # Update placeholders in the template
- template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/$repo_name|g")
- template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
+  # Debugging statements (optional, for troubleshooting)
+  echo "Repo name resolved as: $repo_name"
+  echo "GitHub user resolved as: $github_user"
 
- # Create the temporary script
- cat <<EOL >"$TEMP_SCRIPT"
+  # Update placeholders in the template
+  template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$current_repo|\${{ github.actor }}/$repo_name|g")
+  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/$repo_name|g")
+
+  # Create the temporary script
+  cat <<EOL >"$TEMP_SCRIPT"
 #!/bin/bash
 
 # Temporary script to create GitHub Action in the local project
@@ -68,8 +72,8 @@ echo "GitHub Action template created in .github/workflows/$(basename "$selected_
 
 # Git operations
 git add .github/workflows/$(basename "$selected_template")
-git commit -m "feat: Add GitHub Action for Docker publish" || echo "No changes to commit."
-git push || echo "Git push failed. Ensure your repository is properly configured."
+git commit -m "feat: Add GitHub Action for Docker publish"
+git push
 
 # Provide the GitHub Actions link for tracking progress
 echo "GitHub Action created. Track it here:"
@@ -80,7 +84,7 @@ rm -- "\$0"
 ssh ${vps_user}@${vps_ip} "rm -f $TEMP_SCRIPT"
 EOL
 
- chmod +x "$TEMP_SCRIPT"
+  chmod +x "$TEMP_SCRIPT"
 }
 
 # Function to provide download instructions
