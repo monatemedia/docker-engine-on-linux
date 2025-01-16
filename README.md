@@ -619,11 +619,52 @@ From services menu select `store-docker-image`.
 > Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
+## Create GitHub Secret
+
+We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and pull our image from there.
+
+To store your PAT as a GitHub secret, use `create-github-actions-secret` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `create-github-actions-secret`.
+
+
 ## Create A GitHub Action
 
+Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
 
+The action will run every time you push changes to the main branch of your repository, and then it will triggers the commands we want to run.
 
+To create a GitHub Action, use `create-github-action` command in Denlin's Services Menu.
 
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `create-github-action`.
+
+## Create A Docker Compose File
+
+Now, we want to host our container on our server. For that we will use `docker-compose`. 
+
+`docker-compose` is basically a `yml` file where we specify the properties of our container, and that way we can just run the `docker-compose` file, and not have to use a `docker run` command, making it much easier to run containers.
+
+To create and store your Docker image to the GitHub Registry, use `create-docker-compose` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin common
+```
+
+From services menu select `create-docker-compose`.
 
 <!-- CREATE SHARED PROXY -->
 ## Create Shared Proxy
