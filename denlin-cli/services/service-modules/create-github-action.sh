@@ -38,12 +38,25 @@ list_templates() {
 
 # Function to generate a temporary script for GitHub Action
 generate_temp_script() {
-  selected_template="$1"
-  template_content=$(cat "$selected_template")
+  # Get the repository name from the Git remote URL
+  repo_name=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1#p')
 
-  # Update placeholders in the template
-  template_content=$(echo "$template_content" | sed "s|\$current_repo|\$(basename \$(git rev-parse --show-toplevel 2>/dev/null))|g")
-  template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$current_repo|ghcr.io/\${{ github.actor }}/\$(basename \$(git rev-parse --show-toplevel 2>/dev/null))|g")
+  # If repo_name is still empty, default to 'default-repo'
+  if [[ -z "$repo_name" ]]; then
+    repo_name="default-repo"
+  fi
+
+  # Get the GitHub username from the Git remote URL
+  github_user=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)/[^/]*\.git$#\1#p')
+
+  # If github_user is still empty, default to 'unknown-user'
+  if [[ -z "$github_user" ]]; then
+    github_user="unknown-user"
+  fi
+
+  # Debugging output
+  echo "Repo name resolved as: $repo_name"
+  echo "GitHub user resolved as: $github_user"
 
   # Create the temporary script
   cat <<EOL >"$TEMP_SCRIPT"
