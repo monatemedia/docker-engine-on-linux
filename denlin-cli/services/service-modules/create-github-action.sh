@@ -41,36 +41,31 @@ generate_temp_script() {
   selected_template="$1"
   template_content=$(cat "$selected_template")
 
-  # Create .github/workflows directory if it doesn't exist
-  mkdir -p .github/workflows
-
-  # Add the GitHub Action template
-  cat <<GITHUB_ACTION > .github/workflows/$(basename "$selected_template")
-$template_content
-GITHUB_ACTION
-
-  echo "GitHub Action template created in .github/workflows/$(basename "$selected_template")."
-
-  # Git operations to add, commit, and push the new file (This will happen on user's local machine)
-  cat <<'EOF' > $TEMP_SCRIPT
+  # Create the temporary script
+  cat <<EOF > $TEMP_SCRIPT
 #!/bin/bash
 # Temporary script to run locally
 
+# Create .github/workflows directory if it doesn't exist
+mkdir -p .github/workflows
+
 # Get the GitHub repo name and username from the remote origin URL
-repo_name=$(git config --get remote.origin.url | sed -n 's#.*/\([^/]*\)\.git$#\1#p')
-github_user=$(git config --get remote.origin.url | sed -n 's#.*[:/]\([^/]*\)/.*#\1#p')
+repo_name=\$(git config --get remote.origin.url | sed -n 's#.*/\\([^/]*\\)\\.git\$#\\1#p')
+github_user=\$(git config --get remote.origin.url | sed -n 's#.*[:/]\\([^/]*\\)/.*#\\1#p')
 
-# Debugging statements (optional, for troubleshooting)
-echo "Repo name resolved as: $repo_name"
-echo "GitHub user resolved as: $github_user"
+# Debugging statements
+echo "Repo name resolved as: \$repo_name"
+echo "GitHub user resolved as: \$github_user"
 
-# Update placeholders in the template
-template_content=$(cat .github/workflows/$(basename "$selected_template"))
-template_content=$(echo "$template_content" | sed "s|\${{ github.actor }}/\$repo_name|\${{ github.actor }}/$repo_name|g")
-template_content=$(echo "$template_content" | sed "s|ghcr.io/\${{ github.actor }}/\$repo_name|ghcr.io/\${{ github.actor }}/$repo_name|g")
+# Replace placeholders in the template
+template_content=\$(cat <<'YAML'
+$template_content
+YAML
+)
+template_content=\$(echo "\$template_content" | sed "s|\\\$repo_name|\$repo_name|g")
 
-# Apply the changes to the template
-echo "$template_content" > .github/workflows/$(basename "$selected_template")
+# Write the updated template to .github/workflows
+echo "\$template_content" > .github/workflows/$(basename "$selected_template")
 
 # Git commit and push changes
 git add .github/workflows/$(basename "$selected_template")
@@ -79,9 +74,10 @@ git push
 
 # Provide the GitHub Actions link for tracking progress
 echo "GitHub Action created. Track it here:"
-echo "https://github.com/$github_user/$repo_name/actions"
+echo "https://github.com/\$github_user/\$repo_name/actions"
 EOF
 
+  chmod +x $TEMP_SCRIPT
   echo "Temporary script created at $TEMP_SCRIPT. Now you can run this script locally."
 }
 
