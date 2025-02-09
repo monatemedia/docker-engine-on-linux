@@ -31,9 +31,9 @@ if [ -f "$CONF_FILE" ]; then
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             user_email=$(prompt_email)  # This prompts the user and stores just the email address
             echo "DEBUG: user_email is set to '$user_email'"
-            # Remove any unwanted spaces or newlines
+            # Remove unwanted spaces or newlines and ensure only the email is kept
             user_email=$(echo "$user_email" | tr -d '[:space:]')
-            # Write the email correctly into the config file
+            # Update the email correctly in the config file
             sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
         else
             user_email="$existing_email"
@@ -63,6 +63,7 @@ mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
     echo "Generating docker-compose.yml..."
     # Use a safer delimiter (|) for the sed command to avoid issues with @ in email
+    # Make sure the email address is properly inserted
     sed "s|\${user_email}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
     if [ $? -eq 0 ]; then
         echo "docker-compose.yml created successfully."
@@ -91,4 +92,4 @@ fi
 # Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
 echo "Starting Docker services..."
-docker-compose up -d
+docker compose up -d
