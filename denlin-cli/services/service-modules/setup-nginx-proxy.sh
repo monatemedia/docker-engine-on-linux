@@ -3,7 +3,7 @@
 # Menu: Configure VPS
 # Description: Create a shared proxy server and SSL certificate
 
-set -x  # Enable debugging (shows each command before execution)
+# set -x  # Enable debugging (shows each command before execution)
 
 # Variables
 CONF_FILE="/etc/denlin-cli.conf"
