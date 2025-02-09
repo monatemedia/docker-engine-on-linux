@@ -11,9 +11,9 @@ DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 
 # Function to prompt user for email
 prompt_email() {
-    # Prompt the user for their email address, no need to echo it into the variable
     local email
     while true; do
+        # Prompt user for the email and ensure no additional prompt text is included
         echo "Enter your email address (for SSL certificate notifications):"
         read -r email
         # Validate the email format using regex
@@ -37,28 +37,45 @@ if [ -f "$CONF_FILE" ]; then
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             # Ask for a new email address and sanitize it
             user_email=$(prompt_email)
-            user_email=$(echo "$user_email" | tr -d '[:space:]')  # Remove spaces
-            echo "DEBUG: user_email is set to '$user_email'"
-            # Update the email correctly in the config file
-            sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
+            echo "DEBUG: New user_email captured: '$user_email'"
+            # Check if the email is clean
+            if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+                # Update the email correctly in the config file
+                sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
+            else
+                echo "Error: Invalid email format."
+                exit 1
+            fi
         else
             user_email="$existing_email"
         fi
     else
         echo "No email found in the config file. Please enter your email."
         user_email=$(prompt_email)  # Get new email
-        user_email=$(echo "$user_email" | tr -d '[:space:]')  # Clean email
-        # Write the email correctly into the config file
-        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
+        echo "DEBUG: New user_email captured: '$user_email'"
+        # Check if the email is clean
+        if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            # Write the email correctly into the config file
+            echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
+        else
+            echo "Error: Invalid email format."
+            exit 1
+        fi
     fi
 else
     echo "Config file not found. Creating one..."
     sudo touch "$CONF_FILE"
     echo "No email in the config file. Please enter your email."
     user_email=$(prompt_email)  # Ask for email
-    user_email=$(echo "$user_email" | tr -d '[:space:]')  # Clean email
-    # Write the email correctly into the config file
-    echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
+    echo "DEBUG: New user_email captured: '$user_email'"
+    # Check if the email is clean
+    if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        # Write the email correctly into the config file
+        echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
+    else
+        echo "Error: Invalid email format."
+        exit 1
+    fi
 fi
 
 # Step 2: Create nginx-proxy directory structure
@@ -98,4 +115,4 @@ fi
 # Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
 echo "Starting Docker services..."
-docker-compose up -d
+docker compose up -d
