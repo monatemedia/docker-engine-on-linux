@@ -38,12 +38,14 @@ if [ -f "$CONF_FILE" ]; then
             user_email="$existing_email"
         fi
     else
+        echo "No email found in the config file. Please enter your email."
         user_email=$(prompt_email)
         echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
     fi
 else
     echo "Config file not found. Creating one..."
     sudo touch "$CONF_FILE"
+    echo "No email in the config file. Please enter your email."
     user_email=$(prompt_email)
     echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
 fi
@@ -53,7 +55,6 @@ echo "Using email: $user_email"
 # Step 2: Create nginx-proxy directory structure
 echo "Creating necessary directories in $TARGET_DIR..."
 mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR/acme"
-
 
 # Step 3: Generate docker-compose.yml from template
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
