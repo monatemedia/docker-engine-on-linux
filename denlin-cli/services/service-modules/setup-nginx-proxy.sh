@@ -27,7 +27,8 @@ if [ -f "$CONF_FILE" ]; then
     existing_email=$(grep '^user_email=' "$CONF_FILE" | cut -d '=' -f2)
     if [ -n "$existing_email" ]; then
         echo "Found existing email: $existing_email"
-        read -p "Do you want to use this email? (y/n): " choice
+        echo -n "Do you want to use this email? (y/n): "
+        read choice
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             user_email=$(prompt_email)
             sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
@@ -49,7 +50,8 @@ echo "Using email: $user_email"
 
 # Step 2: Create nginx-proxy directory structure
 echo "Creating necessary directories in $TARGET_DIR..."
-mkdir -p "$TARGET_DIR/nginx/html" "$TARGET_DIR/nginx/certs" "$TARGET_DIR/nginx/vhost" "$TARGET_DIR/nginx/acme"
+mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR/acme"
+
 
 # Step 3: Generate docker-compose.yml from template
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
@@ -64,7 +66,11 @@ fi
 # Step 4: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
 echo "Starting Docker services with 'docker compose up -d'..."
-docker compose up -d
+if command -v docker-compose &> /dev/null; then
+    docker-compose up -d
+else
+    docker compose up -d
+fi
 
 if [ $? -eq 0 ]; then
     echo "Proxy setup completed successfully! Your shared proxy is now running."
