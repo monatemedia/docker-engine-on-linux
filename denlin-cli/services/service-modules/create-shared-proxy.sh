@@ -80,24 +80,4 @@ else
     exit 1
 fi
 
-# Step 6: Set up cron job for SSL certificate renewal
-setup_cron_job() {
-    echo "Setting up a cron job to renew SSL certificates automatically..."
-    cron_command="docker exec letsencrypt-companion /app/letsencrypt-auto renew --quiet && docker exec nginx-proxy nginx -s reload"
-    cron_job="0 0 * * * $cron_command"
-
-    # Add cron job if it doesn't already exist
-    (crontab -l 2>/dev/null; echo "$cron_job") | sort | uniq | crontab -
-
-    echo "Cron job added to renew SSL certificates daily at midnight."
-}
-
-# Confirm setting up cron job
-read -p "Do you want to set up an automatic cron job for SSL renewal? (y/n): " setup_cron
-if [[ "$setup_cron" == "y" ]]; then
-    setup_cron_job
-else
-    echo "Skipping cron job setup."
-fi
-
-echo "Setup is complete. If you need further assistance, refer to the documentation or seek help from the community!"
+echo "Setup is complete."
