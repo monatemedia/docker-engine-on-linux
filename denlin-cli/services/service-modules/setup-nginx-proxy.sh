@@ -11,14 +11,20 @@ DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 
 # Function to prompt user for email
 prompt_email() {
+    # Prompt the user for their email address, no need to echo it into the variable
     local email
-    echo "Enter your email address (for SSL certificate notifications):"
-    read -r email
-    while [[ ! "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; do
-        echo "Invalid email format. Please try again:"
+    while true; do
+        echo "Enter your email address (for SSL certificate notifications):"
         read -r email
+        # Validate the email format using regex
+        if [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            break
+        else
+            echo "Invalid email format. Please try again."
+        fi
     done
-    echo "$email"  # Return the email address
+    # Return the clean email address
+    echo "$email"
 }
 
 # Step 1: Check if email exists in CONF_FILE
@@ -29,10 +35,10 @@ if [ -f "$CONF_FILE" ]; then
         echo -n "Do you want to use this email: $existing_email? (y/n): "
         read choice
         if [[ "$choice" =~ ^[Nn]$ ]]; then
-            user_email=$(prompt_email)  # This prompts the user and stores just the email address
+            # Ask for a new email address and sanitize it
+            user_email=$(prompt_email)
+            user_email=$(echo "$user_email" | tr -d '[:space:]')  # Remove spaces
             echo "DEBUG: user_email is set to '$user_email'"
-            # Remove unwanted spaces or newlines and ensure only the email is kept
-            user_email=$(echo "$user_email" | tr -d '[:space:]')
             # Update the email correctly in the config file
             sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
         else
@@ -40,8 +46,8 @@ if [ -f "$CONF_FILE" ]; then
         fi
     else
         echo "No email found in the config file. Please enter your email."
-        user_email=$(prompt_email)  # This prompts the user and stores just the email address
-        user_email=$(echo "$user_email" | tr -d '[:space:]')  # Sanitize email
+        user_email=$(prompt_email)  # Get new email
+        user_email=$(echo "$user_email" | tr -d '[:space:]')  # Clean email
         # Write the email correctly into the config file
         echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
     fi
@@ -49,8 +55,8 @@ else
     echo "Config file not found. Creating one..."
     sudo touch "$CONF_FILE"
     echo "No email in the config file. Please enter your email."
-    user_email=$(prompt_email)  # This prompts the user and stores just the email address
-    user_email=$(echo "$user_email" | tr -d '[:space:]')  # Sanitize email
+    user_email=$(prompt_email)  # Ask for email
+    user_email=$(echo "$user_email" | tr -d '[:space:]')  # Clean email
     # Write the email correctly into the config file
     echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
 fi
@@ -63,7 +69,7 @@ mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
     echo "Generating docker-compose.yml..."
     # Use a safer delimiter (|) for the sed command to avoid issues with @ in email
-    # Make sure the email address is properly inserted
+    # Ensure only email address is inserted, no extra text
     sed "s|\${user_email}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
     if [ $? -eq 0 ]; then
         echo "docker-compose.yml created successfully."
@@ -92,4 +98,4 @@ fi
 # Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
 echo "Starting Docker services..."
-docker compose up -d
+docker-compose up -d
