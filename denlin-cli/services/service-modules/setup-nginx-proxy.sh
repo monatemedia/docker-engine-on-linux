@@ -50,7 +50,7 @@ else
     echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
 fi
 
-echo "Using email: $user_email"
+echo "DEBUG: Using email: $user_email"
 
 # Step 2: Create nginx-proxy directory structure
 echo "Creating necessary directories in $TARGET_DIR..."
@@ -59,7 +59,6 @@ mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR
 # Step 3: Generate docker-compose.yml from template
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
     echo "Generating docker-compose.yml..."
-    # Use a safer delimiter (|) for the sed command to avoid issues with @ in email
     sed "s|\${user_email}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
     echo "docker-compose.yml created successfully."
 else
