@@ -20,17 +20,29 @@ fi
 # Source configuration file
 source "$CONF_FILE"
 
-# Prompt for email if it's not set or invalid
-if [[ -z "$user_email" || ! "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-    read -p "Enter your email address for SSL certificate notifications: " input_email
-    user_email="${input_email:-$user_email}"
+# Prompt user to confirm or update email
+if [[ -n "$user_email" ]]; then
+    read -p "The current email in the config file is: $user_email. Do you want to use this email? (y/n): " confirm_email
+    if [[ "$confirm_email" != "y" ]]; then
+        read -p "Enter a new email address for SSL certificate notifications: " input_email
+        user_email="$input_email"
+    fi
+else
+    read -p "Enter your email address for SSL certificate notifications: " user_email
+fi
 
-    # Update config file with the new email address
-    echo "Updating configuration file..."
-    sudo bash -c "cat > $CONF_FILE" <<EOF
+# Validate the email format
+if [[ ! "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+    echo "Error: Invalid email format. Please enter a valid email."
+    exit 1
+fi
+
+# Update config file if a new email was entered
+echo "Updating configuration file..."
+sudo bash -c "cat > $CONF_FILE" <<EOF
 user_email=$user_email
 EOF
-fi
+
 
 # Step 1: Generate docker-compose.yml from the template
 echo "Creating Docker Compose file from the template..."
@@ -43,6 +55,6 @@ sed -i "s/\${user_email}/$user_email/" "$DOCKER_COMPOSE_FILE"
 
 # Step 3: Deploy the Docker Compose stack
 echo "Deploying Docker Compose stack..."
-docker-compose -f "$DOCKER_COMPOSE_FILE" up -d
+docker compose -f "$DOCKER_COMPOSE_FILE" up -d
 
 echo "Nginx Proxy and Let's Encrypt setup complete."
