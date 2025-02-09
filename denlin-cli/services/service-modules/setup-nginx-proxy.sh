@@ -54,7 +54,7 @@ mkdir -p "$TARGET_DIR/nginx/html" "$TARGET_DIR/nginx/certs" "$TARGET_DIR/nginx/v
 # Step 3: Generate docker-compose.yml from template
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
     echo "Generating docker-compose.yml..."
-    sed "s|\${{ user_email }}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
+    sed "s|\${user_email}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
     echo "docker-compose.yml created successfully."
 else
     echo "Error: Template file not found at $DOCKER_COMPOSE_DIR"
