@@ -18,7 +18,7 @@ prompt_email() {
         echo "Invalid email format. Please try again:"
         read -r email
     done
-    echo "$email"
+    echo "$email"  # Return the email address
 }
 
 # Step 1: Check if email exists in CONF_FILE
@@ -31,21 +31,28 @@ if [ -f "$CONF_FILE" ]; then
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             user_email=$(prompt_email)  # This prompts the user and stores just the email address
             echo "DEBUG: user_email is set to '$user_email'"
-            sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"  # Correctly updates email in config file
+            # Remove any unwanted spaces or newlines
+            user_email=$(echo "$user_email" | tr -d '[:space:]')
+            # Write the email correctly into the config file
+            sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
         else
             user_email="$existing_email"
         fi
     else
         echo "No email found in the config file. Please enter your email."
         user_email=$(prompt_email)  # This prompts the user and stores just the email address
-        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null  # Correctly writes email to config
+        user_email=$(echo "$user_email" | tr -d '[:space:]')  # Sanitize email
+        # Write the email correctly into the config file
+        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
     fi
 else
     echo "Config file not found. Creating one..."
     sudo touch "$CONF_FILE"
     echo "No email in the config file. Please enter your email."
     user_email=$(prompt_email)  # This prompts the user and stores just the email address
-    echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null  # Correctly writes email to config
+    user_email=$(echo "$user_email" | tr -d '[:space:]')  # Sanitize email
+    # Write the email correctly into the config file
+    echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
 fi
 
 # Step 2: Create nginx-proxy directory structure
@@ -83,4 +90,5 @@ fi
 
 # Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
-echo "Starting Docker services 
+echo "Starting Docker services..."
+docker-compose up -d
