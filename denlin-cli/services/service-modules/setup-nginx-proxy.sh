@@ -59,6 +59,7 @@ mkdir -p "$TARGET_DIR/html" "$TARGET_DIR/certs" "$TARGET_DIR/vhost" "$TARGET_DIR
 # Step 3: Generate docker-compose.yml from template
 if [ -f "$DOCKER_COMPOSE_DIR" ]; then
     echo "Generating docker-compose.yml..."
+    # Use a safer delimiter (|) for the sed command to avoid issues with @ in email
     sed "s|\${user_email}|$user_email|g" "$DOCKER_COMPOSE_DIR" > "$DOCKER_COMPOSE_FILE"
     echo "docker-compose.yml created successfully."
 else
