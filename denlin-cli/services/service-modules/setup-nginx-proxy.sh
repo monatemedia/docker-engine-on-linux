@@ -3,6 +3,7 @@
 # Menu: Configure VPS
 # Description: Create a shared proxy server and SSL certificate
 
+set -x  # Enable debugging (shows each command before execution)
 
 # Variables
 CONF_FILE="/etc/denlin-cli.conf"
@@ -31,6 +32,7 @@ if [ -f "$CONF_FILE" ]; then
         read choice
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             user_email=$(prompt_email)
+            echo "DEBUG: user_email is set to '$user_email'"
             sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
         else
             user_email="$existing_email"
