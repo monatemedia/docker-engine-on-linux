@@ -13,7 +13,7 @@ DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 prompt_email() {
     local email
     while true; do
-        # Prompt user for the email and ensure no additional prompt text is included
+        # Prompt user for the email address only, no additional text on the same line
         echo "Enter your email address (for SSL certificate notifications):"
         read -r email
         # Validate the email format using regex
@@ -39,7 +39,7 @@ if [ -f "$CONF_FILE" ]; then
             user_email=$(prompt_email)
             echo "DEBUG: New user_email captured: '$user_email'"
             # Check if the email is clean
-            if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
                 # Update the email correctly in the config file
                 sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
             else
@@ -54,7 +54,7 @@ if [ -f "$CONF_FILE" ]; then
         user_email=$(prompt_email)  # Get new email
         echo "DEBUG: New user_email captured: '$user_email'"
         # Check if the email is clean
-        if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        if [[ "$user_email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
             # Write the email correctly into the config file
             echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
         else
