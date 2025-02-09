@@ -29,26 +29,24 @@ if [ -f "$CONF_FILE" ]; then
         echo -n "Do you want to use this email: $existing_email? (y/n): "
         read choice
         if [[ "$choice" =~ ^[Nn]$ ]]; then
-            user_email=$(prompt_email)
+            user_email=$(prompt_email)  # This prompts the user and stores just the email address
             echo "DEBUG: user_email is set to '$user_email'"
-            sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
+            sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"  # Correctly updates email in config file
         else
             user_email="$existing_email"
         fi
     else
         echo "No email found in the config file. Please enter your email."
-        user_email=$(prompt_email)
-        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
+        user_email=$(prompt_email)  # This prompts the user and stores just the email address
+        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null  # Correctly writes email to config
     fi
 else
     echo "Config file not found. Creating one..."
     sudo touch "$CONF_FILE"
     echo "No email in the config file. Please enter your email."
-    user_email=$(prompt_email)
-    echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null
+    user_email=$(prompt_email)  # This prompts the user and stores just the email address
+    echo "user_email=$user_email" | sudo tee "$CONF_FILE" > /dev/null  # Correctly writes email to config
 fi
-
-echo "Using email: $user_email"
 
 # Step 2: Create nginx-proxy directory structure
 echo "Creating necessary directories in $TARGET_DIR..."
@@ -85,20 +83,4 @@ fi
 
 # Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
-echo "Starting Docker services with 'docker compose up -d'..."
-if command -v docker-compose &> /dev/null; then
-    docker-compose up -d
-else
-    docker compose up -d
-fi
-
-if [ $? -eq 0 ]; then
-    echo "Proxy setup completed successfully! Your shared proxy is now running."
-else
-    echo "Failed to start Docker services. Please check the configuration and try again."
-    exit 1
-fi
-
-echo "Setup is complete."
-echo ""
-echo "You can now point your domain to this server's IP address and create a CNAME record for the domain."
+echo "Starting Docker services 
