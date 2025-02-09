@@ -28,7 +28,7 @@ if [ -f "$CONF_FILE" ]; then
     existing_email=$(grep '^user_email=' "$CONF_FILE" | cut -d '=' -f2)
     if [ -n "$existing_email" ]; then
         echo "Found existing email: $existing_email"
-        echo -n "Do you want to use this email? (y/n): "
+        echo -n "Do you want to use this email: $existing_email? (y/n): "
         read choice
         if [[ "$choice" =~ ^[Nn]$ ]]; then
             user_email=$(prompt_email)
@@ -67,7 +67,20 @@ else
     exit 1
 fi
 
-# Step 4: Start Docker services
+# Step 4: Ensure Docker daemon is running
+echo "Checking if Docker daemon is running..."
+if ! systemctl is-active --quiet docker; then
+    echo "Docker daemon is not running. Starting it now..."
+    sudo systemctl start docker
+    if [ $? -ne 0 ]; then
+        echo "Failed to start Docker daemon. Exiting."
+        exit 1
+    fi
+else
+    echo "Docker daemon is already running."
+fi
+
+# Step 5: Start Docker services
 cd "$TARGET_DIR" || { echo "Failed to enter directory."; exit 1; }
 echo "Starting Docker services with 'docker compose up -d'..."
 if command -v docker-compose &> /dev/null; then
@@ -84,3 +97,5 @@ else
 fi
 
 echo "Setup is complete."
+echo ""
+echo "You can now point your domain to this server's IP address and create a CNAME record for the domain."
