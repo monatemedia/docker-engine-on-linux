@@ -177,7 +177,6 @@ Gunicorn for Python Django application server.
 ### Client-Side Framework Docker Templates
 
 [![Angular][Angular.dev]][Angular-url]
-![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
 [![React][React.dev]][React-url]
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 [![Vue][Vuejs.org]][Vue-url]
@@ -1198,6 +1197,8 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Lets-Encrypt-url]: https://letsencrypt.org/
 [Htop.dev]: https://avatars.githubusercontent.com/u/69567116?s=48&v=4
 [Htop-url]: https://htop.dev/
+[Angular.dev]: https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.dev/
 [Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
 [Svelte-url]: https://svelte.dev/
 [Python.org]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
