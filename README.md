@@ -181,6 +181,7 @@ Gunicorn for Python Django application server.
 [![Vue][Vuejs.org]][Vue-url]
 [![Next][Next.org]][Next-url]
 [![Svelte][Svelte.dev]][Svelte-url]
+[![HTML5][HTML5]][HTML5-url]
 
 
 ### Server-Side Framework Docker Templates
@@ -1201,6 +1202,8 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Next-url]: https://nextjs.org/
 [Svelte.dev]: https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white
 [Svelte-url]: https://svelte.dev/
+[HTML5]: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
+[HTML5-url]: https://html.spec.whatwg.org/
 [Python.org]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Python-url]: https://www.python.org/
 [Djangoproject.com]: https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white
