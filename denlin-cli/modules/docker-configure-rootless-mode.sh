@@ -13,6 +13,12 @@ else
     echo "Systemd is already installed."
 fi
 
+echo "Checking if dbus-launch is installed..."
+if ! command -v dbus-launch &>/dev/null; then
+    echo "dbus-launch is not installed. Installing dbus-x11..."
+    sudo apt-get install -y dbus-x11
+fi
+
 echo "Checking if systemd is running in user mode..."
 if ! systemctl --user status &>/dev/null; then
     echo "Setting up environment variables..."
@@ -28,6 +34,12 @@ sudo systemctl disable --now docker.service docker.socket || echo "Docker daemon
 
 echo "Installing required dependencies..."
 sudo apt-get update && sudo apt-get install -y docker-ce-rootless-extras rootlesskit slirp4netns
+
+# Handle potential package conflict
+if dpkg-query -l | grep -q "rootlesskit"; then
+    echo "Removing conflicting rootlesskit package..."
+    sudo apt-get remove -y rootlesskit
+fi
 
 echo "Verifying Docker Rootless setup tools..."
 if ! command -v dockerd-rootless-setuptool.sh &>/dev/null; then
