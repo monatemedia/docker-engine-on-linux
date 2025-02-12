@@ -1183,7 +1183,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [license-url]: https://github.com/monatemedia/docker-engine-on-linux/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/company/monatemediaofficial
-[product-screenshot]: images/denlin-main-menu.png
+[product-screenshot]: images/denlin-main-menu.PNG
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
