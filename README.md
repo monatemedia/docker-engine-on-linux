@@ -88,7 +88,6 @@
 
 <p align="center">Denlin: Docker Engine On Linux CLI Tool Screenshot</p>
 
----
 
 The Problem: I have one VPS with a single IP address. I want to be able to experiment with different programming languages and host my various side projects on my single VPS. 
 
@@ -108,7 +107,7 @@ The technology stack:
 
 Self hosting done right can reduce the cost of hosting, but introduces additionaly complexity which will cost you taking longer to launch. 
 
-The "Denlin Docker Engine on Linux CLI Tool" is a set of scripts to help DevOps beginners get started quickly, using these scripts.
+The "Denlin Docker Engine on Linux CLI Tool" is a set of scripts to help DevOps beginners get their VPS set up quickly with Linux and Docker, using these scripts.
 
 The Set Up: In my directory root, I have these apps:
 
@@ -140,22 +139,16 @@ Tested on Ubuntu 22.04
 [![Docker][Docker-hub]][Docker-hub-url]
 
 
-### Git Bash Terminal Client
-
-[![Git-bash][Git-bash]][Git-bash-url]
-
-
 ### Github Version Control
 
-[![Github][Github.com]][Github-url]
-![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+[![Github][Github]][Github-url]
 
 
 ### Github Actions CI/CD Pipeline
 
 Github Action for Continuous Integration/Continuous Delivery pipelines
 
-[![Github-Actions][Github-Actions.com]][Github-Actions-url]
+[![Github Actions][Github Actions]][Github-Actions-url]
 
 
 ### Nginx Reverse Proxy Server
@@ -167,7 +160,6 @@ Nginx as the HTTP web server, reverse proxy and content cache.
 Gunicorn for Python Django application server.
 
 [![Gunicorn][Gunicorn]][Gunicorn-url]
-![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white)
 
 
 ### Let's Encrypt SSL Certificate
@@ -178,6 +170,8 @@ Gunicorn for Python Django application server.
 ### Htop System Monitoring
 
 `htop` provides interactive process viewing and system monitoring.
+
+[![Htop][Htop.dev]][Htop-url]
 
 
 ### Client-Side Framework Docker Templates
@@ -1192,10 +1186,18 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
 [Docker-hub-url]: https://hub.docker.com/
-[Github-actions]: https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white
+[Github]: https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white
+[Github-url]: https://github.com/monatemedia/docker-engine-on-linux
+[Github Actions]: https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white
 [Github-actions-url]: https://github.com/features/actions
 [Nginx]: https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white
 [Nginx-url]: https://nginx.org/en/
+[Gunicorn]: https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white
+[Gunicorn-url]: https://gunicorn.org/
+[Lets-Encrypt]: https://avatars.githubusercontent.com/u/9289019?s=200&v=4
+[Lets-Encrypt-url]: https://letsencrypt.org/
+[Htop.dev]: https://avatars.githubusercontent.com/u/69567116?s=48&v=4
+[Htop-url]: https://htop.dev/
 [Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
 [Svelte-url]: https://svelte.dev/
 [Python.org]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
