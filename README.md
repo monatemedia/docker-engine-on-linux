@@ -164,9 +164,7 @@ Gunicorn for Python Django application server.
 
 ### Let's Encrypt SSL Certificate
 
-<a href="[Lets-Encrypt-url]">
-  <img src="[Lets-Encrypt]" alt="Lets-Encrypt" width="25%">
-</a>
+[![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
 
 
 ### Htop System Monitoring
@@ -1196,7 +1194,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Nginx-url]: https://nginx.org/en/
 [Gunicorn]: https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white
 [Gunicorn-url]: https://gunicorn.org/
-[Lets-Encrypt]: https://avatars.githubusercontent.com/u/9289019?s=200&v=4
+[Lets-Encrypt]: https://avatars.githubusercontent.com/u/9289019?s=200&v=4?size=50
 [Lets-Encrypt-url]: https://letsencrypt.org/
 [Htop.dev]: https://avatars.githubusercontent.com/u/69567116?s=48&v=4
 [Htop-url]: https://htop.dev/
