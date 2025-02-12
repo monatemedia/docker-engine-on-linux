@@ -17,7 +17,7 @@ echo -e "- It installs dependencies and recommendations without asking for confi
 echo -e "- It installs the latest stable release of Docker CLI, Docker Engine, Docker Buildx, Docker Compose, containerd, and runc."
 echo -e "- It may result in unexpected major version upgrades of these packages."
 echo -e "- Always test upgrades in a test environment before deploying to production systems."
-echo -e "- For manual installation methods, refer to //github.com/monatemedia/docker-engine-on-linux/.\n"
+echo -e "- For manual installation methods, refer to https://github.com/monatemedia/docker-engine-on-linux/.\n"
 
 # Confirm installation
 read -p "Do you want to proceed with the installation of Docker? (yes/no): " confirmation
