@@ -16,8 +16,7 @@ fi
 echo "Checking if systemd is running in user mode..."
 if ! systemctl --user status &>/dev/null; then
     echo "Enabling systemd user mode..."
-    systemctl --user enable
-    systemctl --user start
+    systemctl --user enable --now docker.service
 fi
 
 echo "Disabling system-wide Docker daemon..."
