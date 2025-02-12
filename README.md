@@ -180,6 +180,7 @@ Gunicorn for Python Django application server.
 [![React][React.dev]][React-url]
 [![Vue][Vuejs.org]][Vue-url]
 [![Next][Next.org]][Next-url]
+[![Nuxt][Nuxt.net]][Nuxt-url]
 [![Svelte][Svelte.dev]][Svelte-url]
 [![HTML5][HTML5]][HTML5-url]
 [![CSS3][CSS3]][CSS3-url]
@@ -191,18 +192,10 @@ Gunicorn for Python Django application server.
 [![Python][Python.org]][Python-url]
 [![Django][Djangoproject.com]][Django-url]
 [![FastAPI][FastAPI.dev]][FastAPI-url]
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 [![Flask][Flask.dev]][Flask-url]
-![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
 [![Streamlit][Streamlit.net]][Streamlit-url]
-![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
 [![PHP][Php.net]][Php-url]
 [![WordPress][WordPress.net]][WordPress-url]
-WordPress 	![WordPress](https://img.shields.io/badge/WordPress-%23117AC9.svg?style=for-the-badge&logo=WordPress&logoColor=white)
-[![Next][Next.net]][Next-url]
-![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
-[![Nuxt][Nuxt.net]][Nuxt-url]
-![Nuxtjs](https://img.shields.io/badge/Nuxt-002E3B?style=for-the-badge&logo=nuxtdotjs&logoColor=#00DC82)
 [![Laravel][Laravel.com]][Laravel-url]
 
 
@@ -1202,6 +1195,8 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Angular-url]: https://angular.dev/
 [Next.org]: https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white
 [Next-url]: https://nextjs.org/
+[Nuxt.net]: https://img.shields.io/badge/Nuxt-002E3B?style=for-the-badge&logo=nuxtdotjs&logoColor=#00DC82
+[Nuxt-url]: https://nuxt.com/
 [Svelte.dev]: https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white
 [Svelte-url]: https://svelte.dev/
 [HTML5]: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
@@ -1214,12 +1209,20 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Python-url]: https://www.python.org/
 [Djangoproject.com]: https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white
 [Django-url]: https://www.djangoproject.com/
+[FastAPI.dev]: https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi
+[FastAPI-url]: https://fastapi.tiangolo.com/
+[Flask.dev]: https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white
+[Flask-url]: https://flask.palletsprojects.com/
+[Streamlit.net]: https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white
+[Streamlit-url]: https://streamlit.io/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [Php.net]: https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white
 [Php-url]: https://www.php.net/
+[WordPress.net]: https://img.shields.io/badge/WordPress-%23117AC9.svg?style=for-the-badge&logo=WordPress&logoColor=white
+[WordPress-url]: https://wordpress.org/
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 [Vuejs.org]: https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D
