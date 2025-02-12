@@ -164,7 +164,9 @@ Gunicorn for Python Django application server.
 
 ### Let's Encrypt SSL Certificate
 
-[![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
+<a href="[Lets-Encrypt-url]">
+  <img src="[Lets-Encrypt]" alt="Lets-Encrypt" width="25%">
+</a>
 
 
 ### Htop System Monitoring
