@@ -86,6 +86,8 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://github.com/monatemedia/docker-engine-on-linux)
 
+<p align="center">Denlin: Docker Engine On Linux CLI Tool Screenshot</p>
+
 ---
 
 The Problem: I have one VPS with a single IP address. I want to be able to experiment with different programming languages and host my various side projects on my single VPS. 
