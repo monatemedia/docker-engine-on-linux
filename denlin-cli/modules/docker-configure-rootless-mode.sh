@@ -15,8 +15,12 @@ fi
 
 echo "Checking if systemd is running in user mode..."
 if ! systemctl --user status &>/dev/null; then
+    echo "Setting up environment variables..."
+    export DBUS_SESSION_BUS_ADDRESS=$(dbus-launch --sh-syntax | grep DBUS_SESSION_BUS_ADDRESS | sed 's/DBUS_SESSION_BUS_ADDRESS=//')
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    
     echo "Enabling systemd user mode..."
-    systemctl --user enable --now docker.service
+    systemctl --user enable --now docker.service || echo "Failed to enable Docker user service."
 fi
 
 echo "Disabling system-wide Docker daemon..."
