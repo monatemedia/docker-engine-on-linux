@@ -84,7 +84,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+<div align="center">
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
+</div>
 
 The Problem: I have one VPS with a single IP address. I want to be able to experiment with different programming languages and host my various side projects on my single VPS. 
 
