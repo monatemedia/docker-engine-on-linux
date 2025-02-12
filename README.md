@@ -178,11 +178,9 @@ Gunicorn for Python Django application server.
 
 [![Angular][Angular.dev]][Angular-url]
 [![React][React.dev]][React-url]
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 [![Vue][Vuejs.org]][Vue-url]
 [![Next][Next.org]][Next-url]
 [![Svelte][Svelte.dev]][Svelte-url]
-![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
 
 
 ### Server-Side Framework Docker Templates
@@ -1199,7 +1197,9 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [Htop-url]: https://htop.dev/
 [Angular.dev]: https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white
 [Angular-url]: https://angular.dev/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
+[Next.org]: https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white
+[Next-url]: https://nextjs.org/
+[Svelte.dev]: https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white
 [Svelte-url]: https://svelte.dev/
 [Python.org]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Python-url]: https://www.python.org/
