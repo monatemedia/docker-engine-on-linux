@@ -1172,12 +1172,13 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* [Othneil Drew Starter README Template](https://github.com/othneildrew/Best-README-Template/)
-* [Ileriayo Adebiyi Markdown Badges](https://github.com/Ileriayo/markdown-badges)- [Django Road Deploying Django with Docker Compose, Gunicorn and Nginx](https://youtu.be/vJAfq6Ku4cI?si=uPeJRauxcgIClGUX)
+- [Othneil Drew Starter README Template](https://github.com/othneildrew/Best-README-Template/)
+- [Ileriayo Adebiyi Markdown Badges](https://github.com/Ileriayo/markdown-badges)
 - [Programonaut How To Easily Set Up A Server (VPS) For Your Side Projects](https://youtu.be/v1SvBm5Wn8I?si=KraIJZwkuOiRfBnx)
 - [Programonaut How To Host An Application On A Server (VPS) Using Docker?](https://youtu.be/zHh7oGjkefY?si=vw2BcVUtFLtxxbV3)
 - [Programonaut How To Set Up A Domain For Your Application!](https://youtu.be/MUYmFtxykMA?si=UyQyrgHJcU4yN-5O)
 - [Programonaut How To Set Up A Reverse Proxy With Free SSL Using Nginx-Proxy](https://youtu.be/ynGeCodXFXI?si=SiLZG3MJK3SHEttI)
+- [Django Road Deploying Django with Docker Compose, Gunicorn and Nginx](https://youtu.be/vJAfq6Ku4cI?si=uPeJRauxcgIClGUX)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
