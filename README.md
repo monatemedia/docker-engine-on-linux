@@ -134,37 +134,32 @@ Tested on Ubuntu 22.04
 [![Ububtu][Ubuntu.com]][Ubuntu-url]
 
 
-### Docker Containers
+### Docker
+
+Docker hosts applications inside of docker containers
 
 [![Docker][Docker-hub]][Docker-hub-url]
 
 
 ### Github Version Control
 
+Version control provided by GitHub.
+
 [![Github][Github]][Github-url]
 
 
-### Github Actions CI/CD Pipeline
+### Github Actions CI/CD Pipelines
 
-Github Action for Continuous Integration/Continuous Delivery pipelines
+Github Actions for Continuous Integration/Continuous Delivery pipelines
 
 [![Github Actions][Github Actions]][Github-Actions-url]
 
 
-### Nginx Reverse Proxy Server
+### Nginx Reverse Proxy Server & Let's Encrypt SSL Certificate
 
-Nginx as the HTTP web server, reverse proxy and content cache. 
+Nginx as the HTTP web server, reverse proxy and content cache. Let's Encrypt Nginx Companion provides SSL Certificates.
 
-[![Nginx][Nginx]][Nginx-url]
-
-Gunicorn for Python Django application server.
-
-[![Gunicorn][Gunicorn]][Gunicorn-url]
-
-
-### Let's Encrypt SSL Certificate
-
-[![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
+[![Nginx][Nginx]][Nginx-url][![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
 
 
 ### Htop System Monitoring
@@ -191,6 +186,7 @@ Gunicorn for Python Django application server.
 
 [![Python][Python.org]][Python-url]
 [![Django][Djangoproject.com]][Django-url]
+[![Gunicorn][Gunicorn]][Gunicorn-url]
 [![FastAPI][FastAPI.dev]][FastAPI-url]
 [![Flask][Flask.dev]][Flask-url]
 [![Streamlit][Streamlit.net]][Streamlit-url]
