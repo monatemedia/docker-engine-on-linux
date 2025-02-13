@@ -377,7 +377,29 @@ To install Docker Engine, use the following command:
 denlin docker-install
 ```
 
-When prompted to configure Docker for rootless mode, select "yes".
+
+## Set Up Nginx Proxy
+
+To create the Nginx proxy, use the following command:
+
+
+```sh
+denlin common
+```
+
+Then select the option `setup-nginx-proxy`.
+
+
+## Set Up Our First Container
+
+
+Test your installation by creating a test container with these commands:
+
+```sh
+denlin common
+```
+
+Then select the option `new-test-container`.
 
 
 ## Create Your Project
