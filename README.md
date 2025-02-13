@@ -155,11 +155,18 @@ Github Actions for Continuous Integration/Continuous Delivery pipelines
 [![Github Actions][Github Actions]][Github-Actions-url]
 
 
-### Nginx Reverse Proxy Server & Let's Encrypt SSL Certificate
+### Nginx Reverse Proxy Server
 
-Nginx as the HTTP web server, reverse proxy and content cache. Let's Encrypt Nginx Companion provides SSL Certificates.
+Nginx as the HTTP web server, reverse proxy and content cache. 
 
-[![Nginx][Nginx]][Nginx-url][![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
+[![Nginx][Nginx]][Nginx-url]
+
+
+### Let's Encrypt SSL Certificate
+
+Let's Encrypt Nginx Companion provides SSL Certificates.
+
+[![Lets-Encrypt][Lets-Encrypt]][Lets-Encrypt-url]
 
 
 ### Htop System Monitoring
