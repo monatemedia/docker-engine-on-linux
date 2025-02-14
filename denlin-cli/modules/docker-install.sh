@@ -6,18 +6,14 @@
 # Docker Installation Script
 # ============================
 
-echo -e ""
 echo -e "\nThis script will install Docker Engine on your Ubuntu system."
 echo -e "Please read the following warnings carefully before proceeding:\n"
-echo -e ""
-echo -e "⚠️  Warnings:"
-echo -e "- This script is intended as a convenient way to configure Docker's package repositories and install Docker Engine."
-echo -e "- This script is NOT recommended for production environments."
-echo -e "- It installs dependencies and recommendations without asking for confirmation."
-echo -e "- It installs the latest stable release of Docker CLI, Docker Engine, Docker Buildx, Docker Compose, containerd, and runc."
-echo -e "- It may result in unexpected major version upgrades of these packages."
-echo -e "- Always test upgrades in a test environment before deploying to production systems."
-echo -e "- For manual installation methods, refer to https://github.com/monatemedia/docker-engine-on-linux/.\n"
+
+echo -e "Warnings:"
+echo -e "- This script installs Docker and its dependencies without confirmation."
+echo -e "- It installs the latest stable release of Docker CLI, Engine, Buildx, Compose, containerd, and runc."
+echo -e "- Major version upgrades may occur, so test in a non-production environment first."
+echo -e "- Manual installation methods are available at: https://github.com/monatemedia/docker-engine-on-linux/\n"
 
 # Confirm installation
 read -p "Do you want to proceed with the installation of Docker? (yes/no): " confirmation
@@ -59,16 +55,19 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 echo "Adding current user to Docker group..."
 sudo usermod -aG docker $USER
 
-echo "Refreshing group membership..."
-newgrp docker
+echo "You need to log out and log back in or restart your system for group changes to take effect."
+echo "Attempting to refresh group membership in the current session..."
+newgrp docker || echo "Please log out and log back in or reboot your system for changes to fully apply."
 
 echo "Verifying Docker installation..."
 if ! docker run hello-world; then
-    echo "Failed to connect to Docker daemon. Try running: PATH=/usr/bin:/sbin:/usr/sbin:\$PATH dockerd-rootless.sh"
+    echo "Failed to connect to Docker daemon."
+    echo "Possible solutions:"
+    echo "- Log out and log back in, or restart your computer."
+    echo "- Check that the Docker service is running with: sudo systemctl status docker"
+    echo "- Ensure your user is in the 'docker' group with: groups $USER"
     exit 1
 fi
 
-echo "Docker installation completed successfully."
+echo -e "\nDocker installation completed successfully."
 echo "You can now use Docker without root privileges."
-echo ""
-echo "You will need to log out and log back in or reboot to apply the group membership changes."
