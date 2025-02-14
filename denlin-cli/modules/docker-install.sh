@@ -70,6 +70,3 @@ newgrp docker <<EOF
     echo "You can now use Docker without root privileges."
 EOF
 
-echo -e "\nDocker installation completed successfully."    
-echo "\nThis terminal will still need a logout/relogin or reboot for other commands (outside this script) to recognize your new group membership."
-

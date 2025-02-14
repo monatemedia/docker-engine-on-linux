@@ -377,6 +377,12 @@ To install Docker Engine, use the following command:
 denlin docker-install
 ```
 
+If you did not get the `Hello from Docker!` message, you can test your installation by running:
+
+```sh
+docker run hello-world
+```
+
 
 ## Set Up Nginx Proxy
 
