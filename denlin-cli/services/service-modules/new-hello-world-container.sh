@@ -1,12 +1,10 @@
 #!/bin/bash
 
 # Menu: Configure VPS
-# Description: A script to deploy a Hello World container with Nginx Proxy and Let's Encrypt.
+# Description: A script to deploy a Hello World container for Docker testing.
 
 CONF_FILE="/etc/denlin-cli.conf"
-DOCKER_COMPOSE_DIR="/usr/local/bin/denlin-cli/services/docker-compose/hello-world.template.yml"
-TARGET_DIR="$HOME/nginx-proxy"
-DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
+DOCKER_COMPOSE_TEMPLATE="/usr/local/bin/denlin-cli/services/docker-compose/hello-world.template.yml"
 
 # Ensure the config file exists
 echo "Checking configuration file at $CONF_FILE..."
@@ -33,16 +31,18 @@ validate_ip() {
                 return 1
             fi
         done
-        return 0  # Valid IP
+        return 0
     fi
 
-    return 1  # Invalid IP
+    return 1
 }
 
 # Step 1: Get service name
 read -p "Enter the desired service name: " service_name
+TARGET_DIR="$HOME/$service_name"
+DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 
-# Step 2: Confirm or update domain name
+# Step 2: Get domain name
 if [[ -n "$domain_name" ]]; then
     read -p "The current domain name in the config file is: $domain_name. Do you want to use this domain name? (y/n): " confirm_domain_name
     if [[ "$confirm_domain_name" != "y" ]]; then
@@ -53,32 +53,43 @@ else
     read -p "Enter your domain name: " domain_name
 fi
 
-# Remove protocol (http:// or https://) and trailing slash
+# Normalize domain name (remove http://, https://, and trailing slashes)
 domain_name=$(echo "$domain_name" | sed -E 's~^(https?://)~~' | sed -E 's~/$~~')
 
-# Extract only the root domain and extension
-domain_name=$(echo "$domain_name" | sed -E 's~^([a-zA-Z0-9-]+\.)*([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/??.*$~\2~')
-
 # Validate domain format
-if [[ ! "$domain_name" =~ ^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$ ]]; then
-    echo "Error: Invalid domain format. Please enter a valid domain name."
+if [[ ! "$domain_name" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+    echo "Error: Invalid domain format."
     exit 1
 fi
 
-# Step 3: Ask if it's a main domain or subdomain
+# Step 3: Main or Subdomain?
 while true; do
     read -p "Is this container mapped as a main domain (e.g., monatemedia.com) or a subdomain (e.g., hello-world.monatemedia.com)? Enter 'main' or 'sub': " domain_type
-
     if [[ "$domain_type" == "main" || "$domain_type" == "sub" ]]; then
         break
     else
-        echo -e "\nInvalid choice! Please enter 'main' for a root domain (e.g., monatemedia.com) or 'sub' for a subdomain (e.g., hello-world.monatemedia.com). Try again.\n"
+        echo -e "\nInvalid choice! Please enter 'main' or 'sub'.\n"
     fi
 done
 
-# Step 4: Confirm or update VPS IP with validation
+if [[ "$domain_type" == "sub" ]]; then
+    full_domain="$service_name.$domain_name"
+    dns_name="$service_name"
+else
+    full_domain="$domain_name"
+    dns_name="@"
+fi
+
+# Determine correct DNS name format
+if [[ "$domain_type" == "main" ]]; then
+    dns_name="@"
+else
+    dns_name="$service_name.$domain_name"
+fi
+
+# Step 4: Get VPS IP with validation
 if [[ -n "$vps_ip" ]]; then
-    read -p "The current VPS IP in the config file is: $vps_ip. Do you want to use this IP? (y/n): " confirm_vps_ip
+    read -p "The current VPS IP is: $vps_ip. Do you want to use this IP? (y/n): " confirm_vps_ip
     if [[ "$confirm_vps_ip" != "y" ]]; then
         while true; do
             read -p "Enter your VPS IP address: " input_vps_ip
@@ -86,7 +97,7 @@ if [[ -n "$vps_ip" ]]; then
                 vps_ip="$input_vps_ip"
                 break
             else
-                echo -e "\nInvalid IP address! Please enter a valid IPv4 address (e.g., 192.168.1.1).\n"
+                echo -e "\nInvalid IP address! Try again.\n"
             fi
         done
     fi
@@ -96,49 +107,34 @@ else
         if validate_ip "$vps_ip"; then
             break
         else
-            echo -e "\nInvalid IP address! Please enter a valid IPv4 address (e.g., 192.168.1.1).\n"
+            echo -e "\nInvalid IP address! Try again.\n"
         fi
     done
 fi
 
 # Output final domain and VPS IP
-echo "Final Domain Name: $domain_name"
+echo "Final Domain Name: $dns_name"
 echo "VPS IP Address: $vps_ip"
 
-# Step 5: Update config file
-echo "Updating configuration file..."
-sudo bash -c "cat > $CONF_FILE" <<EOF
-domain_name=$domain_name
-vps_ip=$vps_ip
-EOF
+# Save to configuration file
+echo -e "domain_name=$domain_name\nvps_ip=$vps_ip" | sudo tee "$CONF_FILE" > /dev/null
 
-# Step 6: Create Docker Compose file from the template
-echo "Creating Docker Compose file from the template..."
+# Ensure the target directory exists
+TARGET_DIR="$HOME/$service_name"
 mkdir -p "$TARGET_DIR"
+
+# Copy the Docker Compose template
+DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 cp "$DOCKER_COMPOSE_DIR" "$DOCKER_COMPOSE_FILE"
 
-# Step 7: Replace placeholders in the template
-sed -i "s/\${service_name}/$service_name/" "$DOCKER_COMPOSE_FILE"
-sed -i "s/\${domain_name}/$domain_name/" "$DOCKER_COMPOSE_FILE"
+# Deploy the container
+cd "$TARGET_DIR" || exit
+docker-compose up -d
 
-# Step 8: Deploy the Docker Compose stack
-echo "Deploying Docker Compose stack..."
-docker compose -f "$DOCKER_COMPOSE_FILE" up -d
+# Output DNS entry information
+echo -e "\n$dns_name needs an A record. Add the following DNS entry:"
+echo -e "Type       | Name                           | Points to       | TTL"
+echo -e "---------- | ------------------------------ | --------------- | -----"
+echo -e "A          | $dns_name                      | $vps_ip         | 14400"
 
-echo "Setup complete: $domain_name (Service: $service_name) is now running."
-
-# Step 9: Display DNS Instructions
-echo -e "\n${domain_name} needs an A record. Add the following DNS entry:\n"
-
-# Print Table Header
-printf "%-10s | %-30s | %-15s | %-5s \n" "Type" "Name" "Points to" "TTL"
-printf "%-10s | %-30s | %-15s | %-5s \n" "----------" "------------------------------" "---------------" "-----"
-
-# Print Table Row
-if [[ -n "$vps_ip" ]]; then
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$domain_name" "$vps_ip" "14400"
-else
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$domain_name" "-" "14400"
-fi
-
-echo -e "\nPlease update your DNS settings accordingly."
+echo "Setup complete: $dns_name (Service: $service_name) is now running."
