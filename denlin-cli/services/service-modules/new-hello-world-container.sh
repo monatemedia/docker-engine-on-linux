@@ -48,11 +48,15 @@ if [[ ! "$domain_name" =~ ^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$ ]]; then
 fi
 
 # Step 3: Ask if it's a main domain or subdomain
-read -p "Is this container mapped as a main domain (e.g., monatemedia.com) or a subdomain (e.g., hello-world.monatemedia.com)? (main/sub): " domain_type
+while true; do
+    read -p "Is this container mapped as a main domain (e.g., monatemedia.com) or a subdomain (e.g., hello-world.monatemedia.com)? Enter 'main' or 'sub': " domain_type
 
-if [[ "$domain_type" == "sub" ]]; then
-    domain_name="${service_name}.${domain_name}"
-fi
+    if [[ "$domain_type" == "main" || "$domain_type" == "sub" ]]; then
+        break
+    else
+        echo -e "\nInvalid choice! Please enter 'main' for a root domain (e.g., monatemedia.com) or 'sub' for a subdomain (e.g., hello-world.monatemedia.com). Try again.\n"
+    fi
+done
 
 # Step 4: Confirm or update VPS IP
 if [[ -n "$vps_ip" ]]; then
