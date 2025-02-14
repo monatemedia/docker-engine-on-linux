@@ -1,0 +1,17 @@
+# Template: Hello World
+# Description: A test container that displays a simple "Hello, World!" message in the browser.
+
+services:
+  "${service_name}": # Use the service name as the container name
+    container_name: "${service_name}" # Use the service name as the container name
+    image: crccheck/hello-world
+    environment:
+      VIRTUAL_HOST: "${domain_name}" # Tell nginx-proxy to route traffic based on the service name eg. hello-world.monatemedia.com
+      LETSENCRYPT_HOST: "${domain_name}" # Enable Let's Encrypt SSL for this domain
+      VIRTUAL_PORT: 8000 # Tell nginx-proxy that the container serves on port 8000
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true

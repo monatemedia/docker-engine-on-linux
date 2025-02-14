@@ -2,7 +2,7 @@
 # Description: A reverse proxy server that routes HTTP and HTTPS traffic to other services based on domain names.
 
 services:
-  nginx-proxy: # Reverse proxy to route requests to appropriate services
+  nginx-proxy:
     container_name: nginx-proxy
     image: nginxproxy/nginx-proxy # Uses the official Nginx Proxy image
     restart: unless-stopped # Ensures the container restarts if it fails
@@ -15,10 +15,11 @@ services:
       - ./nginx/certs:/etc/nginx/certs # Stores SSL certificates for HTTPS
       - ./nginx/vhost:/etc/nginx/vhost.d # Stores custom Nginx virtual host configurations
       - ./nginx/acme:/etc/acme.sh # Stores Let's Encrypt ACME challenge files for SSL certs
+      - ./nginx/html:/usr/share/nginx/html:rw # Ensure the ACME challenge files are placed in the correct path
     networks:
       - proxy-network # Connects to the shared network for communication with other containers
 
-  letsencrypt-companion: # Manages SSL certificates automatically using Let's Encrypt
+  letsencrypt-companion:
     container_name: letsencrypt-companion
     image: nginxproxy/acme-companion # Uses the ACME companion image to automate SSL certificate renewal
     restart: unless-stopped # Ensures the container restarts if it fails
@@ -26,17 +27,15 @@ services:
       - nginx-proxy # Ensures nginx-proxy starts before this container
     environment:
       DEFAULT_EMAIL: "${user_email}" # Email for Let's Encrypt SSL certificate notifications
+      NGINX_PROXY_CONTAINER: "nginx-proxy" # Ensure the LetsEncrypt container knows the nginx-proxy container name
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Allows access to Docker API for detecting running containers
       - ./nginx/acme:/etc/acme.sh:rw # Stores ACME challenge responses for certificate issuance
       - ./nginx/certs:/etc/nginx/certs:rw # Stores SSL certificates
       - ./nginx/vhost:/etc/nginx/vhost.d # Stores virtual host configurations
+      - ./nginx/html:/usr/share/nginx/html:rw # Mounts a writable webroot directory for the challenge files
     networks:
       - proxy-network # Connects to the shared network for communication with nginx-proxy
-    command: >
-      sh -c "echo '0 0,12 * * * /app/force_renew >> /var/log/cron.log 2>&1' | crontab - && 
-             cron -f & /app/start.sh"
-      # Schedules automatic certificate renewal every 12 hours and starts the main process
 
 networks:
   proxy-network:
