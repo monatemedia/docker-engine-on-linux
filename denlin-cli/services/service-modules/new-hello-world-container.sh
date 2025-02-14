@@ -21,6 +21,24 @@ fi
 # Source configuration file
 source "$CONF_FILE"
 
+# Function to validate an IP address
+validate_ip() {
+    local ip="$1"
+    local regex='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
+
+    if [[ $ip =~ $regex ]]; then
+        IFS='.' read -r -a octets <<< "$ip"
+        for octet in "${octets[@]}"; do
+            if (( octet < 0 || octet > 255 )); then
+                return 1
+            fi
+        done
+        return 0  # Valid IP
+    fi
+
+    return 1  # Invalid IP
+}
+
 # Step 1: Get service name
 read -p "Enter the desired service name: " service_name
 
@@ -58,15 +76,29 @@ while true; do
     fi
 done
 
-# Step 4: Confirm or update VPS IP
+# Step 4: Confirm or update VPS IP with validation
 if [[ -n "$vps_ip" ]]; then
     read -p "The current VPS IP in the config file is: $vps_ip. Do you want to use this IP? (y/n): " confirm_vps_ip
     if [[ "$confirm_vps_ip" != "y" ]]; then
-        read -p "Enter your VPS IP address: " input_vps_ip
-        vps_ip="$input_vps_ip"
+        while true; do
+            read -p "Enter your VPS IP address: " input_vps_ip
+            if validate_ip "$input_vps_ip"; then
+                vps_ip="$input_vps_ip"
+                break
+            else
+                echo -e "\nInvalid IP address! Please enter a valid IPv4 address (e.g., 192.168.1.1).\n"
+            fi
+        done
     fi
 else
-    read -p "Enter your VPS IP address: " vps_ip
+    while true; do
+        read -p "Enter your VPS IP address: " vps_ip
+        if validate_ip "$vps_ip"; then
+            break
+        else
+            echo -e "\nInvalid IP address! Please enter a valid IPv4 address (e.g., 192.168.1.1).\n"
+        fi
+    done
 fi
 
 # Output final domain and VPS IP
