@@ -37,8 +37,17 @@ validate_ip() {
     return 1
 }
 
-# Step 1: Get service name
-read -p "Enter the desired service name: " service_name
+# Step 1: Get service name (Ensure input is not empty)
+while true; do
+    read -p "Enter the desired service name: " service_name
+    if [[ -n "$service_name" ]]; then
+        break
+    else
+        echo "Error: Service name cannot be empty. Please enter a valid service name."
+    fi
+done
+
+# Set target directory and Docker Compose file
 TARGET_DIR="$HOME/$service_name"
 DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 
