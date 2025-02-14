@@ -55,19 +55,21 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 echo "Adding current user to Docker group..."
 sudo usermod -aG docker $USER
 
-echo "You need to log out and log back in or restart your system for group changes to take effect."
 echo "Attempting to refresh group membership in the current session..."
-newgrp docker || echo "Please log out and log back in or reboot your system for changes to fully apply."
+newgrp docker <<EOF
+    echo "Verifying Docker installation..."
+    if ! docker run hello-world; then
+        echo "Failed to connect to Docker daemon."
+        echo "Possible solutions:"
+        echo "- Log out and log back in, or restart your computer."
+        echo "- Check that the Docker service is running with: sudo systemctl status docker"
+        echo "- Ensure your user is in the 'docker' group with: groups $USER"
+        exit 1
+    fi
+    echo -e "\nDocker installation completed successfully."
+    echo "You can now use Docker without root privileges."
+EOF
 
-echo "Verifying Docker installation..."
-if ! docker run hello-world; then
-    echo "Failed to connect to Docker daemon."
-    echo "Possible solutions:"
-    echo "- Log out and log back in, or restart your computer."
-    echo "- Check that the Docker service is running with: sudo systemctl status docker"
-    echo "- Ensure your user is in the 'docker' group with: groups $USER"
-    exit 1
-fi
+echo -e "\nDocker installation completed successfully."    
+echo "\nThis terminal will still need a logout/relogin or reboot for other commands (outside this script) to recognize your new group membership."
 
-echo -e "\nDocker installation completed successfully."
-echo "You can now use Docker without root privileges."
