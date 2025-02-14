@@ -397,9 +397,11 @@ denlin common
 
 Then select the option `setup-nginx-proxy`.
 
-Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
 
 [![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]](https://github.com/monatemedia/docker-engine-on-linux)
+
+
+Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
 
 
 ## Set Up Our First Container
