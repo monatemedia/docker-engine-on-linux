@@ -386,6 +386,8 @@ docker run hello-world
 
 ## Set Up Nginx Proxy
 
+You can use a single, centralized nginx-proxy container to manage your applications. This container will act as a reverse proxy and route traffic based on the subdomain to the correct application.
+
 To create the Nginx proxy, use the following command:
 
 
@@ -394,6 +396,10 @@ denlin common
 ```
 
 Then select the option `setup-nginx-proxy`.
+
+Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
+
+[![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]](https://github.com/monatemedia/docker-engine-on-linux)
 
 
 ## Set Up Our First Container
@@ -1205,6 +1211,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/company/monatemediaofficial
 [product-screenshot]: images/denlin-main-menu-large.PNG
+[nginx-http-error-503-screenshot]: images/nginx-http-error-503.png
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white

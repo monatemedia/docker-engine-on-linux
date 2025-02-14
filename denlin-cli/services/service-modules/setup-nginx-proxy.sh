@@ -67,9 +67,14 @@ sed -i "s/\${user_email}/$user_email/" "$DOCKER_COMPOSE_FILE"
 # Step 3: Deploy the Docker Compose stack
 echo "Deploying Docker Compose stack..."
 
-# Step 4: Create a network for the proxy
-echo "Creating proxy network..."
-docker network create proxy-network
+# Step 4: Create a network for the proxy if it does not already exist
+echo "Checking if proxy network exists..."
+if ! docker network ls | grep -q "proxy-network"; then
+    echo "Creating proxy network..."
+    docker network create proxy-network
+else
+    echo "Proxy network already exists. Skipping creation."
+fi
 
 # Step 5: Start the Nginx Proxy and Let's Encrypt containers
 echo "Starting Nginx Proxy and Let's Encrypt containers..."
