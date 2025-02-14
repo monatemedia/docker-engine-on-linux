@@ -134,7 +134,7 @@ else
 fi
 
 # Output final domain and VPS IP
-echo "Final Domain Name: $dns_name"
+echo "Final Domain Name: $full_domain"
 echo "VPS IP Address: $vps_ip"
 
 # Save to configuration file
@@ -179,9 +179,9 @@ printf "%-10s | %-30s | %-15s | %-5s \n" "----------" "-------------------------
 
 # Print Table Row
 if [[ -n "$vps_ip" ]]; then
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$full_domain" "$vps_ip" "14400"
+    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$dns_name" "$vps_ip" "14400"
 else
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$full_domain" "-" "14400"
+    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$dns_name" "-" "14400"
 fi
 
 echo -e "\nPlease update your DNS settings accordingly."
