@@ -32,6 +32,7 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
     sudo apt-get remove -y $pkg 
 done
 
+# Run Package Updates
 echo "Updating package list..."
 sudo apt-get update
 
@@ -55,7 +56,19 @@ sudo apt-get update
 echo "Installing Docker Engine and related packages..."
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+echo "Adding current user to Docker group..."
+sudo usermod -aG docker $USER
+
+echo "Refreshing group membership..."
+newgrp docker
+
 echo "Verifying Docker installation..."
-sudo docker run hello-world
+if ! docker run hello-world; then
+    echo "Failed to connect to Docker daemon. Try running: PATH=/usr/bin:/sbin:/usr/sbin:\$PATH dockerd-rootless.sh"
+    exit 1
+fi
 
 echo "Docker installation completed successfully."
+echo "You can now use Docker without root privileges."
+echo ""
+echo "You will need to log out and log back in or reboot to apply the group membership changes."
