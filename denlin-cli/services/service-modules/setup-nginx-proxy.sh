@@ -43,25 +43,36 @@ sudo bash -c "cat > $CONF_FILE" <<EOF
 user_email=$user_email
 EOF
 
+# Check and remove Apache if installed
+if dpkg -l | grep -q apache2; then
+    echo "Apache is installed. Removing it..."
+    sudo systemctl stop apache2
+    sudo systemctl disable apache2
+    sudo apt-get remove -y apache2 apache2-utils apache2-bin apache2.2-common
+    sudo apt-get autoremove -y
+    echo "Apache has been removed."
+else
+    echo "Apache is not installed. Proceeding with setup..."
+fi
 
 # Step 1: Generate docker-compose.yml from the template
-echo "\nCreating Docker Compose file from the template..."
+echo "Creating Docker Compose file from the template..."
 mkdir -p "$TARGET_DIR"
 cp "$DOCKER_COMPOSE_DIR" "$DOCKER_COMPOSE_FILE"
 
 # Step 2: Replace the user email variable in the template
-echo "\nConfiguring Nginx Proxy with your email..."
+echo "Configuring Nginx Proxy with your email..."
 sed -i "s/\${user_email}/$user_email/" "$DOCKER_COMPOSE_FILE"
 
 # Step 3: Deploy the Docker Compose stack
-echo "\nDeploying Docker Compose stack..."
+echo "Deploying Docker Compose stack..."
 
 # Step 4: Create a network for the proxy
-echo "\nCreating proxy network..."
+echo "Creating proxy network..."
 docker network create proxy-network
 
 # Step 5: Start the Nginx Proxy and Let's Encrypt containers
-echo "\nStarting Nginx Proxy and Let's Encrypt containers..."
+echo "Starting Nginx Proxy and Let's Encrypt containers..."
 docker compose -f "$DOCKER_COMPOSE_FILE" up -d
 
 echo "Nginx Proxy and Let's Encrypt setup complete."
