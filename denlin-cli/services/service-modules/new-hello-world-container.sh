@@ -150,9 +150,9 @@ cp "$DOCKER_COMPOSE_TEMPLATE" "$DOCKER_COMPOSE_FILE"
 
 # Ensure the file was created
 if [[ -f "$DOCKER_COMPOSE_FILE" ]]; then
-    echo "✅ Docker Compose file created successfully at $DOCKER_COMPOSE_FILE"
+    echo "Docker Compose file created successfully at $DOCKER_COMPOSE_FILE"
 else
-    echo "❌ Error: Failed to create the Docker Compose file."
+    echo "Error: Failed to create the Docker Compose file."
     exit 1
 fi
 
@@ -169,9 +169,9 @@ printf "%-10s | %-30s | %-15s | %-5s \n" "----------" "-------------------------
 
 # Print Table Row
 if [[ -n "$vps_ip" ]]; then
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$domain_name" "$vps_ip" "14400"
+    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$full_domain" "$vps_ip" "14400"
 else
-    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$domain_name" "-" "14400"
+    printf "%-10s | %-30s | %-15s | %-5s \n" "A" "$full_domain" "-" "14400"
 fi
 
 echo -e "\nPlease update your DNS settings accordingly."
