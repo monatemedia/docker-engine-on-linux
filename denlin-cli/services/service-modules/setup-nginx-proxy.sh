@@ -12,9 +12,12 @@ DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 echo "Checking configuration file at $CONF_FILE..."
 if [[ ! -f "$CONF_FILE" ]]; then
     echo "$CONF_FILE does not exist. Creating it now."
-    sudo bash -c "cat > $CONF_FILE" <<EOF
-user_email=
-EOF
+    # Ensure the config file has the correct user_email entry
+    if grep -q "^user_email=" "$CONF_FILE"; then
+        sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
+    else
+        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
+    fi
 fi
 
 # Source configuration file

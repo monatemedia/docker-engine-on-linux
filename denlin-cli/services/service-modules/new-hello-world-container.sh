@@ -168,10 +168,10 @@ fi
 
 # Deploy the container
 cd "$TARGET_DIR" || exit
-docker-compose up -d
+docker compose up -d
 
 # Step 9: Display DNS Instructions
-echo -e "\n${domain_name} needs an A record. Add the following DNS entry:\n"
+echo -e "\n${full_domain} needs an A record. Add the following DNS entry:\n"
 
 # Print Table Header
 printf "%-10s | %-30s | %-15s | %-5s \n" "Type" "Name" "Points to" "TTL"
