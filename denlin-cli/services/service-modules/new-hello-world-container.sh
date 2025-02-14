@@ -42,16 +42,28 @@ read -p "Enter the desired service name: " service_name
 TARGET_DIR="$HOME/$service_name"
 DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 
-# Step 2: Get domain name
+# Step 2: Confirm or update domain name
 if [[ -n "$domain_name" ]]; then
-    read -p "The current domain name in the config file is: $domain_name. Do you want to use this domain name? (y/n): " confirm_domain_name
-    if [[ "$confirm_domain_name" != "y" ]]; then
-        read -p "Enter a new domain name: " input_domain_name
-        domain_name="$input_domain_name"
-    fi
+    while true; do
+        read -p "The current domain name in the config file is: $domain_name. Do you want to use this domain name? (y/n): " confirm_domain_name
+        case "$confirm_domain_name" in
+            y|Y) 
+                break 
+                ;;
+            n|N) 
+                read -p "Enter a new domain name: " input_domain_name
+                domain_name="$input_domain_name"
+                break 
+                ;;
+            *) 
+                echo "Invalid input! Please enter 'y' for Yes or 'n' for No."
+                ;;
+        esac
+    done
 else
     read -p "Enter your domain name: " domain_name
 fi
+
 
 # Normalize domain name (remove http://, https://, and trailing slashes)
 domain_name=$(echo "$domain_name" | sed -E 's~^(https?://)~~' | sed -E 's~/$~~')
