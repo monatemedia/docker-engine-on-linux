@@ -146,7 +146,11 @@ mkdir -p "$TARGET_DIR"
 
 # Copy the Docker Compose template
 DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
-cp "$DOCKER_COMPOSE_TEMPLATE" "$DOCKER_COMPOSE_FILE"
+
+# Replace variables in the Docker Compose template
+export service_name="$service_name"
+export full_domain="$full_domain"
+sed -e "s/\${service_name}/$service_name/g" -e "s/\${full_domain}/$full_domain/g" "$DOCKER_COMPOSE_TEMPLATE" > "$DOCKER_COMPOSE_FILE"
 
 # Ensure the file was created
 if [[ -f "$DOCKER_COMPOSE_FILE" ]]; then
