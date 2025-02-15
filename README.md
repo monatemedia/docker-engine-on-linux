@@ -441,7 +441,7 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 ## Publish Your First Project
 
-If you have not as yet created your own project you want to publish, you can create a new project on your local computer. Open a terminal in the location where you intend to create the application's file folder. There is no need to manually create the folder, as the process will create the folder for you.
+If you have not as yet created your own project you want to publish, you can create a new project on your local computer. Open a terminal in the location where you intend to create the application's file folder. There is no need to manually create the folder, as the process will create the project folder for you.
 
 Create a new JavaScript project with Vite.
 
@@ -485,6 +485,12 @@ $ code .
 Lenovo@DESKTOP MINGW64 ~/Coding Projects/react-counter
 $ npm run dev
 ```
+
+You should now be able to visit your new app at `http://localhost:5173/`
+
+
+![Vite React App Screen Shot][vite-react-app-screenshot]
+
 
 ## Create Dockerfile
 
@@ -1240,6 +1246,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [product-screenshot]: images/denlin-main-menu-large.PNG
 [nginx-http-error-503-screenshot]: images/nginx-http-error-503.png
 [hello-world-screenshot]: images/hello-world.png
+[vite-react-app-screenshot]: images/vite-react-app.png
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
