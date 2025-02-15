@@ -441,7 +441,9 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 ## Publish Your First Project
 
-If you have not as yet created your project, you can create a new project on your local computer by opening a terminal in the file folder where you intend to create the application's file folder. 
+If you have not as yet created your own project you want to publish, you can create a new project on your local computer. Open a terminal in the location where you intend to create the application's file folder. There is no need to manually create the folder, as the process will create the folder for you.
+
+Create a new JavaScript project with Vite.
 
 ```sh
 npm create vite@latest
