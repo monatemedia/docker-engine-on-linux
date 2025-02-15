@@ -44,13 +44,25 @@ echo
 # If the user provides a new PAT, use it; otherwise, keep the current CR_PAT
 CR_PAT="${input_CR_PAT:-$CR_PAT}"
 
-# Update the configuration file
-echo "Updating configuration file..."
-sudo bash -c "cat > $CONF_FILE" <<EOF
-vps_ip=$vps_ip
-github_username=$github_username
-CR_PAT=$CR_PAT
-EOF
+# Ensure the config file has the correct entries
+if grep -q "^vps_ip=" "$CONF_FILE"; then
+    sudo sed -i "s|^vps_ip=.*|vps_ip=$vps_ip|" "$CONF_FILE"
+else
+    echo "vps_ip=$vps_ip" | sudo tee -a "$CONF_FILE" > /dev/null
+fi
+
+if grep -q "^github_username=" "$CONF_FILE"; then
+    sudo sed -i "s|^github_username=.*|github_username=$github_username|" "$CONF_FILE"
+else
+    echo "github_username=$github_username" | sudo tee -a "$CONF_FILE" > /dev/null
+fi
+
+if grep -q "^CR_PAT=" "$CONF_FILE"; then
+    sudo sed -i "s|^CR_PAT=.*|CR_PAT=$CR_PAT|" "$CONF_FILE"
+else
+    echo "CR_PAT=$CR_PAT" | sudo tee -a "$CONF_FILE" > /dev/null
+fi
+
 
 # Step 2: Create the temporary script
 echo "Creating temporary script at $TEMP_SCRIPT..."

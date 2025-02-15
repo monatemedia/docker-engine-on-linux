@@ -404,7 +404,7 @@ Then select the option `setup-nginx-proxy`.
 Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
 
 
-## Set Up Our First Container
+## Set Up Your First Container
 
 
 Test your installation by creating a test container with these commands:
@@ -413,7 +413,30 @@ Test your installation by creating a test container with these commands:
 denlin common
 ```
 
-Then select the option `new-test-container`.
+Then select the option `new-hello-world-container`.
+
+For this test, you can use the service name `hello-world`.
+
+
+> [!TIP]
+> ## Hello World Image
+> The `Hello World` image used in this script will displays a simple "Hello, World!" message in the browser
+
+
+Once done, use search to find your DNS records in your web domain hosting provider's control panel.
+
+Add a new DNS record using the output from the script, example:
+
+
+| Type       | Name                           | Points to       | TTL   |
+| ---------- | ------------------------------ | --------------- | ----- |
+| A          | hello-world.monatemedia.com    | 77.243.85.71    | 14400 |
+
+Now visit your domain or subdomain in the browser, and you should see your Hello World message.
+
+
+
+[![Hello World Screen Shot][hello-world-screenshot]]
 
 
 ## Create Your Project
@@ -1214,6 +1237,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [linkedin-url]: https://linkedin.com/company/monatemediaofficial
 [product-screenshot]: images/denlin-main-menu-large.PNG
 [nginx-http-error-503-screenshot]: images/nginx-http-error-503.png
+[hello-world-screenshot]: images/hello-world.png
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
 [Ubuntu-url]: https://ubuntu.com/
 [Docker-hub]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white

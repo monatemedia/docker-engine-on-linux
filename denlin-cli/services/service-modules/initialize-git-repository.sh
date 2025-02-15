@@ -31,12 +31,19 @@ vps_ip="${input_vps_ip:-$vps_ip}"
 read -p "Enter GitHub username or hit ENTER to accept (current: ${github_username:-not set}): " input_github_username
 github_username="${input_github_username:-$github_username}"
 
-# Update the configuration file
-echo "Updating configuration file..."
-sudo bash -c "cat > $CONF_FILE" <<EOF
-vps_ip=$vps_ip
-github_username=$github_username
-EOF
+# Ensure the config file has the correct entries
+if grep -q "^vps_ip=" "$CONF_FILE"; then
+    sudo sed -i "s|^vps_ip=.*|vps_ip=$vps_ip|" "$CONF_FILE"
+else
+    echo "vps_ip=$vps_ip" | sudo tee -a "$CONF_FILE" > /dev/null
+fi
+
+if grep -q "^github_username=" "$CONF_FILE"; then
+    sudo sed -i "s|^github_username=.*|github_username=$github_username|" "$CONF_FILE"
+else
+    echo "github_username=$github_username" | sudo tee -a "$CONF_FILE" > /dev/null
+fi
+
 
 echo ""
 

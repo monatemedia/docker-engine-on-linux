@@ -138,7 +138,8 @@ echo "Final Domain Name: $full_domain"
 echo "VPS IP Address: $vps_ip"
 
 # Save to configuration file
-echo -e "domain_name=$domain_name\nvps_ip=$vps_ip" | sudo tee "$CONF_FILE" > /dev/null
+sudo sed -i "s/^domain_name=.*/domain_name=$domain_name/" "$CONF_FILE" 2>/dev/null || echo "domain_name=$domain_name" | sudo tee -a "$CONF_FILE" > /dev/null
+sudo sed -i "s/^vps_ip=.*/vps_ip=$vps_ip/" "$CONF_FILE" 2>/dev/null || echo "vps_ip=$vps_ip" | sudo tee -a "$CONF_FILE" > /dev/null
 
 # Ensure the target directory exists
 TARGET_DIR="$HOME/$service_name"
