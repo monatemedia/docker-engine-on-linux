@@ -425,18 +425,19 @@ For this test, you can use the service name `hello-world`.
 
 Once done, use search to find your DNS records in your web domain hosting provider's control panel.
 
-Add a new DNS record using the output from the script, example:
+Add a new DNS record using the output from the script, example if using a subdomain:
 
 
 | Type       | Name                           | Points to       | TTL   |
 | ---------- | ------------------------------ | --------------- | ----- |
 | A          | hello-world.monatemedia.com    | 77.243.85.71    | 14400 |
 
+Also note that if the application will be hosted in the main domain, the `Name` value will be `@`. 
+
 Now visit your domain or subdomain in the browser, and you should see your Hello World message.
 
 
-
-[![Hello World Screen Shot][hello-world-screenshot]]
+![Hello World Screen Shot][hello-world-screenshot]
 
 
 ## Create Your Project
