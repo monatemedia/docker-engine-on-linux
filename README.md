@@ -533,7 +533,9 @@ From services menu select `create-github-pat`
 
 > [!TIP]
 > To access the GitHub Container Registry we first need to create a PAT
-> To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new) 
+> To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new).
+>
+> 
 > You can also get there in GitHub by clicking on your profile -> Settings -> Developer Settings -> Personal access tokens -> Tokens(classic) -> Generate new token
 
 
