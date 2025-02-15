@@ -397,7 +397,7 @@ denlin common
 
 Then select the option `setup-nginx-proxy`.
 
-Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
+Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Unavailable) status code message from Nginx.
 
 
 ![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]
@@ -433,7 +433,7 @@ Add a new DNS record using the output from the script, example if using a subdom
 
 Also note that if the application will be hosted in the main domain, the `Name` value will be `@`. 
 
-Now visit your domain or subdomain in the browser, and you should see your Hello World message.
+Now visit your domain or subdomain in the browser, and you should see your Hello World website over HTTPS.
 
 
 ![Hello World Screen Shot][hello-world-screenshot]
@@ -441,9 +441,9 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 ## Publish Your First Project
 
-If you have not as yet created your own project you want to publish, you can create a new project on your local computer. Open a terminal in the location where you intend to create the application's file folder. There is no need to manually create the folder, as the process will create the project folder for you.
+Create a new project on your local computer. Open a terminal in the folder where you keep your coding projects. There is no need to manually create the folder, as the process will create the project folder for you.
 
-Create a new JavaScript project with Vite.
+Create a new React project with Vite.
 
 ```sh
 npm create vite@latest
@@ -508,7 +508,7 @@ From services menu select `create-dockerfile`
 > 
 > ## What is a Dockerfile?
 > 
-> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our application.
+> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our applications.
 
 
 
