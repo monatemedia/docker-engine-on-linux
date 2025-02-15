@@ -532,7 +532,9 @@ From services menu select `create-github-pat`
 
 
 > [!TIP]
+> To access the GitHub Container Registry we first need to create a PAT
 > To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new) 
+> You can also get there in GitHub by clicking on your profile -> Settings -> Developer Settings -> Personal access tokens -> Tokens(classic) -> Generate new token
 
 
 To generate a **new personal access token (classic)** for a server named `VPS 1` with `write:packages`, `delete:packages`, `read:org` and `admin:public_key` scopes, enter the name in the `Note` input box, select the corresponding boxes, then select `Generate token`
@@ -549,6 +551,8 @@ Scope:
   - [x] `read:org`
   - [ ] `manage_runners:org`
 - [x] `admin:public_key`
+
+Copy and keep your token in a safe place. Do not share your token with anyone or commit it to version control systems like GitHub or the GitHub Container Registry.
 
 ## Install the GitHub CLI (`gh`)
 

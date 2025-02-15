@@ -2,7 +2,7 @@
 # Description: Dockerfile template for JavaScript applications
 
 # build stage
-FROM node:23-alpine3.19 as build
+FROM node:lts-alpine as build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
