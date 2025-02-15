@@ -398,7 +398,7 @@ denlin common
 Then select the option `setup-nginx-proxy`.
 
 
-[![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]]
+![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]
 
 
 Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
