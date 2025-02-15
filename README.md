@@ -397,17 +397,16 @@ denlin common
 
 Then select the option `setup-nginx-proxy`.
 
+Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
+
 
 ![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]
-
-
-Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Temporarily Unavailable) status code message from Nginx.
 
 
 ## Set Up Your First Container
 
 
-Test your installation by creating a test container with these commands:
+Test your installation by creating a test container:
 
 ```sh
 denlin common
@@ -415,7 +414,7 @@ denlin common
 
 Then select the option `new-hello-world-container`.
 
-For this test, you can use the service name `hello-world`.
+For this test, for the service name, you can use the name `hello-world`.
 
 
 > [!TIP]
@@ -440,7 +439,7 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 ![Hello World Screen Shot][hello-world-screenshot]
 
 
-## Create Your Project
+## Publish Your First Project
 
 If you have not as yet created your project, you can create a new project on your local computer by opening a terminal in the file folder where you intend to create the application's file folder. 
 
