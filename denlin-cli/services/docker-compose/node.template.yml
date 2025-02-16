@@ -1,0 +1,17 @@
+# Template: Node
+# Description: A Node.js container for running JavaScript applications
+
+services:
+  "${service_name}": # Use the service name as the container name
+    container_name: "${service_name}" # Use the service name as the container name
+    image: ghcr.io/"${github_username}"/"${repo_name}":latest
+    environment:
+      VIRTUAL_HOST: "${full_domain}" # Tell nginx-proxy to route traffic based on the service name eg. hello-world.monatemedia.com
+      LETSENCRYPT_HOST: "${full_domain}" # Enable Let's Encrypt SSL for this domain
+      VIRTUAL_PORT: "${virtual_port}" # Tell nginx-proxy which port the container serves on, eg. port 8000
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
