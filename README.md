@@ -558,8 +558,6 @@ Copy and keep your token in a safe place. Do not share your token with anyone or
 
 ## Install the GitHub CLI (`gh`)
 
-### 1. Installation
-
 On your local computer, check if you have the GitHub CLI installed.
 
 ```sh
@@ -590,7 +588,7 @@ On Mac, you can install with Homebrew:
 brew install gh
 ```
 
-### 2. Test Installation
+Test the installation again.
 
 ```sh
 gh --version
@@ -605,8 +603,8 @@ https://github.com/cli/cli/releases/tag/v2.65.0
 
 If you you get an error, close the terminal window and try again with a new terminal window.
 
-   
-### 3. Authentication
+
+## Log into GitHub with the GitHub CLI
 
 To use the `gh` CLI, you need to authenticate the user on your local machine.
 
@@ -619,8 +617,14 @@ Follow the interactive prompts to log in using your GitHub account.
 ```MarkDown
 What account do you want to log into? GitHub.com
 What is your preferred protocol for Git operations? SSH
+------
 Generate a new SSH key to add to your GitHub account? (Y/n) Y
+--or--
+? Upload your SSH public key to your GitHub account?  [Use arrows to move, type to filter]
+> C:\Users\Lenovo\.ssh\id_rsa.pub
+  Skip
 (If the key already exists, use that one)
+------
 Enter a passphrase for your new SSH key (Optional)
 Title for your SSH key: (GitHub CLI)
 How would you like to authenticate GitHub CLI? Paste an authentication token
