@@ -737,22 +737,37 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- Create Start Script -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- Create Start Script -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+This setup uses Docker's networking feature to communicate with containers and Nginx's reverse proxy feature to protect containers from the public facing internet.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+When creating and publishing new Docker containers with `.yml` files, be sure to include the following information in your `docker-compose.yml` file to ensure that Nginx can commmunicate with your container:
+
+```yml
+# Template: Hello World
+# Description: A test container that displays a simple "Hello, World!" message in the browser.
+
+services:
+  hello-world: # Use the service name as the container name
+    container_name: hello-world # Use the service name as the container name
+    image: crccheck/hello-world
+    environment:
+      VIRTUAL_HOST: hello-world.monatemedia.com # Tell nginx-proxy to route traffic based on the service name eg. hello-world.monatemedia.com
+      LETSENCRYPT_HOST: hello-world.monatemedia.com # Enable Let's Encrypt SSL for this domain
+      VIRTUAL_PORT: 8000 # Tell nginx-proxy that the container serves on port 8000
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
+```
+
+Do not forget to create a DNS record for your container to be reached at the desired website address, as provided in the `VIRTUAL_HOST` for unsecured HTTP on port 80, and `LETSENCRYPT_HOST` for secured HTTPS on port 443. All three should be the same.
+
+_For more examples, please refer to the [Documentation](https://github.com/monatemedia/docker-engine-on-linux/wiki)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -761,17 +776,18 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://github.com/monatemedia/docker-engine-on-linux/wiki)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Node `docker-compose.yml` script
+- [ ] PHP Laravel `docker-compose.yml` script
+- [ ] Python Scripts
+    - [ ] Django `docker-compose.yml` script
+    - [ ] Streamlit `docker-compose.yml` script
 
 See the [open issues](https://github.com/monatemedia/docker-engine-on-linux/issues) for a full list of proposed features (and known issues).
 

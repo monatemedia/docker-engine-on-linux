@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Menu: Configure VPS
-# Description: A script to deploy a Docker Compose container from a template.
+# Description: A script to deploy a Node Docker Compose container from a template.
 
 CONF_FILE="/etc/denlin-cli.conf"
 DOCKER_COMPOSE_TEMPLATE="/usr/local/bin/denlin-cli/services/docker-compose/node.template.yml"

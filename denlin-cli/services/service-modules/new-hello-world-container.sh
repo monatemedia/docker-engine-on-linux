@@ -33,7 +33,6 @@ validate_ip() {
         done
         return 0
     fi
-
     return 1
 }
 
