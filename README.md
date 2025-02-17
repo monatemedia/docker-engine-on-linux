@@ -734,7 +734,7 @@ From services menu select `initialize-git-repository`.
 
 > [!CAUTION]
 >
-> ## Ensure Project is On `Main` Branch
+> ### Ensure Project is On `Main` Branch
 > 
 > These scripts assume that your project is on the `main` branch of your repository. 
 > 
