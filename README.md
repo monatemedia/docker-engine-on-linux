@@ -325,7 +325,7 @@ git version 2.x.x
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Create New User With Denlin CLI
+## Create New User With Denlin-CLI
 
 ### Clone and install the Denlin repository.
 
@@ -475,7 +475,7 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 ## Install the GitHub CLI (`gh`)
 
-Now it's time to do some configuration on our local development computer. Make sure you are navigated to the folder where you store your projects.
+Now it's time to do some configuration on our local development computer. Make sure you are navigated to the folder where you store your projects on your local computer.
 
 ### 1. Check if GitHub CLI is Installed
 
@@ -603,7 +603,9 @@ To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Men
 > 
 > ## What is a Dockerfile?
 > 
-> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our applications.
+> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. 
+> 
+> We will run multiple Docker containers to host our applications.
 
 
 Call the Services Menu
@@ -729,6 +731,14 @@ denlin common
 ```
 
 From services menu select `initialize-git-repository`.
+
+> [!CAUTION]
+>
+> ## Ensure Project is On `Main` Branch
+> 
+> These scripts assume that your project is on the `main` branch of your repository. 
+> 
+> If your project is on `master`, please go into the settings of your repo and change the main branch from `master` to `main`. 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
