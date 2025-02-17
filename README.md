@@ -564,15 +564,15 @@ You should now be able to visit your new app at `http://localhost:5173/`
 ## Create Dockerfile
 
 
+To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Menu.
+
+
 > [!IMPORTANT]
 > 
 > ## What is a Dockerfile?
 > 
 > A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our applications.
->
-> 
 
-To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Menu.
 
 Call the Services Menu
 
