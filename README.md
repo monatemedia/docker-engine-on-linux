@@ -392,11 +392,9 @@ You can use a single, centralized nginx-proxy container to manage your applicati
 > 
 > ## Docker Networking
 > 
-> Our containers on Docker do not communicate via ports and IP addresses as in traditional networking, but instead use Docker's built-in networking feature, where containers are identified by container name.
+> Our containers on Docker do not communicate via ports and IP addresses as in traditional networking, but instead use Docker's built-in networking feature, where containers are identified by container name and communicate over a network which Denlin calls `proxy-network`.
 >
 > Containers can be identified by a tagged name using the `-t` flag, or the name assigned by Docker.
-
-
 
 To create the Nginx proxy, use the following command:
 
@@ -451,6 +449,8 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 ## Install the GitHub CLI (`gh`)
 
+Now it's time to do some configuration on our local development computer. Make sure you are navigated to the folder where you store your projects.
+
 ### 1. Check if GitHub CLI is Installed
 
 On your local computer, check if you have the GitHub CLI installed.
@@ -490,7 +490,7 @@ On Mac, you can install with Homebrew:
 brew install gh
 ```
 
-### #. Test GitHub CLI Installation
+### 3. Test GitHub CLI Installation
 
 Test the installation again.
 
@@ -510,7 +510,7 @@ If you you get an error, close the terminal window and try again with a new term
 
 ## Publish Your First Project
 
-Create a new project on your local computer. Open a terminal in the folder where you keep your coding projects. There is no need to manually create the folder, as the process will create the project folder for you.
+Create a new project on your local computer.  Make sure you are navigated to the folder where you store your projects, right-click in the folder and open a GitBash terminal in this folder. From here the process will create the project folder for you.
 
 Create a new React project with Vite.
 
@@ -563,6 +563,15 @@ You should now be able to visit your new app at `http://localhost:5173/`
 
 ## Create Dockerfile
 
+
+> [!IMPORTANT]
+> 
+> ## What is a Dockerfile?
+> 
+> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our applications.
+>
+> 
+
 To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Menu.
 
 Call the Services Menu
@@ -572,12 +581,6 @@ denlin common
 ```
 
 From services menu select `create-dockerfile`
-
-> [!IMPORTANT]
-> 
-> ## What is a Dockerfile?
-> 
-> A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. We will run multiple Docker containers to host our applications.
 
 
 
