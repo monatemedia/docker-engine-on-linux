@@ -420,7 +420,7 @@ To create the Nginx proxy, use the following command:
 
 
 ```sh
-denlin common
+denlin services
 ```
 
 Then select the option `setup-nginx-proxy`.
@@ -440,7 +440,7 @@ Once the Nginx proxy has been set up, visit your IP address. You should get HTTP
 Test your installation by creating a test container:
 
 ```sh
-denlin common
+denlin services
 ```
 
 Then select the option `new-hello-world-container`.
@@ -611,7 +611,7 @@ To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Men
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `create-dockerfile`.
@@ -628,7 +628,7 @@ To create a GitHub PAT, use `create-github-pat` command in Denlin's Services Men
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `create-github-pat`
@@ -727,7 +727,7 @@ To initialize your GitHub repository, use `initialize-git-repository` command in
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `initialize-git-repository`.
@@ -751,7 +751,7 @@ To create and store your Docker image to the GitHub Container Registry, use `sto
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `store-docker-image`.
@@ -763,17 +763,33 @@ From services menu select `store-docker-image`.
 
 ## Create GitHub Secret
 
-We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and pull our image from there.
+We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and automatically pull our image from there and update the live website inside the container.
 
 To store your PAT as a GitHub secret, use `create-github-actions-secret` command in Denlin's Services Menu.
 
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
-From services menu select `create-github-actions-secret`.
+From services menu select `create-github-actions-secret`. 
+
+This script stores your PAT in your project's Repository secrets.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## Create Additional GitHub Secrets
+
+Go to your project's folder in GitHub and select the `Settings` tab.
+
+In the sidebar on the left, open `Secrets and variables`, and select `Actions`. 
+
+Inside the GitHub Actions secrets and variables section, select `New repository secret`.
+
+Add secrets with your 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -790,7 +806,7 @@ To create a GitHub Action, use `create-github-action` command in Denlin's Servic
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `create-github-action`.
@@ -809,7 +825,7 @@ To create and store your Docker image to the GitHub Registry, use `create-docker
 Call the Services Menu
 
 ```sh
-denlin common
+denlin services
 ```
 
 From services menu select `create-docker-compose`.
