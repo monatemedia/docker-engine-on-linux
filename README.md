@@ -596,15 +596,13 @@ denlin common
 
 From services menu select `create-github-pat`
 
-> [!NOTE]
-> 
-> ## Github Registry Login
->
-> The `create-github-pat` will automatically log your VPS and local computer into the GitHub Registry using the PAT.
+The `create-github-pat` will automatically log your VPS and local computer into the GitHub Registry using the PAT.
 
 
 > [!TIP]
-> To access the GitHub Container Registry we first need to create a PAT
+> To access the GitHub Container Registry we first need to create a PAT.
+>
+> 
 > To create a new token visit: [GitHub Create New Personal Access Token](https://github.com/settings/tokens/new).
 >
 > 
