@@ -220,6 +220,9 @@ Let's Encrypt Nginx Companion provides SSL Certificates.
 I have chosen Hostinger
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## VPS Settings
 
 In your hosting provider's control panel, you'll want to chose an operating system for your VPS.
@@ -230,6 +233,9 @@ In your hosting provider's control panel, you'll want to chose an operating syst
 -  Choose a VPS hostname(optional)
 -  Set a secure root password of at least 12 characters
 -  We can skip creating an SSH Key as we will create that later(if provided)
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Log Into VPS
@@ -276,6 +282,9 @@ root@your_ip_address`s password: your_password_goes_here
 You should now be logged in.
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## Install Git
 
 ### 1. Update Your Package Index
@@ -314,6 +323,8 @@ git version 2.x.x
 ```
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Create New User With Denlin CLI
 
 ### Clone and install the Denlin repository.
@@ -337,6 +348,9 @@ denlin create-new-user
 ```
 
 After the new user has been created, log out of the VPS and then log in with your new user account.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Set Up Passwordless SSH Login
@@ -368,6 +382,9 @@ denlin setup-ssh-login
 ```
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## Install Docker Engine
 
 To install Docker Engine, use the following command:
@@ -382,6 +399,9 @@ If you did not get the `Hello from Docker!` message, you can test your installat
 ```sh
 docker run hello-world
 ```
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Set Up Nginx Proxy
@@ -409,6 +429,9 @@ Once the Nginx proxy has been set up, visit your IP address. You should get HTTP
 
 
 ![Nginx HTTP Error 503 Screen Shot][nginx-http-error-503-screenshot]
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Set Up Your First Container
@@ -445,6 +468,9 @@ Now visit your domain or subdomain in the browser, and you should see your Hello
 
 
 ![Hello World Screen Shot][hello-world-screenshot]
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Install the GitHub CLI (`gh`)
@@ -508,6 +534,9 @@ https://github.com/cli/cli/releases/tag/v2.65.0
 If you you get an error, close the terminal window and try again with a new terminal window.
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## Publish Your First Project
 
 Create a new project on your local computer.  Make sure you are navigated to the folder where you store your projects, right-click in the folder and open a GitBash terminal in this folder. From here the process will create the project folder for you.
@@ -561,6 +590,9 @@ You should now be able to visit your new app at `http://localhost:5173/`
 ![Vite React App Screen Shot][vite-react-app-screenshot]
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## Create Dockerfile
 
 
@@ -580,7 +612,10 @@ Call the Services Menu
 denlin common
 ```
 
-From services menu select `create-dockerfile`
+From services menu select `create-dockerfile`.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -625,6 +660,9 @@ Scope:
 - [x] `admin:public_key`
 
 Copy and keep your token in a safe place. Do not share your token with anyone or commit it to version control systems like GitHub or the GitHub Container Registry.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Log into GitHub with the GitHub CLI
@@ -677,6 +715,9 @@ Open this URL to continue in your web browser: https://github.com/login/device
 ✓ Logged in as monatemedia
 ```
 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Initialize GitHub Repository
 
 To initialize your GitHub repository, use `initialize-git-repository` command in Denlin's Services Menu.
@@ -688,6 +729,9 @@ denlin common
 ```
 
 From services menu select `initialize-git-repository`.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Create and Store Docker Image to GitHub Container Registry
@@ -722,6 +766,9 @@ denlin common
 From services menu select `create-github-actions-secret`.
 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ## Create A GitHub Action
 
 Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
@@ -737,6 +784,9 @@ denlin common
 ```
 
 From services menu select `create-github-action`.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Create A Docker Compose File
 
@@ -794,14 +844,6 @@ _For more examples, please refer to the [Documentation](https://github.com/monat
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://github.com/monatemedia/docker-engine-on-linux/wiki)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
