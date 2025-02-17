@@ -881,7 +881,7 @@ Project Link: [https://github.com/monatemedia/docker-engine-on-linux](https://gi
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/company/monatemediaofficial
 [product-screenshot]: images/denlin-main-menu-large.PNG
-[nginx-http-error-503-screenshot]: images/nginx-http-error-503.png
+[nginx-http-error-503-screenshot]: images/nginx-http-error-503-screenshot.png
 [hello-world-screenshot]: images/hello-world.png
 [vite-react-app-screenshot]: images/vite-react-app.png
 [Ubuntu.com]: https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white
