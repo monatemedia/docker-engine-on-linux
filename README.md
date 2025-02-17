@@ -341,7 +341,7 @@ After the new user has been created, log out of the VPS and then log in with you
 
 ## Set Up Passwordless SSH Login
 
-Whenever logging into your VPS from your local computer, you will always be asked for your username `ssh edward@your_ip_address` and your password. This is fine but can be annoying if you have already secured your personal computer with a strong password.
+Whenever logging into your VPS from your local computer, you will always be asked for your username `ssh your_name@your_ip_address` and your password. This is fine but can be annoying if you have already secured your personal computer with a strong password.
 
 We have the option to in future be able to log into the VPS with only our username using an SSH key-pair.
 
@@ -387,6 +387,16 @@ docker run hello-world
 ## Set Up Nginx Proxy
 
 You can use a single, centralized nginx-proxy container to manage your applications. This container will act as a reverse proxy and route traffic based on the subdomain to the correct application.
+
+> [!IMPORTANT]
+> 
+> ## Docker Networking
+> 
+> Our containers on Docker do not communicate via ports and IP addresses as in traditional networking, but instead use Docker's built-in networking feature, where containers are identified by container name.
+>
+> Containers can be identified by a tagged name using the `-t` flag, or the name assigned by Docker.
+
+
 
 To create the Nginx proxy, use the following command:
 
