@@ -893,20 +893,97 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
 
-The action will run every time you push changes to the main branch of your repository, and triggers the commands we want to run.
+The action will run every time you push changes to the main branch of your repository, and triggers the commands we want to run. We will run commands that will bring the image to the VPS server. 
 
-To create a GitHub Actions CI/CD pipeline, Go to your project's folder in GitHub and select the `Settings` tab.
+So every time we push our code changes ot the main branch of our repository, we also want to pull the changes into our server, and then restart the container.
+
+
+### 1. Create SSH Key Pair For The Server
+
+We have to create an SSH key on our server, and give that key to GitHub as an input variable. 
+
+On the server, use the keygen unility to generate a new key.
+
+```sh
+ssh-keygen -t rsa -b 4096
+```
+
+Copy the content of the private key.
+
+```sh
+more ~/.ssh/id_rsa
+```
+
+Copy the contents of the file to the clipboard.
+
+> [!CAUTION]
+> ### Safeguard SSH Keys
+> You should never share your `SSH_PRIVATE_KEY` with anyone, otherwise they will be able to access the server.
+
+In addition, we will also add the public key to the authorized keys of our server.
+
+```sh
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+
+### 2. Create GitHub Repository Secrets
+
+Go to your project's folder in GitHub and select the `Settings` tab.
 
 In the sidebar on the left, open `Secrets and variables`, and select `Actions`. 
 
-Inside the GitHub Actions secrets and variables section, select `New repository secret`.
+Inside the GitHub Actions secrets and variables section, select `New repository secret`
 
 Add secrets as `Name` `Value` pairs for:
 
-  - HOST
-  - IP
-  - USER
-  - 
+  - SSH_PRIVATE_KEY = The private key's copy we just copied to the clipboard.
+  - SSH_USER = The name of the user you log into the VPS server with.
+  - SSH_HOST = IP address of your server.
+  - WORK_DIR = Directory containing our docker-compose.yml file, using the absolute path `/home/edward/react-counter`.
+
+### 3. Push Changes to Repository
+
+Inside your project folder on your local computer, push your changes to the repository.
+
+Add your changes to the git staging area.
+
+```sh
+git add .
+```
+
+Commit your changes.
+
+```sh
+git commit -m feat: deploy
+```
+
+Push your changes to the repository.
+
+```sh
+git push
+```
+
+### 4. Confirm Workflow Execution
+
+Go to your project's folder in GitHub and select the `workflows` tab.
+
+You should see a new workflow running where the workflow triggers a `publish image` and `deploy image` workflow.
+
+> [!TIP]
+> 
+> ### `Connection closed by remote host` Error
+> 
+> If in the deploy image step you have an error `Connection closed by remote host` restart your server.
+>
+> ```sh
+> sudo reboot
+> ```
+>
+> You should be able to log back into the server normally in a short while. 
+>
+> Now rerun the failed job `deploy image` again.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
