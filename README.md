@@ -795,25 +795,6 @@ Add secrets with your
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-## Create A GitHub Action
-
-Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
-
-The action will run every time you push changes to the main branch of your repository, and then it will triggers the commands we want to run.
-
-To create a GitHub Action, use `create-github-action` command in Denlin's Services Menu.
-
-Call the Services Menu
-
-```sh
-denlin services
-```
-
-From services menu select `create-github-action`.
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## Create A Docker Compose File
 
 Now, we want to host our container on our server. For that we will use `docker-compose`. 
@@ -833,6 +814,26 @@ From services menu select `create-docker-compose`.
 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## Create A GitHub Action
+
+Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
+
+The action will run every time you push changes to the main branch of your repository, and then it will triggers the commands we want to run.
+
+To create a GitHub Action, use `create-github-action` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin services
+```
+
+From services menu select `create-github-action`.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
