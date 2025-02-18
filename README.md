@@ -601,7 +601,7 @@ To create a Dockerfile, use `create-dockerfile` command in Denlin's Services Men
 
 > [!IMPORTANT]
 > 
-> ## What is a Dockerfile?
+> ### What is a Dockerfile?
 > 
 > A Dockerfile is a template for an image of our application. The image is then a template for a Docker container, which is a runnable instance of the Docker image, and uses a `docker-compose.yaml` file to run the image. 
 > 
@@ -619,6 +619,73 @@ From services menu select `create-dockerfile`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+## Build & Run the Container in Docker Desktop
+
+### 1. Build the Docker Image
+
+Run the following command in your project root (where your Dockerfile is located):
+
+```sh
+docker build -t react-counter .
+```
+
+This will:
+
+  - Use ***Node.js*** to install dependencies and build the app.
+  - Copy the dist/ folder to an ***NGINX*** container.
+
+### 2. Run the Container
+
+Run the following command to start your container:
+
+```sh
+docker run -d -p 8080:80 --name react-counter-container react-counter
+```
+
+This will:
+
+  - Run the container in ***detached mode*** (`-d`).
+  - Map port ***8080*** on your machine to port ***80*** inside the container.
+  - Name the container ***vite-container***.
+
+### 3. Access the App
+
+After running the container, open your browser and visit:
+http://localhost:8080
+
+You may also access your container through Docker Desktop.
+
+### 4. Stop & Remove the Container (If Needed)
+
+To stop the running container:
+
+```sh
+docker stop vite-container
+```
+
+To remove it completely:
+
+```sh
+docker rm vite-container
+```
+
+### 5. (Optional) View Logs & Debug
+
+Check running containers:
+
+```sh
+docker ps
+```
+
+Check logs of your container:
+
+```sh
+docker logs react-counter-container
+```
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ## Create a GitHub Personal Access Token (PAT)
