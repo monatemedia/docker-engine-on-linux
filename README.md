@@ -665,7 +665,7 @@ You may also access your container through Docker Desktop.
 
 > [!CAUTION]
 > 
-> ### Unsuccessfull Docker Builds
+> ### Successfull Docker Builds
 >
 > When debugging your container, you must be sure that the container runs on Docker Desktop without any issues before attempting further deployment. 
 >
@@ -760,7 +760,7 @@ Open a GitBash terminal in your projects folder and log into GitHub CLI.
 gh auth login
 ```
 
-Follow the interactive prompts to log in using your GitHub account, using your `PAT` when asked for your `authentication token`.
+Follow the interactive prompts to log into your GitHub account, using your `PAT` when asked for your `authentication token`.
 
 ```MarkDown
 What account do you want to log into? GitHub.com
@@ -866,24 +866,6 @@ From services menu select `store-docker-image`.
 > Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
-## Create Additional GitHub Secrets
-
-Go to your project's folder in GitHub and select the `Settings` tab.
-
-In the sidebar on the left, open `Secrets and variables`, and select `Actions`. 
-
-Inside the GitHub Actions secrets and variables section, select `New repository secret`.
-
-Add secrets as `Name` `Value` pairs for:
-
-  - HOST
-  - IP
-  - USER
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 ## Create A Docker Compose File
 
 Now, we want to host our container on our server. For that we will use `docker-compose`. 
@@ -907,22 +889,24 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-## Create A GitHub Action
+## Create A GitHub Actions CI/CD Pipeline
 
 Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
 
-The action will run every time you push changes to the main branch of your repository, and then it will triggers the commands we want to run.
+The action will run every time you push changes to the main branch of your repository, and triggers the commands we want to run.
 
-To create a GitHub Action, use `create-github-action` command in Denlin's Services Menu.
+To create a GitHub Actions CI/CD pipeline, Go to your project's folder in GitHub and select the `Settings` tab.
 
-Call the Services Menu
+In the sidebar on the left, open `Secrets and variables`, and select `Actions`. 
 
-```sh
-denlin services
-```
+Inside the GitHub Actions secrets and variables section, select `New repository secret`.
 
-From services menu select `create-github-action`.
+Add secrets as `Name` `Value` pairs for:
 
+  - HOST
+  - IP
+  - USER
+  - 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
