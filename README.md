@@ -663,7 +663,7 @@ http://localhost:8080
 You may also access your container through Docker Desktop.
 
 
-> [!DANGER]
+> [!WARNING]
 > 
 > ### Unsuccessfull Docker Builds
 >
