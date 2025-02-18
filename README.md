@@ -667,9 +667,9 @@ You may also access your container through Docker Desktop.
 > 
 > ### Unsuccessfull Docker Builds
 >
-> When debugging your container, you mus be sure that the container runs on Docker Desktop without any issues before attempting further deployment. 
+> When debugging your container, you must be sure that the container runs on Docker Desktop without any issues before attempting further deployment. 
 >
-> If the application does not run on Docker Desktop, the application will not run on the server.
+> If the application does not run on Docker Desktop, the application will not run in deployment.
 
 
 ### 4. Stop & Remove the Container (If Needed)
