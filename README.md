@@ -744,24 +744,7 @@ From services menu select `initialize-git-repository`.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-## Create and Store Docker Image to GitHub Container Registry
-
-To create and store your Docker image to the GitHub Container Registry, use `store-docker-image` command in Denlin's Services Menu.
-
-Call the Services Menu
-
-```sh
-denlin services
-```
-
-From services menu select `store-docker-image`.
-
-
-> [!IMPORTANT]
-> Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
-
-
-## Store PAT As A GitHub Actions Secret
+## Store PAT as a GitHub Actions Secret
 
 We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and pull our image from there.
 
@@ -797,6 +780,23 @@ Add secrets as `Name` `Value` pairs for:
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## Create and Store Docker Image to GitHub Container Registry
+
+To create and store your Docker image to the GitHub Container Registry, use `store-docker-image` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin services
+```
+
+From services menu select `store-docker-image`.
+
+
+> [!IMPORTANT]
+> Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
 ## Create A Docker Compose File
