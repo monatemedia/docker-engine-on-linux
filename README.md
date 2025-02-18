@@ -622,6 +622,12 @@ From services menu select `create-dockerfile`.
 
 ## Build & Run the Container in Docker Desktop
 
+> [!IMPORTANT]
+> 
+> ### Docker Containers in Local Environment
+>
+> To build and run containers in your local development environment, make sure that you have Docker Desktop running.
+
 ### 1. Build the Docker Image
 
 Run the following command in your project root (where your Dockerfile is located):
