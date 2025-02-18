@@ -761,11 +761,11 @@ From services menu select `store-docker-image`.
 > Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
-## Create GitHub Secret
+## Store PAT As A GitHub Actions Secret
 
-We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and automatically pull our image from there and update the live website inside the container.
+We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and pull our image from there.
 
-To store your PAT as a GitHub secret, use `create-github-actions-secret` command in Denlin's Services Menu.
+To store your PAT as a GitHub secret, use `create-github-actions-secret-pat` command in Denlin's Services Menu.
 
 Call the Services Menu
 
@@ -773,7 +773,7 @@ Call the Services Menu
 denlin services
 ```
 
-From services menu select `create-github-actions-secret`. 
+From services menu select `create-github-actions-secret-pat`. 
 
 This script stores your PAT in your project's Repository secrets.
 
@@ -789,7 +789,11 @@ In the sidebar on the left, open `Secrets and variables`, and select `Actions`.
 
 Inside the GitHub Actions secrets and variables section, select `New repository secret`.
 
-Add secrets with your 
+Add secrets as `Name` `Value` pairs for:
+
+  - HOST
+  - IP
+  - USER
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

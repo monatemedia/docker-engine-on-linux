@@ -24,7 +24,7 @@ display_banner() {
 
 
 # Parse Scripts and Descriptions Dynamically
-MODULES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/service-modules" && pwd)"
+MODULES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/services-modules" && pwd)"
 
 load_menu() {
     MENU_ITEMS=()
