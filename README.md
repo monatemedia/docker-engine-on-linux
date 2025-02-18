@@ -671,11 +671,13 @@ Copy and keep your token in a safe place. Do not share your token with anyone or
 
 To use the `gh` CLI, you need to authenticate the user on your local machine.
 
+Open a GitBash terminal in your projects folder and log into GitHub CLI.
+
 ```bash
 gh auth login
 ```
 
-Follow the interactive prompts to log in using your GitHub account.
+Follow the interactive prompts to log in using your GitHub account, using your `PAT` when asked for your `authentication token`.
 
 ```MarkDown
 What account do you want to log into? GitHub.com
@@ -746,7 +748,7 @@ From services menu select `initialize-git-repository`.
 
 ## Store PAT as a GitHub Actions Secret
 
-We want to store our GitHub Personal Access Token (PAT) in the GitHub Action Secrets so that GitHub Actions is able to log into our GitHub Registry and pull our image from there.
+We want to store our GitHub Personal Access Token (PAT) in the GitHub Actions Secrets so that GitHub is able to log into our GitHub Registry and save our image into the registry.
 
 To store your PAT as a GitHub secret, use `create-github-actions-secret-pat` command in Denlin's Services Menu.
 
@@ -762,6 +764,23 @@ This script stores your PAT in your project's Repository secrets.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## Store Docker Image to GitHub Container Registry
+
+To create and store your Docker image to the GitHub Container Registry, use `store-docker-image` command in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin services
+```
+
+From services menu select `store-docker-image`.
+
+
+> [!IMPORTANT]
+> Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
 ## Create Additional GitHub Secrets
@@ -780,23 +799,6 @@ Add secrets as `Name` `Value` pairs for:
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-## Create and Store Docker Image to GitHub Container Registry
-
-To create and store your Docker image to the GitHub Container Registry, use `store-docker-image` command in Denlin's Services Menu.
-
-Call the Services Menu
-
-```sh
-denlin services
-```
-
-From services menu select `store-docker-image`.
-
-
-> [!IMPORTANT]
-> Docker Desktop should be running on your local machine to store your Docker image to the GitHub registry. The process cannot succeed without it.
 
 
 ## Create A Docker Compose File
