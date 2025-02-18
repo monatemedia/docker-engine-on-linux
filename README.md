@@ -663,7 +663,7 @@ http://localhost:8080
 You may also access your container through Docker Desktop.
 
 
-> [!WARNING]
+> [!CAUTION]
 > 
 > ### Unsuccessfull Docker Builds
 >
@@ -817,7 +817,7 @@ denlin services
 
 From services menu select `initialize-git-repository`.
 
-> [!CAUTION]
+> [!WARNING]
 >
 > ### Ensure Project is On `Main` Branch
 > 
