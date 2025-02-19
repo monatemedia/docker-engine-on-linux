@@ -902,7 +902,7 @@ So every time we push our code changes ot the main branch of our repository, we 
 
 We have to create an SSH key on our server, and give that key to GitHub as an input variable. 
 
-On the server, use the keygen unility to generate a new key.
+On the server, use the keygen utility to generate a new key.
 
 ```sh
 ssh-keygen -t rsa -b 4096
@@ -926,6 +926,11 @@ In addition, we will also add the public key to the authorized keys of our serve
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ```
 
+Now reboot the server to update the keys.
+
+```sh
+sudo reboot
+```
 
 ### 2. Create GitHub Repository Secrets
 
