@@ -115,7 +115,7 @@ if [[ -f "$0" ]]; then
 else
     echo "Warning: Unable to remove '$0' (file not found). You may need to delete it manually."
 fi
-ssh "${vps_user}@${vps_ip}" /tmp/rename-git-branch.sh
+ssh "${vps_user}@${vps_ip}" 'chmod +x /tmp/rename-git-branch.sh && /tmp/rename-git-branch.sh && rm -f /tmp/rename-git-branch.sh'
 echo "Rename complete. You can now close this terminal."
 EOF
 
