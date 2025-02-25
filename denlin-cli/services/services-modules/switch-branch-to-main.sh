@@ -79,19 +79,36 @@ git branch --unset-upstream
 git branch -u origin/main
 git remote set-head origin -a
 
-# Step 6: Push the 'main' branch and avoid deleting 'master' if it's the default branch
-echo "Pushing 'main' branch and avoiding deletion of 'master' if it's the default branch..."
+# Step 6: Push the 'main' branch and ensure that we set 'main' as the default branch
+echo "Pushing 'main' branch and changing default to 'main' on GitHub..."
+
+# First, push the main branch
 git push origin main
 
-# Check if 'master' is the default branch on remote
-if [[ "$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')" != "master" ]]; then
-    echo "Deleting remote 'master' branch..."
-    git push origin --delete master
+# Now, check if 'master' is the default branch and change it if necessary
+default_branch=$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')
+
+if [[ "$default_branch" == "master" ]]; then
+    echo "'master' is the default branch. Changing default to 'main' on GitHub..."
+
+    # Use GitHub API to update default branch (requires a GitHub Personal Access Token with repo scope)
+    github_token="YOUR_GITHUB_TOKEN"  # Replace with your GitHub token
+    repo_name="monatemedia/laragigs"  # Replace with your repository name
+
+    curl -X PATCH -H "Authorization: token $github_token" \
+         -d '{"default_branch": "main"}' \
+         "https://api.github.com/repos/$repo_name"
+
+    echo "Default branch changed to 'main' on GitHub."
 else
-    echo "'master' is still the default branch on the remote. Skipping deletion."
+    echo "'$default_branch' is already the default branch. Skipping default change."
 fi
 
-# Step 7: Cleanup
+# Step 7: Delete remote 'master' branch
+echo "Deleting remote 'master' branch..."
+git push origin --delete master || echo "Failed to delete remote 'master' branch. You may need to manually delete it after changing the default branch."
+
+# Step 8: Cleaning up
 echo "Cleaning up script..."
 rm -- "\$0"
 echo "Rename complete. You can now close this terminal."
