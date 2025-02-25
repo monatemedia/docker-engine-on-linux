@@ -1,79 +1,80 @@
 #!/bin/bash
 
-# Main script: Configure VPS
-# Description: Rename the local master branch to main and push it to GitHub
+# Configuration file
+CONF_FILE="/etc/denlin-cli.conf"
 
-# Define variables
-TEMP_SCRIPT="/tmp/rename-git-branch.sh"
-
-# Step 1: Create the temporary script
-echo "Creating temporary script at $TEMP_SCRIPT..."
-cat > "$TEMP_SCRIPT" <<'EOF'
-#!/bin/bash
-
-# Ensure we are in a Git repository
-if [[ ! -d .git ]]; then
-    echo "Error: This is not a Git repository. Please run the script inside a Git project."
+# Check if config file exists
+if [[ ! -f "$CONF_FILE" ]]; then
+    echo "Error: Configuration file $CONF_FILE not found!"
     exit 1
 fi
 
-PROJECT_DIR=$(pwd)
+# Read variables from config file
+source "$CONF_FILE"
 
-# Step 1: Check for or create .gitignore and .dockerignore
-echo "Checking if .gitignore and .dockerignore exist..."
-
-if [[ ! -f "$PROJECT_DIR/.gitignore" ]]; then
-    echo ".gitignore not found. Creating it now..."
-    touch "$PROJECT_DIR/.gitignore"
+# Ensure necessary variables are set
+if [[ -z "$vps_ip" || -z "$github_username" ]]; then
+    echo "Error: Missing 'vps_ip' or 'github_username' in $CONF_FILE!"
+    exit 1
 fi
 
-if [[ ! -f "$PROJECT_DIR/.dockerignore" ]]; then
+# Define temporary script path
+TEMP_SCRIPT="/tmp/rename-git-branch.sh"
+
+# Create the temporary script
+echo "Creating temporary script at $TEMP_SCRIPT..."
+cat > "$TEMP_SCRIPT" <<EOF
+#!/bin/bash
+
+# Set project directory
+PROJECT_DIR="\$(pwd)"
+
+# Step 1: Check or create .gitignore and .dockerignore
+echo "Checking if .gitignore and .dockerignore exist..."
+if [[ ! -f "\$PROJECT_DIR/.gitignore" ]]; then
+    echo ".gitignore not found. Creating it now..."
+    touch "\$PROJECT_DIR/.gitignore"
+fi
+
+if [[ ! -f "\$PROJECT_DIR/.dockerignore" ]]; then
     echo ".dockerignore not found. Creating it now..."
-    touch "$PROJECT_DIR/.dockerignore"
+    touch "\$PROJECT_DIR/.dockerignore"
 fi
 
 # Step 2: Add script to ignore lists
 echo "Adding script to .gitignore and .dockerignore..."
-echo "rename-git-branch.sh" >> "$PROJECT_DIR/.gitignore"
-echo "rename-git-branch.sh" >> "$PROJECT_DIR/.dockerignore"
+echo "rename-git-branch.sh" >> "\$PROJECT_DIR/.gitignore"
+echo "rename-git-branch.sh" >> "\$PROJECT_DIR/.dockerignore"
 
-# Step 3: Rename master to main locally
-echo "Renaming local 'master' branch to 'main'..."
+# Step 3: Rename git branch locally
+echo "Renaming 'master' branch to 'main' locally..."
 git branch -m master main
 
-# Step 4: Push the renamed branch to GitHub
-echo "Pushing 'main' branch to GitHub..."
-git push -u origin main
-
-# Step 5: Update remote tracking branches
-echo "Updating remote tracking branches..."
+# Step 4: Update remote repository
+echo "Updating remote repository..."
+git fetch origin
+git branch --unset-upstream
+git branch -u origin/main
 git remote set-head origin -a
 
-# Step 6: Set default branch to main on GitHub (if GitHub CLI is installed)
-if command -v gh &> /dev/null; then
-    echo "Setting 'main' as the default branch on GitHub..."
-    gh repo edit --default-branch main
-else
-    echo "GitHub CLI not found. Please set 'main' as the default branch manually on GitHub."
-fi
+# Step 5: Push new branch and delete 'master'
+echo "Pushing 'main' branch and deleting 'master'..."
+git push origin main
+git push origin --delete master
 
-# Step 7: Delete the script
-echo "Cleaning up temporary script..."
-rm -- "$0"
-
-echo "Branch renaming complete. You may now close this terminal."
+# Step 6: Cleanup
+echo "Cleaning up script..."
+rm -- "\$0"
+echo "Rename complete. You can now close this terminal."
 EOF
 
-# Step 2: Inform the user how to proceed
+# Provide user with download instructions
+echo "Temporary script created."
+echo "Download and run it from your local machine:"
 echo ""
-echo "Temporary script created at: $TEMP_SCRIPT"
-echo "To proceed, download the script to your local computer and run it from your project root:"
+echo "  scp ${vps_user}@${vps_ip}:/tmp/rename-git-branch.sh ./rename-git-branch.sh"
 echo ""
-echo "  scp user@your-server:$TEMP_SCRIPT ./rename-git-branch.sh"
+echo "Then run  ./rename-git-branch.sh"
 echo ""
-echo "Then run:"
-echo ""
-echo "  chmod +x rename-git-branch.sh && ./rename-git-branch.sh"
-echo ""
-echo "Once the script finishes, it will delete itself."
-echo ""
+echo "Once completed, the script will delete itself."
+
