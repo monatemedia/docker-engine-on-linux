@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# Main script: Configure VPS
+# Description: Renames the 'master' branch to 'main' in your git repository
+
 # Configuration file
 CONF_FILE="/etc/denlin-cli.conf"
+
+# Define temporary script path
+TEMP_SCRIPT="/tmp/rename-git-branch.sh"
 
 # Check if config file exists
 if [[ ! -f "$CONF_FILE" ]]; then
@@ -13,13 +19,10 @@ fi
 source "$CONF_FILE"
 
 # Ensure necessary variables are set
-if [[ -z "$vps_ip" || -z "$github_username" ]]; then
-    echo "Error: Missing 'vps_ip' or 'github_username' in $CONF_FILE!"
+if [[ -z "$vps_ip" ]]; then
+    echo "Error: Missing 'vps_ip' in $CONF_FILE!"
     exit 1
 fi
-
-# Define temporary script path
-TEMP_SCRIPT="/tmp/rename-git-branch.sh"
 
 # Create the temporary script
 echo "Creating temporary script at $TEMP_SCRIPT..."
@@ -72,9 +75,8 @@ EOF
 echo "Temporary script created."
 echo "Download and run it from your local machine:"
 echo ""
-echo "  scp ${vps_user}@${vps_ip}:/tmp/rename-git-branch.sh ./rename-git-branch.sh"
+echo "  scp \$USER@${vps_ip}:/tmp/rename-git-branch.sh ./rename-git-branch.sh"
 echo ""
-echo "Then run  ./rename-git-branch.sh"
+echo "Then run command  ./rename-git-branch.sh"
 echo ""
 echo "Once completed, the script will delete itself."
-
