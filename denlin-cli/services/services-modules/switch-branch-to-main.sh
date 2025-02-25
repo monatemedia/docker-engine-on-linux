@@ -110,7 +110,8 @@ git push origin --delete master || echo "Failed to delete remote 'master' branch
 
 # Step 8: Cleaning up
 echo "Cleaning up script..."
-rm -- "\$0"
+rm -- "$0"
+ssh "${vps_user}@${vps_ip}" "rm /rename-git-branch.sh"
 echo "Rename complete. You can now close this terminal."
 EOF
 
