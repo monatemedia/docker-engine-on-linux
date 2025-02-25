@@ -3,6 +3,9 @@
 # Main script: Configure VPS
 # Description: Renames the 'master' branch to 'main' in your git repository
 
+# Get the username of the logged-in user on the VPS
+vps_user=$(whoami)
+
 # Configuration file
 CONF_FILE="/etc/denlin-cli.conf"
 
@@ -75,7 +78,7 @@ EOF
 echo "Temporary script created."
 echo "Download and run it from your local machine:"
 echo ""
-echo "  scp \$USER@${vps_ip}:/tmp/rename-git-branch.sh ./rename-git-branch.sh"
+echo "  scp ${vps_user}@${vps_ip}:/tmp/rename-git-branch.sh ./rename-git-branch.sh"
 echo ""
 echo "Then run command  ./rename-git-branch.sh"
 echo ""
