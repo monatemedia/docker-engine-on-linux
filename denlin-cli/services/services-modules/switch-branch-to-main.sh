@@ -57,8 +57,16 @@ echo "Renaming 'master' branch to 'main' locally..."
 git branch -m master main
 
 # Step 4: Update remote repository
-echo "Updating remote repository..."
+echo "Fetching updates from remote repository..."
 git fetch origin
+
+# Check if the remote 'main' branch exists, and create it if it doesn't
+if ! git show-ref --verify --quiet refs/remotes/origin/main; then
+    echo "Remote 'main' branch does not exist. Creating it now..."
+    git push origin main
+fi
+
+# Set the upstream for the local 'main' branch
 git branch --unset-upstream
 git branch -u origin/main
 git remote set-head origin -a
