@@ -56,7 +56,15 @@ echo "rename-git-branch.sh" >> "\$PROJECT_DIR/.dockerignore"
 echo "Renaming 'master' branch to 'main' locally..."
 git branch -m master main
 
-# Step 4: Update remote repository
+# Step 4: Check if the current branch is 'main'
+current_branch=\$(git symbolic-ref --short HEAD)
+
+if [[ "\$current_branch" != "main" ]]; then
+    echo "Error: The current branch is not 'main', it's '\$current_branch'. Please switch to 'main' first."
+    exit 1
+fi
+
+# Step 5: Fetch updates from the remote repository
 echo "Fetching updates from remote repository..."
 git fetch origin
 
@@ -71,12 +79,19 @@ git branch --unset-upstream
 git branch -u origin/main
 git remote set-head origin -a
 
-# Step 5: Push new branch and delete 'master'
-echo "Pushing 'main' branch and deleting 'master'..."
+# Step 6: Push the 'main' branch and avoid deleting 'master' if it's the default branch
+echo "Pushing 'main' branch and avoiding deletion of 'master' if it's the default branch..."
 git push origin main
-git push origin --delete master
 
-# Step 6: Cleanup
+# Check if 'master' is the default branch on remote
+if [[ "$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')" != "master" ]]; then
+    echo "Deleting remote 'master' branch..."
+    git push origin --delete master
+else
+    echo "'master' is still the default branch on the remote. Skipping deletion."
+fi
+
+# Step 7: Cleanup
 echo "Cleaning up script..."
 rm -- "\$0"
 echo "Rename complete. You can now close this terminal."
