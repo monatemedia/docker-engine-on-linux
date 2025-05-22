@@ -61,7 +61,16 @@ else
 fi
 echo
 
-# Step 6: Create or Update the Global Symbolic Link
+# Step 6: Make All Module Scripts Executable
+echo "Making all module scripts executable..."
+find "$INSTALL_DIR/modules" -type f -name "*.sh" -exec sudo chmod +x {} \; || {
+    echo "Error: Failed to make module scripts executable."
+    exit 1
+}
+echo "Module scripts are now executable."
+echo
+
+# Step 7: Create or Update the Global Symbolic Link
 echo "Updating the global 'denlin' command..."
 sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
     echo "Error: Failed to update the symbolic link."
@@ -70,7 +79,7 @@ sudo ln -sf "$INSTALL_DIR/denlin.sh" "$SYMLINK_PATH" || {
 echo "'denlin' command successfully updated."
 echo
 
-# Step 7: Test the Updated Installation
+# Step 8: Test the Updated Installation
 echo "Testing the updated installation..."
 if command -v denlin &>/dev/null; then
     echo "'denlin' command is available globally."
@@ -80,7 +89,7 @@ else
 fi
 echo
 
-# Step 8: Cleanup Temporary Files
+# Step 9: Cleanup Temporary Files
 echo "Cleaning up temporary files..."
 rm -rf "$TEMP_DIR" || {
     echo "Warning: Failed to remove temporary files. Please delete $TEMP_DIR manually."
@@ -88,8 +97,11 @@ rm -rf "$TEMP_DIR" || {
 echo "Temporary files removed."
 echo
 
-# Step 9: Completion
-echo "=== Update Complete ==="
-echo "Denlin has been successfully updated to the latest version."
-echo "You can now use 'denlin' to run the updated tool."
+# Step 10: Completion
+echo "=== Installation Complete ==="
+echo
+echo "The Denlin CLI tool has been successfully updated."
+echo "You can run 'denlin' command to use the tool."
+echo
+echo "🚀 Happy scripting!"
 echo
