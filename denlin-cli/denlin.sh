@@ -25,19 +25,15 @@ load_menu() {
     MENU_DESCRIPTIONS=()
     UNASSIGNED_SCRIPTS=()
 
-    # Check if the modules directory exists
-    find "$MODULES_DIR" -type f -name "*.sh" | while read -r script; do
+    while IFS= read -r script; do
         if [ -f "$script" ]; then
-            # Extract menu and description
             menu=$(sed -n 's/^# Menu: \(.*\)/\1/p' "$script" | tr -d '\r')
             description=$(sed -n 's/^# Description: \(.*\)/\1/p' "$script" | tr -d '\r')
 
-            # Default to "Unassigned Scripts" if no menu is defined
             if [ -z "$menu" ]; then
                 menu="Unassigned Scripts"
             fi
 
-            # Add to menu items or unassigned scripts
             basename=$(basename "$script" .sh)
             if [ "$menu" == "Unassigned Scripts" ]; then
                 UNASSIGNED_SCRIPTS+=("$basename:$description")
@@ -45,7 +41,7 @@ load_menu() {
                 MENU_ITEMS+=("$menu:$basename:$description")
             fi
         fi
-    done
+    done < <(find "$MODULES_DIR" -type f -name "*.sh")
 }
 
 run_script() {
