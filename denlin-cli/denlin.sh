@@ -13,7 +13,7 @@ display_banner() {
     echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_ \\\"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\"
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/"
     echo -e "                                                                 "
-    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version India     "
+    echo -e "       Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.0    "
     echo -e "                                                                 "
 }
 
@@ -25,7 +25,8 @@ load_menu() {
     MENU_DESCRIPTIONS=()
     UNASSIGNED_SCRIPTS=()
 
-    for script in "$MODULES_DIR"/*.sh; do
+    # Check if the modules directory exists
+    find "$MODULES_DIR" -type f -name "*.sh" | while read -r script; do
         if [ -f "$script" ]; then
             # Extract menu and description
             menu=$(sed -n 's/^# Menu: \(.*\)/\1/p' "$script" | tr -d '\r')
