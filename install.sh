@@ -60,9 +60,12 @@ echo
 
 # Step 6: Cleanup
 echo "Cleaning up installation files..."
+cd ~ || exit 1  # Switch directory *before* deleting
 sudo rm -rf "$REPO_DIR" || {
     echo "Warning: Failed to remove the repository directory. Please delete it manually."
 }
+echo "Installation files cleaned up."
+echo
 
 # Final Check: Ensure the current working directory is valid
 echo "Ensuring the current working directory is valid..."
@@ -71,7 +74,9 @@ cd ~ || exit 1
 
 # Step 7: Completion
 echo "=== Installation Complete ==="
-echo "You can now run 'denlin' to start using the tool."
+echo
+echo "The Denlin CLI tool has been successfully installed."
+echo "You can run 'denlin' command to use the tool."
 echo
 echo "🚀 Happy scripting!"
 echo

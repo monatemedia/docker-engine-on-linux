@@ -19,4 +19,4 @@ echo "👉 Try running: denlin example/hello-world"
 echo "👉 Or launch the full menu with: denlin"
 echo
 echo "🚀 Happy scripting!"
-echo"
+echo
