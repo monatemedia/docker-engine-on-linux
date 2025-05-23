@@ -13,6 +13,7 @@ echo "  ✅ Describe your script using:          # Description: Show how to make
 echo "  ✅ Add your executable script logic like this echo command"
 echo
 echo -e "\nExample Module Script"
+echo
 echo "========================="
 echo -e "#!/bin/bash"
 echo -e "# modules/<yourfolder>/your-script.sh"
@@ -20,8 +21,6 @@ echo -e "# Menu: <Submenu Name>"
 echo -e "# Description: <Description of what this script does>"
 echo
 echo "example_function() {"
-echo -e "    \"This is an example function in the script.\""
-echo
 echo "    # Add your logic here"
 echo "}"
 echo
