@@ -157,7 +157,17 @@ main_menu() {
     options+=("Exit")
 
     PS3="Select a menu option: "
+    read -rp "$PS3" input
+
+    # Exit if ENTER is pressed (no input)
+    if [[ -z "$input" ]]; then
+        echo -e "\nGoodbye!\n"
+        exit 0
+    fi
+
+    # Use select for input validation
     select opt in "${options[@]}"; do
+
         if [[ -z "$REPLY" ]]; then
             echo -e "\nNo selection made. Goodbye!\n"
             exit 0
