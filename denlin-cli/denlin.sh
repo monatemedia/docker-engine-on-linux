@@ -135,8 +135,7 @@ show_unassigned_scripts() {
 }
 
 main_menu() {
-    clear
-    show_header
+    display_banner
     echo -e "${GREEN}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.3${RESET}"
     echo -e "${YELLOW}Main Menu:${RESET}"
     echo "1) WordPress"
@@ -148,27 +147,29 @@ main_menu() {
         echo -n "Select a menu option: "
         read -r choice
 
-        case $choice in
-            1)
-                show_submenu "WordPress"
-                break
-                ;;
-            2)
-                show_submenu "Hello World"
-                break
-                ;;
-            3)
-                show_submenu "Denlin"
-                break
-                ;;
-            4|"")
-                echo "Goodbye!"
-                exit 0
-                ;;
-            *)
-                echo -e "${RED}Invalid option. Try again.${RESET}"
-                ;;
-        esac
+    choice=$(echo "$choice" | xargs)  # Trim whitespace
+
+    case $choice in
+        1)
+            show_submenu "WordPress"
+            break
+            ;;
+        2)
+            show_submenu "Hello World"
+            break
+            ;;
+        3)
+            show_submenu "Denlin"
+            break
+            ;;
+        4|"")
+            echo "Goodbye!"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Try again.${RESET}"
+            ;;
+    esac
     done
 }
 
