@@ -6,11 +6,25 @@
 echo "👋 Hello from Denlin CLI!"
 echo
 echo "This is an example module script that shows you how to create a script:"
-echo "  ✅ Start the script with the shebang:   #!/bin/bash"#!/bin/bash
+echo "  ✅ Start the script with the shebang:   #!/bin/bash"
 echo "  ✅ Add a comment for the path:          # modules/hello-world/hello-world.sh"
-echo "  ✅ Create a menu section using:         # Menu: <menu>"
-echo "  ✅ Describe your script using:          # Description: <info>"
+echo "  ✅ Create a menu section using:         # Menu: Hello World"
+echo "  ✅ Describe your script using:          # Description: Show how to make your own Denlin script"
 echo "  ✅ Add your executable script logic like this echo command"
+echo
+echo -e "\nExample Module Script\n"
+echo "========================="
+echo -e "#!/bin/bash\n"
+echo -e "# modules/<yourfolder>/your-script.sh\n"
+echo -e "# Menu: <Submenu Name>"
+echo -e "# Description: <Description of what this script does>\n"
+echo "example_function() {"
+echo -e "    echo \"This is an example function in the script.\"\n"
+echo "    # Add your logic here\n"
+echo "}\n\n"
+echo -e "# Call the function"
+echo "example_function"
+echo -e "\n=========================\n"
 echo
 echo "💡 To add your own script:"
 echo "  1. Save it in: /usr/local/bin/denlin-cli/modules/<yourfolder>/your-script.sh"
