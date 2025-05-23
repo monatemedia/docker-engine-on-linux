@@ -158,23 +158,25 @@ main_menu() {
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
-        if [[ -z "$opt" ]]; then
-            echo -e "${RED}Invalid selection. Try again.${RESET}"
-            continue
-        fi
-
-        case "$opt" in
-            "Exit")
+        case $REPLY in
+            1)
+                show_submenu "WordPress"
+                break
+                ;;
+            2)
+                show_submenu "Hello World"
+                break
+                ;;
+            3)
+                show_submenu "Denlin"
+                break
+                ;;
+            4)
                 echo "Goodbye!"
                 exit 0
                 ;;
-            "Unassigned Scripts")
-                show_unassigned_scripts
-                break
-                ;;
             *)
-                show_submenu "$opt"
-                break
+                echo -e "${RED}Invalid option. Try again.${RESET}"
                 ;;
         esac
     done
