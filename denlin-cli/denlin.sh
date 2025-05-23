@@ -135,30 +135,20 @@ show_unassigned_scripts() {
 }
 
 main_menu() {
-    display_banner
-    load_menu
+    clear
+    show_header
+    echo -e "${GREEN}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.3${RESET}"
+    echo -e "${YELLOW}Main Menu:${RESET}"
+    echo "1) WordPress"
+    echo "2) Hello World"
+    echo "3) Denlin"
+    echo "4) Exit"
 
-    echo -e "${GREEN}Main Menu:${RESET}\n"
-    local options=()
-    local has_unassigned_scripts=0
+    while true; do
+        echo -n "Select a menu option: "
+        read -r choice
 
-    for item in "${MENU_ITEMS[@]}"; do
-        menu=$(echo "$item" | cut -d: -f1)
-        if [[ ! " ${options[*]} " =~ " $menu " ]]; then
-            options+=("$menu")
-        fi
-    done
-
-    if [ ${#UNASSIGNED_SCRIPTS[@]} -gt 0 ]; then
-        options+=("Unassigned Scripts")
-        has_unassigned_scripts=1
-    fi
-
-    options+=("Exit")
-
-    PS3="Select a menu option: "
-    select opt in "${options[@]}"; do
-        case $REPLY in
+        case $choice in
             1)
                 show_submenu "WordPress"
                 break
@@ -171,7 +161,7 @@ main_menu() {
                 show_submenu "Denlin"
                 break
                 ;;
-            4)
+            4|"")
                 echo "Goodbye!"
                 exit 0
                 ;;
@@ -181,7 +171,6 @@ main_menu() {
         esac
     done
 }
-
 
 # Direct Script Execution
 if [ "$1" ]; then
