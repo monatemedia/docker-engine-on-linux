@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # ==========================
-# Denlin CLI Tool - Simplified Main Menu
+# Denlin CLI Tool
 # ==========================
 
 # Colors
 RED="\e[31m"
 GREEN="\e[32m"
+YELLOW="\e[33m"
 BLUE="\e[34m"
 RESET="\e[0m"
 
@@ -25,12 +26,14 @@ display_banner() {
     echo -e "${RESET}"
 }
 
-# Set root directory for scripts
+# Set root directory
 MODULES_DIR="/usr/local/bin/denlin-cli/modules"
 
-# Load menu items (menu:script_name:description)
 load_menu() {
     MENU_ITEMS=()
+    MENU_DESCRIPTIONS=()
+    UNASSIGNED_SCRIPTS=()
+
     while IFS= read -r script; do
         if [ -f "$script" ]; then
             menu=$(sed -n 's/^# Menu: \(.*\)/\1/p' "$script" | tr -d '\r')
@@ -39,123 +42,135 @@ load_menu() {
             rel_path="${script#$MODULES_DIR/}"
             basename="${rel_path%.sh}"
 
-            # Only add scripts with a menu name
-            if [ -n "$menu" ]; then
+            if [ -z "$menu" ]; then
+                menu="Unassigned Scripts"
+            fi
+
+            if [ "$menu" == "Unassigned Scripts" ]; then
+                UNASSIGNED_SCRIPTS+=("$basename:$description")
+            else
                 MENU_ITEMS+=("$menu:$basename:$description")
             fi
         fi
     done < <(find "$MODULES_DIR" -type f -name "*.sh")
 }
 
-# Run a selected script by basename
+log_execution() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$HOME/.denlin.log"
+}
+
 run_script() {
-    local script_name="$1"
-    local script_path="$MODULES_DIR/$script_name.sh"
+    script_name="$1"
+    shift
+    script_path="$MODULES_DIR/$script_name.sh"
 
     if [ -f "$script_path" ]; then
         if [ ! -x "$script_path" ]; then
-            echo -e "${RED}Script '$script_path' is not executable. Run:\nchmod +x \"$script_path\"${RESET}"
+            echo -e "${YELLOW}\nScript '$script_path' is not executable. Try running:\nchmod +x \"$script_path\"\n${RESET}"
             exit 1
         fi
+
         echo -e "\nRunning script: $script_name\n"
-        bash "$script_path"
+        log_execution "$script_name $*"
+        bash "$script_path" "$@"
     else
-        echo -e "${RED}Script '$script_name' not found.${RESET}"
+        echo -e "${RED}\nScript '$script_name' not found in modules directory.\nExpected: $script_path\n${RESET}"
         exit 1
     fi
 }
 
-# Show main menu and prompt user
+show_submenu() {
+    local menu="$1"
+    echo -e "${BLUE}\nSubmenu: $menu${RESET}\n"
+    local options=()
+
+    for item in "${MENU_ITEMS[@]}"; do
+        IFS=':' read -r item_menu basename description <<< "$item"
+        if [ "$item_menu" == "$menu" ]; then
+            echo -e "  ${GREEN}$basename${RESET} - $description"
+            options+=("$basename")
+        fi
+    done
+
+    echo
+    PS3="Select an option (or press ENTER to go back): "
+    select opt in "${options[@]}" "Back"; do
+        if [ "$opt" == "Back" ]; then
+            main_menu
+            return
+        elif [ -n "$opt" ]; then
+            run_script "$opt"
+            return
+        fi
+    done
+}
+
+show_unassigned_scripts() {
+    echo -e "${BLUE}\nUnassigned Scripts:${RESET}\n====================\n"
+    if [ ${#UNASSIGNED_SCRIPTS[@]} -eq 0 ]; then
+        echo -e "No unassigned scripts.\n"
+        return
+    fi
+
+    echo -e "These scripts are not assigned to any menu. To assign a script:"
+    echo -e "  1. Open the script in a text editor."
+    echo -e "  2. Add a line:   # Menu: <desired_menu_name>"
+    echo -e "  3. Add a line:   # Description: <desired_description>"
+
+    echo
+    PS3="Select an unassigned script (or press ENTER to go back): "
+    select script in "${UNASSIGNED_SCRIPTS[@]}" "Back"; do
+        if [[ "$script" == "Back" ]]; then
+            main_menu
+            return
+        elif [ -n "$script" ]; then
+            script_name=$(echo "$script" | cut -d: -f1)
+            run_script "$script_name"
+            return
+        fi
+    done
+}
+
 main_menu() {
     display_banner
     load_menu
 
     echo -e "${GREEN}Main Menu:${RESET}\n"
+    local options=()
+    local has_unassigned_scripts=0
 
-    # Get unique menus in order
-    local menus=()
     for item in "${MENU_ITEMS[@]}"; do
         menu=$(echo "$item" | cut -d: -f1)
-        if [[ ! " ${menus[*]} " =~ " $menu " ]]; then
-            menus+=("$menu")
+        if [[ ! " ${options[*]} " =~ " $menu " ]]; then
+            options+=("$menu")
         fi
     done
 
-    # Add Exit option
-    menus+=("Exit")
+    if [ ${#UNASSIGNED_SCRIPTS[@]} -gt 0 ]; then
+        options+=("Unassigned Scripts")
+        has_unassigned_scripts=1
+    fi
 
-    while true; do
-        # Display menu options with numbers
-        for i in "${!menus[@]}"; do
-            echo "$((i+1))) ${menus[i]}"
-        done
+    options+=("Exit")
 
-        echo
-        read -rp "Select a menu option (or press ENTER to exit): " choice
-        choice=$(echo "$choice" | xargs)  # Trim whitespace
-
-        # Exit on empty input or Exit option
-        if [[ -z "$choice" ]] || [[ "${menus[choice-1]}" == "Exit" ]]; then
+    PS3="Select a menu option: "
+    select opt in "${options[@]}"; do
+        if [ "$opt" == "Exit" ]; then
             echo -e "\nGoodbye!\n"
             exit 0
-        fi
-
-        # Validate input number range
-        if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#menus[@]} )); then
-            selected_menu="${menus[choice-1]}"
-            if [[ "$selected_menu" == "Exit" ]]; then
-                echo -e "\nGoodbye!\n"
-                exit 0
-            fi
-
-            # If only one script per menu, run it directly
-            # Otherwise, list scripts under that menu for selection
-
-            # Find scripts under selected menu
-            local scripts=()
-            local descriptions=()
-            for item in "${MENU_ITEMS[@]}"; do
-                IFS=":" read -r menu_name script_name script_desc <<< "$item"
-                if [[ "$menu_name" == "$selected_menu" ]]; then
-                    scripts+=("$script_name")
-                    descriptions+=("$script_desc")
-                fi
-            done
-
-            if [ "${#scripts[@]}" -eq 1 ]; then
-                run_script "${scripts[0]}"
-            else
-                # Show submenu to select a script
-                echo -e "\n${GREEN}$selected_menu Options:${RESET}"
-                for i in "${!scripts[@]}"; do
-                    printf "%d) %s - %s\n" "$((i+1))" "${scripts[i]}" "${descriptions[i]}"
-                done
-                echo
-
-                read -rp "Select a script to run (or press ENTER to return): " subchoice
-                subchoice=$(echo "$subchoice" | xargs)
-
-                if [[ -z "$subchoice" ]]; then
-                    continue
-                fi
-
-                if [[ "$subchoice" =~ ^[0-9]+$ ]] && (( subchoice >= 1 && subchoice <= ${#scripts[@]} )); then
-                    run_script "${scripts[subchoice-1]}"
-                else
-                    echo -e "${RED}Invalid option. Returning to main menu.${RESET}\n"
-                    sleep 1
-                fi
-            fi
+        elif [ "$opt" == "Unassigned Scripts" ] && [ $has_unassigned_scripts -eq 1 ]; then
+            show_unassigned_scripts
+        elif [[ " ${options[*]} " =~ " $opt " ]]; then
+            show_submenu "$opt"
         else
-            echo -e "${RED}Invalid option. Try again.${RESET}\n"
-            sleep 1
+            echo -e "${RED}\nInvalid option. Try again.\n${RESET}"
         fi
     done
 }
 
-# Script entry point
+# Direct Script Execution
 if [ "$1" ]; then
-    run_script "$1"
+    run_script "$@"
 else
     main_menu
 fi
