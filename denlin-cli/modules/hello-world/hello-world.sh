@@ -28,11 +28,6 @@ echo -e "# Call the function"
 echo "example_function"
 echo -e "\n=========================\n"
 echo
-echo "💡 To add your own script:"
-echo "  1. Save it in: /usr/local/bin/denlin-cli/modules/<yourfolder>/your-script.sh"
-echo "  2. Make it executable: chmod +x your-script.sh"
-echo "  3. Use the 'Menu' and 'Description' headers to organize it in the CLI"
-echo
 echo "👉 Try running: denlin <yourfolder>/your-script"
 echo "👉 Or launch the full menu with: denlin"
 echo
