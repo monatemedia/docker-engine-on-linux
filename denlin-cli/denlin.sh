@@ -157,32 +157,27 @@ main_menu() {
     options+=("Exit")
 
     PS3="Select a menu option: "
-    read -rp "$PS3" input
-
-    # Exit if ENTER is pressed (no input)
-    if [[ -z "$input" ]]; then
-        echo -e "\nGoodbye!\n"
-        exit 0
-    fi
-
-    # Use select for input validation
     select opt in "${options[@]}"; do
-
-        if [[ -z "$REPLY" ]]; then
-            echo -e "\nNo selection made. Goodbye!\n"
-            exit 0
-        elif [ "$opt" == "Exit" ]; then
-            echo -e "\nGoodbye!\n"
-            exit 0
-        elif [ "$opt" == "Unassigned Scripts" ] && [ $has_unassigned_scripts -eq 1 ]; then
-            show_unassigned_scripts
-        elif [[ " ${options[*]} " =~ " $opt " ]]; then
-            show_submenu "$opt"
-        else
-            echo -e "${RED}\nInvalid option. Try again.\n${RESET}"
-        fi
+        case "$opt" in
+            "Exit")
+                echo "Goodbye!"
+                exit 0
+                ;;
+            "Unassigned Scripts")
+                show_unassigned_scripts
+                break
+                ;;
+            "")
+                echo "Invalid selection. Try again."
+                ;;
+            *)
+                show_submenu "$opt"
+                break
+                ;;
+        esac
     done
 }
+
 
 # Direct Script Execution
 if [ "$1" ]; then
