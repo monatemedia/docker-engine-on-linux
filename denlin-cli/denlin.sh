@@ -1,4 +1,7 @@
 #!/bin/bash
+# denlin.sh
+# Menu: <Main Menu>
+# Description: Denlin CLI Tool Main Script
 
 # ==========================
 # Denlin CLI Tool
@@ -21,7 +24,7 @@ display_banner() {
     echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_\\ \"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\ "
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/ "
     echo -e "                                                                     "
-    echo -e "     ${RESET}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.3${BLUE}"
+    echo -e "    ${YELLOW}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.3${BLUE}"
     echo -e "                                                                     "
     echo -e "${RESET}"
 }
@@ -155,7 +158,10 @@ main_menu() {
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
-        if [ "$opt" == "Exit" ]; then
+        if [[ -z "$REPLY" ]]; then
+            echo -e "\nNo selection made. Goodbye!\n"
+            exit 0
+        elif [ "$opt" == "Exit" ]; then
             echo -e "\nGoodbye!\n"
             exit 0
         elif [ "$opt" == "Unassigned Scripts" ] && [ $has_unassigned_scripts -eq 1 ]; then
