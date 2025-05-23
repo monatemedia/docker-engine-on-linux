@@ -158,6 +158,11 @@ main_menu() {
 
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
+        if [[ -z "$opt" ]]; then
+            echo -e "${RED}Invalid selection. Try again.${RESET}"
+            continue
+        fi
+
         case "$opt" in
             "Exit")
                 echo "Goodbye!"
@@ -166,9 +171,6 @@ main_menu() {
             "Unassigned Scripts")
                 show_unassigned_scripts
                 break
-                ;;
-            "")
-                echo "Invalid selection. Try again."
                 ;;
             *)
                 show_submenu "$opt"
