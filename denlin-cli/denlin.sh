@@ -18,10 +18,10 @@ display_banner() {
     echo -e "    _____     ______     __   __     __         __     __   __      "
     echo -e "   /\\  __-.  /\\  ___\\   /\\ \"-.\\ \\   /\\ \\       /\\ \\   /\\ \"-.\\ \\   "
     echo -e "   \\ \\ \\/\\ \\ \\ \\  __\\   \\ \\ \\-.  \\  \\ \\ \\____  \\ \\ \\  \\ \\ \\-.  \\  "
-    echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_\\ \"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\\"\\_\\ "
+    echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_\\ \"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\ "
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/ "
     echo -e "                                                                     "
-    echo -e "  ${RESET}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.2${BLUE}"
+    echo -e "  ${RESET}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.3${BLUE}"
     echo -e "                                                                     "
     echo -e "${RESET}"
 }
