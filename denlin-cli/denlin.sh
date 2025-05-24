@@ -156,7 +156,7 @@ main_menu() {
     PS3="Select a menu option: "
     select opt in "${options[@]}"; do
         # If input is empty (user just presses Enter)
-        if [[ -z "$opt" ]]; then
+        if [[ -z "$REPLY" ]]; then
             echo -e "\nNo input detected. Exiting...\n"
             exit 0
         elif [ "$opt" == "Exit" ]; then
