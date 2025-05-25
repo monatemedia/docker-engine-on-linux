@@ -6,21 +6,22 @@
 set -e
 set -o pipefail
 
-# Load environment variables
+# Load environment variables from .env in current directory
 source "$(pwd)/.env"
 
-# Resolve container name
+# Resolve container name (assuming docker-compose service name + suffix)
 CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
 docker exec -i "$CONTAINER_NAME" bash <<'EOF'
-  set -ex  # <--- Enable command trace and exit-on-error
+  set -ex  # Enable command trace and exit-on-error inside container
 
-  # Define a wrapper for wp-cli to include --allow-root
+  # Define a wrapper for wp-cli to include --allow-root and echo commands
   wp() {
+    echo "+ wp $* --allow-root"
     command wp "$@" --allow-root
   }
 
-  # Load environment variables (inherited via Docker)
+  # Export environment variables inherited via Docker exec
   export WP_SITE_URL="$WP_SITE_URL"
   export WP_SITE_TITLE="$WP_SITE_TITLE"
   export WP_ADMIN_USER="$WP_ADMIN_USER"
@@ -47,12 +48,20 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   # Update core
   wp core update
 
-  # Themes
-  wp theme list --field=name | grep -v twentytwentyfive | xargs -r wp theme delete
+  # Delete all themes except twentytwentyfive, then install and activate twentytwentyfive
+  for theme in $(wp theme list --field=name); do
+    if [[ "$theme" != "twentytwentyfive" ]]; then
+      wp theme delete "$theme"
+    fi
+  done
   wp theme install twentytwentyfive --activate
 
-  # Plugins
-  wp plugin list --field=name | xargs -r wp plugin delete
+  # Delete all plugins
+  for plugin in $(wp plugin list --field=name); do
+    wp plugin delete "$plugin"
+  done
+
+  # Install some plugins
   wp plugin install wpvivid-backuprestore --activate
   wp plugin install litespeed-cache
   wp plugin install wordpress-seo
@@ -62,7 +71,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     wp user create "$WP_ADMIN_USER" "$WP_ADMIN_EMAIL" --user_pass="$WP_ADMIN_PASS" --role=administrator
   fi
 
-  # Force HTTPS in site/home
+  # Force HTTPS in siteurl and home options
   wp option update siteurl "$(wp option get siteurl | sed 's|http:|https:|')"
   wp option update home "$(wp option get home | sed 's|http:|https:|')"
 
@@ -81,23 +90,29 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp option update blog_public 0
   wp language core install "$WP_LANGUAGE" --activate
 
-  # Auto update config
+  # Auto update config in wp-config.php
   wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE" --raw
   wp config set AUTOMATIC_UPDATER_DISABLED false --raw
   wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS" --raw
   wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES" --raw
 
-  # Cleanup content
-  wp post list --post_type=page --format=ids | xargs -r wp post delete --force
-  wp post list --post_type=post --format=ids | xargs -r wp post delete --force
-  wp comment list --format=ids | xargs -r wp comment delete --force
+  # Cleanup content: delete pages, posts, comments
+  for page_id in $(wp post list --post_type=page --format=ids); do
+    wp post delete "$page_id" --force
+  done
+  for post_id in $(wp post list --post_type=post --format=ids); do
+    wp post delete "$post_id" --force
+  done
+  for comment_id in $(wp comment list --format=ids); do
+    wp comment delete "$comment_id" --force
+  done
 
   # Create and set front page
   HOME_ID=$(wp post create --post_type=page --post_title="Home" --post_status=publish --porcelain)
   wp option update show_on_front page
   wp option update page_on_front "$HOME_ID"
 
-  # Permalink structure
+  # Permalink structure setup and flush
   wp rewrite structure '/%postname%/' --hard
   wp rewrite flush --hard
 
