@@ -20,6 +20,12 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     command wp "$@" --allow-root
   }
 
+  # Wait for MySQL to be ready before proceeding
+  echo "⏳ Waiting for MySQL to be ready..."
+  until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do
+    sleep 2
+  done
+
   export WP_SITE_URL="$WP_SITE_URL"
   export WP_SITE_TITLE="$WP_SITE_TITLE"
   export WP_ADMIN_USER="$WP_ADMIN_USER"
@@ -113,7 +119,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     wp comment delete $COMMENT_IDS --force
   fi
 
-  # Create front page
+  # Front page setup
   HOME_ID=$(wp post create --post_type=page --post_title="Home" --post_status=publish --porcelain)
   wp option update show_on_front page
   wp option update page_on_front "$HOME_ID"
