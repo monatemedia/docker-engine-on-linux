@@ -43,9 +43,8 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
       --admin_email="$WP_ADMIN_EMAIL"
  
     # Force HTTPS immediately after install
-    NEW_URL=$(wp option get siteurl | sed 's|^http:|https:|')
-    wp option update siteurl "$NEW_URL"
-    wp option update home "$NEW_URL"
+    wp option update siteurl "$(wp option get siteurl | sed 's|^http:|https:|')"
+    wp option update home "$(wp option get home | sed 's|^http:|https:|')"
   fi
 
   wp core update
