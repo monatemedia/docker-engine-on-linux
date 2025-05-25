@@ -92,9 +92,12 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Auto update config
   wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
-  wp config set AUTOMATIC_UPDATER_DISABLED false
-  wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
-  wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
+
+  # Enable auto-updates for all plugins
+  wp plugin list --field=name | xargs -n1 wp plugin auto-updates enable
+
+  # Enable auto-updates for all themes
+  wp theme list --field=name | xargs -n1 wp theme auto-updates enable
 
   # Cleanup content
   wp post delete $(wp post list --post_type=page --format=ids) --force || true
