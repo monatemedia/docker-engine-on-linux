@@ -20,12 +20,6 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     command wp "$@" --allow-root
   }
 
-  # Wait for MySQL to be ready before proceeding
-  echo "⏳ Waiting for MySQL to be ready..."
-  until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do
-    sleep 2
-  done
-
   export WP_SITE_URL="$WP_SITE_URL"
   export WP_SITE_TITLE="$WP_SITE_TITLE"
   export WP_ADMIN_USER="$WP_ADMIN_USER"
