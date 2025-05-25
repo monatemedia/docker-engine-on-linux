@@ -46,22 +46,22 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp core update
 
   echo "🧹 Deleting all themes..."
-  wp theme list --field=name --allow-root | while read -r theme; do
-    wp theme delete "$theme" --allow-root 2>/dev/null || true
+  wp theme list --field=name | while read -r theme; do
+    wp theme delete "$theme" 2>/dev/null || true
   done
 
   echo "🎨 Installing and activating 'twentytwentyfive' theme..."
-  wp theme install twentytwentyfive --activate --allow-root
+  wp theme install twentytwentyfive --activate
 
   echo "🧹 Deleting all plugins..."
-  wp plugin list --field=name --allow-root | while read -r plugin; do
-    wp plugin delete "$plugin" --allow-root 2>/dev/null || true
+  wp plugin list --field=name | while read -r plugin; do
+    wp plugin delete "$plugin" 2>/dev/null || true
   done
 
   echo "📦 Installing and activating required plugins..."
-  wp plugin install wpvivid-backuprestore --activate --allow-root
-  wp plugin install litespeed-cache --activate --allow-root
-  wp plugin install wordpress-seo --activate --allow-root
+  wp plugin install wpvivid-backuprestore --activate
+  wp plugin install litespeed-cache --activate
+  wp plugin install wordpress-seo --activate
 
   # Ensure admin user exists
   if ! wp user get "$WP_ADMIN_USER" >/dev/null 2>&1; then
