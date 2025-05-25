@@ -42,12 +42,12 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
       --admin_password="$WP_ADMIN_PASS" \
       --admin_email="$WP_ADMIN_EMAIL"
  
-    # Force HTTPS immediately after install
-    CURRENT_URL="$(wp option get siteurl | sed 's|^http:|https:|')"
-    wp option update siteurl "$CURRENT_URL"
+    # Force HTTPS immediately after install (avoid echo pollution)
+    CURRENT_URL="$(command wp option get siteurl --allow-root | sed 's|^http:|https:|')"
+    command wp option update siteurl "$CURRENT_URL" --allow-root
 
-    HOME_URL="$(wp option get home | sed 's|^http:|https:|')"
-    wp option update home "$HOME_URL"
+    HOME_URL="$(command wp option get home --allow-root | sed 's|^http:|https:|')"
+    command wp option update home "$HOME_URL" --allow-root
   fi
 
   wp core update
@@ -88,16 +88,12 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp option update comment_moderation 1
   wp option update show_avatars 0
   wp option update blog_public 0
-  wp language core install "$WP_LANGUAGE" --activate
 
   # Auto update config
   wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
-
-  # Enable auto-updates for all plugins
-  wp plugin list --field=name | xargs -n1 wp plugin auto-updates enable
-
-  # Enable auto-updates for all themes
-  wp theme list --field=name | xargs -n1 wp theme auto-updates enable
+  wp config set AUTOMATIC_UPDATER_DISABLED false
+  wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
+  wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
 
   # Cleanup content
   wp post delete $(wp post list --post_type=page --format=ids) --force || true
