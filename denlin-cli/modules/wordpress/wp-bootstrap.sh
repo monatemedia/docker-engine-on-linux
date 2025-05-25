@@ -13,7 +13,7 @@ source "$(pwd)/.env"
 CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
 docker exec -i "$CONTAINER_NAME" bash <<'EOF'
-  set -e
+  set -ex  # <--- Enable command trace and exit-on-error
 
   # Define a wrapper for wp-cli to include --allow-root
   wp() {
