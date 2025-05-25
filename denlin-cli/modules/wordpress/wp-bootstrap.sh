@@ -88,10 +88,10 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp language core install "$WP_LANGUAGE" --activate
 
   # Auto update config
-  wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE" --raw
-  wp config set AUTOMATIC_UPDATER_DISABLED false --raw
-  wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS" --raw
-  wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES" --raw
+  wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
+  wp config set AUTOMATIC_UPDATER_DISABLED false
+  wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
+  wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
 
   # Cleanup content
   wp post delete $(wp post list --post_type=page --format=ids) --force || true
