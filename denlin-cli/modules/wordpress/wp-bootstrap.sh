@@ -12,12 +12,27 @@ source "$(pwd)/.env"
 # Resolve container name
 CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
-docker exec -it "$CONTAINER_NAME" bash -c '
+docker exec -i "$CONTAINER_NAME" bash <<'EOF'
+
   set -e
 
   wp() {
     command wp "$@" --allow-root
   }
+
+  # Load environment variables inside container
+  export WP_SITE_URL="$WP_SITE_URL"
+  export WP_SITE_TITLE="$WP_SITE_TITLE"
+  export WP_ADMIN_USER="$WP_ADMIN_USER"
+  export WP_ADMIN_PASS="$WP_ADMIN_PASS"
+  export WP_ADMIN_EMAIL="$WP_ADMIN_EMAIL"
+  export WP_SITE_TAGLINE="$WP_SITE_TAGLINE"
+  export WP_TIMEZONE="$WP_TIMEZONE"
+  export WP_START_OF_WEEK="$WP_START_OF_WEEK"
+  export WP_LANGUAGE="$WP_LANGUAGE"
+  export WP_AUTO_UPDATE_CORE="$WP_AUTO_UPDATE_CORE"
+  export WP_AUTO_UPDATE_PLUGINS="$WP_AUTO_UPDATE_PLUGINS"
+  export WP_AUTO_UPDATE_THEMES="$WP_AUTO_UPDATE_THEMES"
 
   # Install WordPress core if not installed
   if ! wp core is-installed; then
@@ -50,8 +65,8 @@ docker exec -it "$CONTAINER_NAME" bash -c '
   fi
 
   # Force HTTPS
-  wp option update siteurl "$(wp option get siteurl | sed '\''s|http:|https:|'\'' )"
-  wp option update home "$(wp option get home | sed '\''s|http:|https:|'\'' )"
+  wp option update siteurl "$(wp option get siteurl | sed 's|http:|https:|')"
+  wp option update home "$(wp option get home | sed 's|http:|https:|')"
 
   # General Settings
   wp option update blogname "$WP_SITE_TITLE"
@@ -85,7 +100,9 @@ docker exec -it "$CONTAINER_NAME" bash -c '
   wp option update page_on_front "$HOME_ID"
 
   # Permalink structure
-  wp rewrite structure "/%postname%/" --hard
+  wp rewrite structure '/%postname%/' --hard
   wp rewrite flush --hard
 
-  echo "✅ WordPress setup completed successfully."
+  echo '✅ WordPress setup completed successfully.'
+
+EOF
