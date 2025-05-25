@@ -120,7 +120,9 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Permalink setup
   wp rewrite structure '/%postname%/' --hard
-  wp rewrite flush --hard
 
   echo '✅ WordPress bootstrap completed successfully.'
 EOF
+
+# Flush rewrite rules (separately to avoid database connection issues)
+docker exec -i "$CONTAINER_NAME" wp rewrite flush --hard --allow-root
