@@ -45,20 +45,17 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   wp core update
 
-  echo "🧹 Cleaning up old themes..."
-  KEEP_THEME="twentytwentyfive"
+  echo "🧹 Deleting all themes..."
   for theme in $(wp theme list --field=name); do
-    if [[ "$theme" != "$KEEP_THEME" ]]; then
-      wp theme delete "$theme"
-    fi
+    wp theme delete "$theme" || true
   done
 
-  echo "🎨 Installing and activating $KEEP_THEME..."
-  wp theme install "$KEEP_THEME" --activate
+  echo "🎨 Installing and activating 'twentytwentyfive' theme..."
+  wp theme install twentytwentyfive --activate
 
-  echo "🧹 Removing all plugins..."
+  echo "🧹 Deleting all plugins..."
   for plugin in $(wp plugin list --field=name); do
-    wp plugin delete "$plugin"
+    wp plugin delete "$plugin" || true
   done
 
   echo "📦 Installing and activating required plugins..."
