@@ -124,5 +124,9 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   echo '✅ WordPress bootstrap completed successfully.'
 EOF
 
-# Flush rewrite rules (separately to avoid database connection issues)
+# Enable mod_rewrite and restart Apache
+docker exec -i "$CONTAINER_NAME" a2enmod rewrite
+docker exec -i "$CONTAINER_NAME" service apache2 restart
+
+# Flush permalinks
 docker exec -i "$CONTAINER_NAME" wp rewrite flush --hard --allow-root
