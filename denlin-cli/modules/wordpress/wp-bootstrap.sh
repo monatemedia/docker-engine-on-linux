@@ -41,6 +41,11 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
       --admin_user="$WP_ADMIN_USER" \
       --admin_password="$WP_ADMIN_PASS" \
       --admin_email="$WP_ADMIN_EMAIL"
+ 
+    # Force HTTPS immediately after install
+    NEW_URL=$(wp option get siteurl | sed 's|^http:|https:|')
+    wp option update siteurl "$NEW_URL"
+    wp option update home "$NEW_URL"
   fi
 
   wp core update
@@ -67,10 +72,6 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   if ! wp user get "$WP_ADMIN_USER" >/dev/null 2>&1; then
     wp user create "$WP_ADMIN_USER" "$WP_ADMIN_EMAIL" --user_pass="$WP_ADMIN_PASS" --role=administrator
   fi
-
-  # Force HTTPS
-  wp option update siteurl "$(wp option get siteurl | sed 's|^http:|https:|')"
-  wp option update home "$(wp option get home | sed 's|^http:|https:|')"
 
   # General settings
   wp option update blogname "$WP_SITE_TITLE"
