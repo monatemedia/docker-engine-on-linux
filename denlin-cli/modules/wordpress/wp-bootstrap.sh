@@ -7,7 +7,7 @@ set -e
 set -o pipefail
 
 # Load environment variables
-source "$(dirname "$0")/../../.env"
+source "$(pwd)/.env"
 
 # Resolve container name
 CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
