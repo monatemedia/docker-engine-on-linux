@@ -47,7 +47,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   echo "🧹 Deleting all themes..."
   for theme in $(wp theme list --field=name); do
-    wp theme delete "$theme" || true
+    wp theme delete "$theme" 2>/dev/null || true
   done
 
   echo "🎨 Installing and activating 'twentytwentyfive' theme..."
@@ -55,7 +55,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   echo "🧹 Deleting all plugins..."
   for plugin in $(wp plugin list --field=name); do
-    wp plugin delete "$plugin" || true
+    wp plugin delete "$plugin" 2>/dev/null || true
   done
 
   echo "📦 Installing and activating required plugins..."
