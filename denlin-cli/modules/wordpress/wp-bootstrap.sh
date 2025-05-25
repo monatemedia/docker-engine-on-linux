@@ -48,12 +48,17 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   # Update core
   wp core update
 
-  # Delete all themes except twentytwentyfive, then install and activate twentytwentyfive
+  echo "Available themes:"
+  wp theme list
+
+  # Delete all themes except twentytwentyfive
   for theme in $(wp theme list --field=name); do
     if [[ "$theme" != "twentytwentyfive" ]]; then
       wp theme delete "$theme"
     fi
   done
+
+  # Ensure twentytwentyfive is installed and activated
   wp theme install twentytwentyfive --activate
 
   # Delete all plugins
@@ -61,7 +66,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     wp plugin delete "$plugin"
   done
 
-  # Install some plugins
+  # Install recommended plugins
   wp plugin install wpvivid-backuprestore --activate
   wp plugin install litespeed-cache
   wp plugin install wordpress-seo
