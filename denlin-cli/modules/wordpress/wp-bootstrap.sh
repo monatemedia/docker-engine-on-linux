@@ -95,10 +95,23 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
   wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
 
-  # Cleanup content
-  wp post delete $(wp post list --post_type=page --format=ids) --force || true
-  wp post delete $(wp post list --post_type=post --format=ids) --force || true
-  wp comment delete $(wp comment list --format=ids) --force || true
+  # Delete all pages
+  POST_IDS=$(command wp post list --post_type=page --format=ids --allow-root)
+  if [ -n "$POST_IDS" ]; then
+    wp post delete $POST_IDS --force
+  fi
+
+  # Delete all posts
+  POST_IDS=$(command wp post list --post_type=post --format=ids --allow-root)
+  if [ -n "$POST_IDS" ]; then
+    wp post delete $POST_IDS --force
+  fi
+
+  # Delete all comments
+  COMMENT_IDS=$(command wp comment list --format=ids --allow-root)
+  if [ -n "$COMMENT_IDS" ]; then
+    wp comment delete $COMMENT_IDS --force
+  fi
 
   # Create front page
   HOME_ID=$(wp post create --post_type=page --post_title="Home" --post_status=publish --porcelain)
