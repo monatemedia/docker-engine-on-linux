@@ -123,7 +123,8 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Ensure Apache mod_rewrite is enabled
   a2enmod rewrite || true
-  apache2ctl -k restart
+  echo "ServerName localhost" >> /etc/apache2/apache2.conf || true
+  apache2ctl -k restart || true
 
   # Flush rewrite rules
   wp rewrite flush --hard --allow-root || true
