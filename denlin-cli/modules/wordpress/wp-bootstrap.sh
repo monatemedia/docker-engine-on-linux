@@ -127,9 +127,21 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 EOF
 
 # Enable Apache mod_rewrite and restart Apache
+# docker exec "$CONTAINER_NAME" bash -c "
+#   a2enmod rewrite 2>/dev/null || true
+#   echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
+#   apache2ctl -k restart >/dev/null 2>&1 || true
+# "
+
+# Flush rewrite rules
 docker exec "$CONTAINER_NAME" bash -c "
-  a2enmod rewrite 2>/dev/null || true
+  echo 'Enabling Apache mod_rewrite...'
+  a2enmod rewrite
+"
+# Flush rewrite rules
+docker exec "$CONTAINER_NAME" bash -c "
   echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
+  echo 'Restarting Apache...'
   apache2ctl -k restart >/dev/null 2>&1 || true
 "
 
