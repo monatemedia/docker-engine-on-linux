@@ -120,11 +120,13 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Permalink setup, ignoring DB connection error
   wp rewrite structure '/%postname%/' --hard --allow-root || true
-  wp rewrite flush --hard --allow-root || true
 
   # Ensure Apache mod_rewrite is enabled
   a2enmod rewrite
-  apache2 restart
+  service apache2 restart
+
+  # Flush rewrite rules
+  wp rewrite flush --hard --allow-root || true
 
   echo '✅ WordPress bootstrap completed successfully.'
 EOF
