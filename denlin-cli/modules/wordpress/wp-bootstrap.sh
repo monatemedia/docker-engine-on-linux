@@ -14,7 +14,7 @@ CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   set -ex
   wp() {
-    echo "+ wp $* --allow-root"
+    echo "+ wp $*" >&2
     command wp "$@" --allow-root
   }
   export WP_SITE_URL="$WP_SITE_URL"
@@ -112,8 +112,8 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     wp comment delete $COMMENT_IDS --force
   fi
 
-  # Front page setup
-  HOME_ID=$(wp post create --post_type=page --post_title="Home" --post_status=publish --porcelain)
+  # Front page setup - use command wp directly to avoid echo pollution
+  HOME_ID=$(command wp post create --post_type=page --post_title="Home" --post_status=publish --porcelain --allow-root)
   wp option update show_on_front page
   wp option update page_on_front "$HOME_ID"
 
@@ -121,11 +121,17 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp rewrite structure '/%postname%/' --hard --allow-root 2>/dev/null || true
 EOF
 
-# Enable Apache mod_rewrite (no restart needed if already enabled)
+# Enable Apache mod_rewrite and restart Apache
 docker exec "$CONTAINER_NAME" bash -c "
   echo 'Enabling Apache mod_rewrite...'
-  a2enmod rewrite 2>/dev/null || true
-  echo 'ServerName localhost' >> /etc/apache2/apache2.conf 2>/dev/null || true
+  a2enmod rewrite
+"
+
+# Add ServerName and restart Apache
+docker exec "$CONTAINER_NAME" bash -c "
+  echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
+  echo 'Restarting Apache...'
+  service apache2 restart >/dev/null 2>&1 || apache2ctl graceful >/dev/null 2>&1 || true
 "
 
 # Flush rewrite rules with --quiet flag to avoid interactive prompts
