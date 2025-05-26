@@ -33,6 +33,9 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   export WP_AUTO_UPDATE_PLUGINS="$WP_AUTO_UPDATE_PLUGINS"
   export WP_AUTO_UPDATE_THEMES="$WP_AUTO_UPDATE_THEMES"
 
+  # Avoid interactive prompts
+  export DEBIAN_FRONTEND=noninteractive
+
   # Install WordPress if not already installed
   if ! wp core is-installed; then
     wp core install \
@@ -124,7 +127,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   # Ensure Apache mod_rewrite is enabled
   a2enmod rewrite || true
   echo "ServerName localhost" >> /etc/apache2/apache2.conf || true
-  apache2ctl -k restart || true
+  apache2ctl -k restart >/dev/null 2>&1 || true
 
   # Flush rewrite rules
   wp rewrite flush --hard --allow-root || true
