@@ -122,8 +122,8 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp rewrite structure '/%postname%/' --hard --allow-root || true
 
   # Ensure Apache mod_rewrite is enabled
-  a2enmod rewrite
-  service apache2 restart
+  a2enmod rewrite || true
+  service apache2 restart || true
 
   # Flush rewrite rules
   wp rewrite flush --hard --allow-root || true
