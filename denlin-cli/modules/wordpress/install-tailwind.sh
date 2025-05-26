@@ -2,7 +2,8 @@
 # modules/wordpress/install-tailwind.sh
 # Menu: WordPress
 # Description: Initializes TailPress theme with Tailwind CSS in a WordPress Docker container
-set -eset -o pipefail
+set -e
+set -o pipefail
 
 # Load environment variables
 source "$(pwd)/.env"
@@ -15,12 +16,13 @@ THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 echo "➡️ Logging into the WordPress container..."
 docker exec -it "$CONTAINER_NAME" bash <<'EOF'
-  set -ex
+  set -e
+  set -o pipefail
 
   echo "📂 Changing directory to wp-content/themes..."
   cd /var/www/html/wp-content/themes
 
-  # Get the site title and theme slug from environment variables passed by Docker
+  # Get the site title and theme slug from environment variables
   SITE_TITLE="$WP_SITE_TITLE"
   THEME_SLUG="$THEME_SLUG"
 
@@ -34,14 +36,19 @@ docker exec -it "$CONTAINER_NAME" bash <<'EOF'
 
   echo "✅ TailPress theme '$THEME_SLUG' created."
 
-  echo "🚀 Activating the '$THEME_SLUG' theme..."
-  wp theme activate "$THEME_SLUG" --allow-root
+  echo "📦 Changing directory to the new theme: $THEME_SLUG"
+  cd "$THEME_SLUG"
+
+  echo "⚙️ Installing npm dependencies..."
+  npm install --timeout=120000
+
+  echo "🛠️ Running the npm build process..."
+  npm run build
+
+  echo "✅ Theme build complete."
 EOF
 
-echo "📦 Installing npm dependencies for the theme..."
-docker exec -it "$CONTAINER_NAME" bash -c "cd /var/www/html/wp-content/themes/$THEME_SLUG && npm install --timeout=120000"
+echo "🚀 Activating the '$THEME_SLUG' theme..."
+docker exec -it "$CONTAINER_NAME" wp theme activate "$THEME_SLUG" --allow-root
 
-echo "🛠️ Running the npm build process..."
-docker exec -it "$CONTAINER_NAME" bash -c "cd /var/www/html/wp-content/themes/$THEME_SLUG && npm run build"
-
-echo "✅ Tailwind installation and build process initiated."
+echo "✅ Tailwind theme installation and activation complete!"
