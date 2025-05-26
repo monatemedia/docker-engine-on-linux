@@ -121,17 +121,11 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp rewrite structure '/%postname%/' --hard --allow-root 2>/dev/null || true
 EOF
 
-# Enable Apache mod_rewrite and restart Apache
+# Enable Apache mod_rewrite (no restart needed if already enabled)
 docker exec "$CONTAINER_NAME" bash -c "
   echo 'Enabling Apache mod_rewrite...'
-  a2enmod rewrite
-"
-
-# Add ServerName and restart Apache
-docker exec "$CONTAINER_NAME" bash -c "
-  echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
-  echo 'Restarting Apache...'
-  systemctl reload apache2 >/dev/null 2>&1 || service apache2 reload >/dev/null 2>&1 || true
+  a2enmod rewrite 2>/dev/null || true
+  echo 'ServerName localhost' >> /etc/apache2/apache2.conf 2>/dev/null || true
 "
 
 # Flush rewrite rules with --quiet flag to avoid interactive prompts
