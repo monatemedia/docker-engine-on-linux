@@ -131,7 +131,7 @@ docker exec "$CONTAINER_NAME" bash -c "
 docker exec "$CONTAINER_NAME" bash -c "
   echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
   echo 'Restarting Apache...'
-  apache2ctl -k restart >/dev/null 2>&1 || true
+  systemctl reload apache2 >/dev/null 2>&1 || service apache2 reload >/dev/null 2>&1 || true
 "
 
 # Flush rewrite rules with --quiet flag to avoid interactive prompts
