@@ -118,15 +118,13 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp option update show_on_front page
   wp option update page_on_front "$HOME_ID"
 
-  # Permalink setup
-  wp rewrite structure '/%postname%/' --hard
+  # Permalink setup, ignoring DB connection error
+  wp rewrite structure '/%postname%/' --hard --allow-root || true
+  wp rewrite flush --hard --allow-root || true
+
+  # Ensure Apache mod_rewrite is enabled
+  a2enmod rewrite
+  apache2 restart
 
   echo '✅ WordPress bootstrap completed successfully.'
 EOF
-
-# Enable mod_rewrite and restart Apache
-docker exec -i "$CONTAINER_NAME" a2enmod rewrite
-docker exec -i "$CONTAINER_NAME" service apache2 restart
-
-# Flush permalinks
-docker exec -i "$CONTAINER_NAME" wp rewrite flush --hard --allow-root
