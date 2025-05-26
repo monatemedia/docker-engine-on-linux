@@ -2,7 +2,6 @@
 # modules/wordpress/wp-bootstrap.sh
 # Menu: WordPress
 # Description: Bootstraps WordPress in Docker using WP-CLI and environment variables
-
 set -e
 set -o pipefail
 
@@ -14,12 +13,10 @@ CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
 docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   set -ex
-
   wp() {
     echo "+ wp $* --allow-root"
     command wp "$@" --allow-root
   }
-
   export WP_SITE_URL="$WP_SITE_URL"
   export WP_SITE_TITLE="$WP_SITE_TITLE"
   export WP_ADMIN_USER="$WP_ADMIN_USER"
@@ -38,7 +35,6 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Install WordPress if not already installed
   if ! wp core is-installed; then
-
     # Set auto-update config BEFORE install to avoid DB connection issues later
     wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
     wp config set AUTOMATIC_UPDATER_DISABLED false
@@ -55,7 +51,6 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
     # Force HTTPS immediately after install (avoid echo pollution)
     CURRENT_URL="$(command wp option get siteurl --allow-root | sed 's|^http:|https:|')"
     command wp option update siteurl "$CURRENT_URL" --allow-root
-
     HOME_URL="$(command wp option get home --allow-root | sed 's|^http:|https:|')"
     command wp option update home "$HOME_URL" --allow-root
   fi
@@ -127,25 +122,22 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 EOF
 
 # Enable Apache mod_rewrite and restart Apache
-# docker exec "$CONTAINER_NAME" bash -c "
-#   a2enmod rewrite 2>/dev/null || true
-#   echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
-#   apache2ctl -k restart >/dev/null 2>&1 || true
-# "
-
-# Flush rewrite rules
 docker exec "$CONTAINER_NAME" bash -c "
   echo 'Enabling Apache mod_rewrite...'
   a2enmod rewrite
 "
-# Flush rewrite rules
+
+# Add ServerName and restart Apache
 docker exec "$CONTAINER_NAME" bash -c "
   echo 'ServerName localhost' >> /etc/apache2/apache2.conf || true
   echo 'Restarting Apache...'
   apache2ctl -k restart >/dev/null 2>&1 || true
 "
 
-# Flush rewrite rules
-docker exec "$CONTAINER_NAME" wp rewrite flush --hard --allow-root || true
+# Flush rewrite rules with --quiet flag to avoid interactive prompts
+docker exec "$CONTAINER_NAME" bash -c "
+  echo 'Flushing rewrite rules...'
+  wp rewrite flush --hard --allow-root --quiet || true
+"
 
 echo '✅ WordPress bootstrap completed successfully.'
