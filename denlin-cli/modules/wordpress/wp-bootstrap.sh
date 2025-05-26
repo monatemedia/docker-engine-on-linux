@@ -136,3 +136,4 @@ docker exec "$CONTAINER_NAME" bash -c "
 "
 
 echo '✅ WordPress bootstrap completed successfully.'
+echo
