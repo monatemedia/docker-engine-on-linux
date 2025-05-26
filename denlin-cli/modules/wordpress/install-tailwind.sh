@@ -15,20 +15,16 @@ CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 echo "➡️ Logging into the WordPress container..."
-docker exec -i "$CONTAINER_NAME" bash <<'EOF'
+docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$CONTAINER_NAME" bash <<'EOF'
   set -e
   set -o pipefail
 
   echo "📂 Changing directory to wp-content/themes..."
   cd /var/www/html/wp-content/themes
 
-  # Get the site title and theme slug from environment variables
-  SITE_TITLE="$WP_SITE_TITLE"
-  THEME_SLUG="$THEME_SLUG"
-
   echo "✨ Running 'tailpress new $THEME_SLUG'..."
   # Execute the tailpress new command and provide answers non-interactively
-  echo "$SITE_TITLE" | tailpress new "$THEME_SLUG"
+  echo "$WP_SITE_TITLE" | tailpress new "$THEME_SLUG"
   echo "Monate Media"
   echo "edward@monatemedia.com"
   echo "https://localhost:8000"
