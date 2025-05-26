@@ -126,9 +126,11 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp rewrite structure '/%postname%/' --hard --allow-root 2>/dev/null || true
 
   # Ensure Apache mod_rewrite is enabled
-  a2enmod rewrite || true
-  echo "ServerName localhost" >> /etc/apache2/apache2.conf || true
-  apache2ctl -k restart >/dev/null 2>&1 || true
+  { a2enmod rewrite 2>/dev/null || true; } || true
+
+  # Add ServerName to avoid warning
+  { echo "ServerName localhost" >> /etc/apache2/apache2.conf 2>/dev/null || true; } || true
+  { apache2ctl -k restart >/dev/null 2>&1 || true; } || true
 
   # Flush rewrite rules
   wp rewrite flush --hard --allow-root || true
