@@ -15,7 +15,7 @@ CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 echo "➡️ Logging into the WordPress container..."
-docker exec -it "$CONTAINER_NAME" bash <<'EOF'
+docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   set -e
   set -o pipefail
 
