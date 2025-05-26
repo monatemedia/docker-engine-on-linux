@@ -38,6 +38,13 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
 
   # Install WordPress if not already installed
   if ! wp core is-installed; then
+
+    # Set auto-update config BEFORE install to avoid DB connection issues later
+    wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
+    wp config set AUTOMATIC_UPDATER_DISABLED false
+    wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
+    wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
+
     wp core install \
       --url="$WP_SITE_URL" \
       --title="$WP_SITE_TITLE" \
@@ -92,12 +99,6 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp option update show_avatars 0
   wp option update blog_public 0
 
-  # Auto update config
-  wp config set WP_AUTO_UPDATE_CORE "$WP_AUTO_UPDATE_CORE"
-  wp config set AUTOMATIC_UPDATER_DISABLED false
-  wp config set WP_PLUGIN_AUTO_UPDATE "$WP_AUTO_UPDATE_PLUGINS"
-  wp config set WP_THEME_AUTO_UPDATE "$WP_AUTO_UPDATE_THEMES"
-
   # Delete all pages
   POST_IDS=$(command wp post list --post_type=page --format=ids --allow-root)
   if [ -n "$POST_IDS" ]; then
@@ -122,7 +123,7 @@ docker exec -i "$CONTAINER_NAME" bash <<'EOF'
   wp option update page_on_front "$HOME_ID"
 
   # Permalink setup, ignoring DB connection error
-  wp rewrite structure '/%postname%/' --hard --allow-root || true
+  wp rewrite structure '/%postname%/' --hard --allow-root 2>/dev/null || true
 
   # Ensure Apache mod_rewrite is enabled
   a2enmod rewrite || true
