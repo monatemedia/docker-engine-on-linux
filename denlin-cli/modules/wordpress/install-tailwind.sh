@@ -22,11 +22,8 @@ docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$C
   echo "📂 Changing directory to wp-content/themes..."
   cd /var/www/html/wp-content/themes
 
-  echo "📂 Changing directory to wp-content/themes..."
-  cd /var/www/html/wp-content/themes
-
-  echo "✨ Running 'tailpress new $THEME_SLUG' with here-string for name..."
-  tailpress new "$THEME_SLUG" <<< "$WP_SITE_TITLE"
+  echo "✨ Running 'tailpress new $THEME_SLUG'..."
+  printf "%s\\n" "$WP_SITE_TITLE" "Monate Media" "edward@monatemedia.com" "https://localhost:8000" "no" | tailpress new "$THEME_SLUG"
 
   echo "✅ TailPress theme '$THEME_SLUG' created."
 
@@ -40,6 +37,11 @@ docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$C
   npm run build
 
   echo "✅ Theme build complete."
+
+  echo "Optimizing Composer autoloader for production..."
+  composer dump-autoload --optimize --no-dev
+
+  echo "✅ Composer autoloader optimized."
 EOF
 
 echo "🚀 Activating the '$THEME_SLUG' theme..."
