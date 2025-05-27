@@ -22,9 +22,11 @@ docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$C
   echo "📂 Changing directory to wp-content/themes..."
   cd /var/www/html/wp-content/themes
 
-  echo "✨ Running 'tailpress new $THEME_SLUG'..."
-  # Execute the tailpress new command and provide answers non-interactively
-  printf "%s\\n" "$WP_SITE_TITLE" "Monate Media" "edward@monatemedia.com" "https://localhost:8000" "no" | tailpress new "$THEME_SLUG"
+  echo "📂 Changing directory to wp-content/themes..."
+  cd /var/www/html/wp-content/themes
+
+  echo "✨ Running 'tailpress new $THEME_SLUG' with here-string for name..."
+  tailpress new "$THEME_SLUG" <<< "$WP_SITE_TITLE"
 
   echo "✅ TailPress theme '$THEME_SLUG' created."
 
