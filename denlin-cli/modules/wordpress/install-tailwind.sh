@@ -24,7 +24,7 @@ docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$C
 
   echo "✨ Running 'tailpress new $THEME_SLUG'..."
   # Execute the tailpress new command and provide answers non-interactively
-  yes "" | tailpress new "$THEME_SLUG"
+  printf "%s\\n" "$WP_SITE_TITLE" "Monate Media" "edward@monatemedia.com" "https://localhost:8000" "no" | tailpress new "$THEME_SLUG"
 
   echo "✅ TailPress theme '$THEME_SLUG' created."
 
