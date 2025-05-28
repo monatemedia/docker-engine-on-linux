@@ -9,15 +9,17 @@ set -o pipefail
 # Load environment variables
 source "$(pwd)/.env"
 
-# Vars
-CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
-LOCAL_JS_PATH="$(pwd)/modules/wordpress/transform-components/transform-components.js"
-CONTAINER_TEMPLATE_DIR="/var/www/html/template"
-CONTAINER_SCRIPT_DIR="${CONTAINER_TEMPLATE_DIR}/scripts"
+# Get the directory of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Define source and destination paths
+SOURCE_JS="$SCRIPT_DIR/transform-components/transform-components.js"
+DEST_JS="$SCRIPT_DIR/../../../template/scripts/transform-components.js"
 
 echo "➡️ Copying JS transformer to template/scripts..."
-docker exec "$CONTAINER_NAME" mkdir -p "$CONTAINER_SCRIPT_DIR"
-docker cp "$LOCAL_JS_PATH" "$CONTAINER_NAME:$CONTAINER_SCRIPT_DIR/transform-components.js"
+mkdir -p "$(dirname "$DEST_JS")"
+cp "$SOURCE_JS" "$DEST_JS"
+echo "✅ JS transformer copied to template/scripts."
 
 echo "🧠 Setting THEME_SLUG env variable in container..."
 THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
