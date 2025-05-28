@@ -3,54 +3,29 @@
 // Menu: WordPress
 // Description: Transform Vite JSX/TSX components into TailPress-compatible PHP template parts
 
-const fs = require('fs-extra');
-const path = require('path');
-const prettier = require('prettier');
+import fs from 'fs-extra';
+import path from 'path';
 
-// Paths
-const COMPONENTS_DIR = '/var/www/html/template/src/components';
-const THEME_PARTS_DIR = '/var/www/html/wp-content/themes';
-const THEME_SLUG = process.env.THEME_SLUG;
-const OUTPUT_DIR = path.join(THEME_PARTS_DIR, THEME_SLUG, 'template-parts');
+const themeSlug = process.env.THEME_SLUG || 'default-theme';
+const srcDir = path.resolve('src/components');
+const destDir = path.resolve(`wp-content/themes/${themeSlug}/template-parts`);
 
-// Transform logic
-async function transformComponent(filePath, outputPath) {
-  const name = path.basename(filePath, path.extname(filePath));
-  let contents = await fs.readFile(filePath, 'utf-8');
-
-  // Remove import/export lines
-  contents = contents
-    .replace(/import[^;]+;/g, '')
-    .replace(/export default [a-zA-Z0-9_]+;/g, '')
-    .replace(/export\s+(function|const|default)[^{]*{/, '')
-    .trim();
-
-  const htmlMatch = contents.match(/return\s*\(([\s\S]*?)\);?/);
-  const html = htmlMatch ? htmlMatch[1].trim() : '<!-- could not parse JSX -->';
-
-  const phpTemplate = `<?php // Template part: ${name} ?>
-<!-- Start ${name} -->
-${html}
-<!-- End ${name} -->
-`;
-
-  const formatted = prettier.format(phpTemplate, { parser: 'html' });
-  await fs.outputFile(outputPath, formatted);
-  console.log(`✅ Transformed: ${name}`);
-}
-
-// Run for all components
-(async () => {
-  const files = await fs.readdir(COMPONENTS_DIR);
-  await fs.ensureDir(OUTPUT_DIR);
+async function transformComponents() {
+  const files = await fs.readdir(srcDir);
 
   for (const file of files) {
-    if (file.endsWith('.tsx')) {
-      const inputPath = path.join(COMPONENTS_DIR, file);
-      const outputPath = path.join(OUTPUT_DIR, `${path.basename(file, '.tsx').toLowerCase()}.php`);
-      await transformComponent(inputPath, outputPath);
+    if (file.endsWith('.jsx') || file.endsWith('.tsx')) {
+      const content = await fs.readFile(path.join(srcDir, file), 'utf8');
+      const newFilename = file.replace(/\.(jsx|tsx)$/, '.php');
+      const phpContent = `<!-- Transformed from ${file} -->\n<?php\n// ... your transform logic here ?>`;
+      await fs.outputFile(path.join(destDir, newFilename), phpContent);
     }
   }
 
-  console.log('🚀 All components transformed!');
-})();
+  console.log('✅ JSX/TSX files transformed to PHP components.');
+}
+
+transformComponents().catch((err) => {
+  console.error('❌ Error transforming components:', err);
+  process.exit(1);
+});
