@@ -135,5 +135,19 @@ docker exec "$CONTAINER_NAME" bash -c "
   wp rewrite flush --hard --allow-root --quiet || true
 "
 
-echo '✅ WordPress bootstrap completed successfully.'
+# Get current directory (where script is run)
+CURRENT_DIR="$(pwd)"
+
+# Get current user (running the script)
+CURRENT_USER="$(whoami)"
+
+echo "🔧 Fixing ownership of WordPress folders inside $CURRENT_DIR for user $CURRENT_USER..."
+
+sudo chown -R "$CURRENT_USER":"$CURRENT_USER" "$CURRENT_DIR/template"
+sudo chown -R "$CURRENT_USER":"$CURRENT_USER" "$CURRENT_DIR/wp-content"
+echo 
+echo "✅ Ownership fixed."
+echo
+
+echo '🚀 WordPress bootstrap completed successfully.'
 echo
