@@ -12,6 +12,9 @@ source "$(pwd)/.env"
 # Resolve container name
 CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
+# Convert WP_SITE_TITLE to kebab-case for the theme directory name
+THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
 echo "➡️ Logging into the WordPress container for Vite-to-TailPress conversion..."
 
 docker exec -i -e THEME_SLUG="$THEME_SLUG" "$CONTAINER_NAME" bash <<'EOF'
