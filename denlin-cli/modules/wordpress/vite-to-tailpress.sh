@@ -17,34 +17,39 @@ THEME_SLUG=$(echo "$WP_SITE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
 echo "➡️ Logging into the WordPress container for Vite-to-TailPress conversion..."
 
-docker exec -i -e THEME_SLUG="$THEME_SLUG" "$CONTAINER_NAME" bash <<'EOF'
-  set -e
-  set -o pipefail
+docker exec -i -e THEME_SLUG="$THEME_SLUG" "$CONTAINER_NAME" bash <<EOF
+set -e
+set -o pipefail
 
-  THEME_DIR="/var/www/html/wp-content/themes/$THEME_SLUG"
+THEME_DIR="/var/www/html/wp-content/themes/\$THEME_SLUG"
 
-  echo "📂 Changing directory to theme folder: \$THEME_DIR"
-  cd "\$THEME_DIR"
+if [ ! -d "\$THEME_DIR" ]; then
+  echo "❌ Theme directory \$THEME_DIR does not exist. Did you run 'install-tailwind.sh'?"
+  exit 1
+fi
 
-  echo "🎨 Merging app.css..."
-  cat ./resources/css/base.css >> ./resources/css/app.css
+echo "📂 Changing directory to theme folder: \$THEME_DIR"
+cd "\$THEME_DIR"
 
-  echo "📦 Creating template-parts if not exists..."
-  mkdir -p ./template-parts
+echo "🎨 Merging app.css..."
+cat ./resources/css/base.css >> ./resources/css/app.css
 
-  echo "📄 Converting Vite React components to PHP templates..."
-  for name in about contact footer hero navbar services whychooseus; do
-    echo "<?php // Template part: \$name ?>" > "./template-parts/\$name.php"
-    echo "Created: ./template-parts/\$name.php"
-  done
+echo "📦 Creating template-parts if not exists..."
+mkdir -p ./template-parts
 
-  echo "🧱 Setting up index.php layout..."
-  cp index.php index.php.bak
-  echo "<?php get_header(); ?>" > index.php
-  echo "<main><h1>Welcome to TailPress</h1></main>" >> index.php
-  echo "<?php get_footer(); ?>" >> index.php
+echo "📄 Converting Vite React components to PHP templates..."
+for name in about contact footer hero navbar services whychooseus; do
+  echo "<?php // Template part: \$name ?>" > "./template-parts/\$name.php"
+  echo "Created: ./template-parts/\$name.php"
+done
 
-  echo "✅ Conversion complete inside container."
+echo "🧱 Setting up index.php layout..."
+cp index.php index.php.bak
+echo "<?php get_header(); ?>" > index.php
+echo "<main><h1>Welcome to TailPress</h1></main>" >> index.php
+echo "<?php get_footer(); ?>" >> index.php
+
+echo "✅ Conversion complete inside container."
 EOF
 
 echo "🚀 Vite-to-TailPress conversion done!"
