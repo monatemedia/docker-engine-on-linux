@@ -31,8 +31,8 @@ fi
 echo "📂 Changing directory to theme folder: \$THEME_DIR"
 cd "\$THEME_DIR"
 
-echo "🎨 Merging app.css..."
-cat ./resources/css/base.css >> ./resources/css/app.css
+echo "🎨 Replacing app.css with index.css from the template..."
+cp ./template/src/index.css ./wp-content/themes/$THEME_SLUG/resources/css/app.css
 
 echo "📦 Creating template-parts if not exists..."
 mkdir -p ./template-parts
