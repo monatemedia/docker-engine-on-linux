@@ -12,9 +12,9 @@ source "$(pwd)/.env"
 # Get the directory of the current script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Define source and destination paths
-SOURCE_JS="$SCRIPT_DIR/transform-components/transform-components.js"
-DEST_JS="$SCRIPT_DIR/../../../template/scripts/transform-components.js"
+# Use the current directory where you run the script (project root)
+DEST_JS="$(pwd)/template/scripts/transform-components.js"
+SOURCE_JS="$(dirname "${BASH_SOURCE[0]}")/transform-components/transform-components.js"
 
 echo "➡️ Copying JS transformer to template/scripts..."
 mkdir -p "$(dirname "$DEST_JS")"
