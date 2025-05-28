@@ -3,45 +3,45 @@
 # Menu: WordPress
 # Description: Automate converting a Vite React template into a TailPress-based WordPress theme
 
-convert_vite_to_tailpress() {
-  echo "🚀 Starting conversion from Vite React to TailPress WordPress theme..."
+set -e
+set -o pipefail
 
-  # Define source and destination paths
-  TEMPLATE_DIR="$HOME/wordpress/template"
-  THEME_DIR="$HOME/wordpress/wp-content/themes/super-test-site"
+# Load environment variables
+source "$(pwd)/.env"
 
-  # Copy styles
-  echo "🎨 Merging CSS..."
-  cat "$TEMPLATE_DIR/src/index.css" >> "$THEME_DIR/resources/css/app.css"
+# Resolve container name
+CONTAINER_NAME="${DOCKER_CONTAINER_NAME}-web"
 
-  # Copy React components as raw HTML placeholders to template-parts
-  echo "📦 Converting components..."
-  COMPONENTS_DIR="$TEMPLATE_DIR/src/components"
-  DEST_PARTS_DIR="$THEME_DIR/template-parts"
+echo "➡️ Logging into the WordPress container for Vite-to-TailPress conversion..."
 
-  mkdir -p "$DEST_PARTS_DIR"
-  for file in "$COMPONENTS_DIR"/*.tsx; do
-    name=$(basename "$file" .tsx | tr '[:upper:]' '[:lower:]')
-    dest="$DEST_PARTS_DIR/${name}.php"
-    echo "<!-- Placeholder converted from $file -->" > "$dest"
-    echo "<?php /* TODO: Convert content manually */ ?>" >> "$dest"
-    echo "Created: $dest"
+docker exec -i -e THEME_SLUG="$THEME_SLUG" "$CONTAINER_NAME" bash <<'EOF'
+  set -e
+  set -o pipefail
+
+  THEME_DIR="/var/www/html/wp-content/themes/$THEME_SLUG"
+
+  echo "📂 Changing directory to theme folder: \$THEME_DIR"
+  cd "\$THEME_DIR"
+
+  echo "🎨 Merging app.css..."
+  cat ./resources/css/base.css >> ./resources/css/app.css
+
+  echo "📦 Creating template-parts if not exists..."
+  mkdir -p ./template-parts
+
+  echo "📄 Converting Vite React components to PHP templates..."
+  for name in about contact footer hero navbar services whychooseus; do
+    echo "<?php // Template part: \$name ?>" > "./template-parts/\$name.php"
+    echo "Created: ./template-parts/\$name.php"
   done
 
-  # Copy index.html layout shell into index.php (basic example)
   echo "🧱 Setting up index.php layout..."
-  cp "$THEME_DIR/index.php" "$THEME_DIR/index.php.bak"
-  echo "<?php get_header(); ?>" > "$THEME_DIR/index.php"
-  echo "<main class='container mx-auto'>" >> "$THEME_DIR/index.php"
-  echo "<?php get_template_part('template-parts/hero'); ?>" >> "$THEME_DIR/index.php"
-  echo "<?php get_template_part('template-parts/about'); ?>" >> "$THEME_DIR/index.php"
-  echo "<?php get_template_part('template-parts/services'); ?>" >> "$THEME_DIR/index.php"
-  echo "<?php get_template_part('template-parts/contact'); ?>" >> "$THEME_DIR/index.php"
-  echo "</main>" >> "$THEME_DIR/index.php"
-  echo "<?php get_footer(); ?>" >> "$THEME_DIR/index.php"
+  cp index.php index.php.bak
+  echo "<?php get_header(); ?>" > index.php
+  echo "<main><h1>Welcome to TailPress</h1></main>" >> index.php
+  echo "<?php get_footer(); ?>" >> index.php
 
-  echo "✅ Conversion complete!"
-}
+  echo "✅ Conversion complete inside container."
+EOF
 
-# Run the function
-convert_vite_to_tailpress
+echo "🚀 Vite-to-TailPress conversion done!"

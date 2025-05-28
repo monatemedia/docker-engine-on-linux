@@ -21,7 +21,7 @@ display_banner() {
     echo -e "    \\ \\____-  \\ \\_____\\  \\ \\_\\ \"\\_\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \"\\_\\ "
     echo -e "     \\/____/   \\/_____/   \\/_/ \\/_/   \\/_____/   \\/_/   \\/_/ \\/_/ "
     echo -e "                                                                     "
-    echo -e "     ${RESET}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.6${BLUE}"
+    echo -e "     ${RESET}Denlin: Docker Engine on Linux CLI Tool Version Juliet 1.0.7${BLUE}"
     echo -e "                                                                     "
     echo -e "${RESET}"
 }
