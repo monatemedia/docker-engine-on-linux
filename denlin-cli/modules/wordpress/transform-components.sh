@@ -31,29 +31,11 @@ mkdir -p "$(dirname "$DEST_JS")"
 cp "$SOURCE_JS" "$DEST_JS"
 echo "✅ JS transformer copied to template/scripts."
 
-echo "🧠 Setting THEME_SLUG env variable..."
-echo
+echo "📦 Ensuring fs-extra is installed in container..."
+docker exec -it "$CONTAINER_NAME" sh -c "cd $CONTAINER_TEMPLATE_DIR && npm ls fs-extra >/dev/null 2>&1 || npm install fs-extra"
 
-# Try running the script in the container and capture output
-run_js_script() {
-  docker exec -e THEME_SLUG="$THEME_SLUG" -i "$CONTAINER_NAME" node "$CONTAINER_JS_PATH" 2>&1
-}
-
-echo "🚀 Running transform-components.js inside container..."
-OUTPUT=$(run_js_script)
-
-# Check if the output contains a missing module error
-if echo "$OUTPUT" | grep -q "Cannot find package"; then
-  MISSING_MODULE=$(echo "$OUTPUT" | grep "Cannot find package" | sed -E "s/.*Cannot find package '([^']+)'.*/\1/")
-  echo "📦 Missing module detected: $MISSING_MODULE"
-  echo "📥 Installing $MISSING_MODULE in container..."
-  docker exec -it "$CONTAINER_NAME" sh -c "cd $CONTAINER_TEMPLATE_DIR && npm install $MISSING_MODULE"
-
-  echo "🔁 Retrying script after installing $MISSING_MODULE..."
-  OUTPUT=$(run_js_script)
-fi
-
-echo "$OUTPUT"
+echo "🧠 Setting THEME_SLUG env variable and running JS inside container..."
+docker exec -e THEME_SLUG="$THEME_SLUG" -it "$CONTAINER_NAME" node "$CONTAINER_JS_PATH"
 
 echo "✅ Components transformed and placed into theme's template-parts folder."
 echo
