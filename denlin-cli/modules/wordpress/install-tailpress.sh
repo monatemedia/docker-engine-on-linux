@@ -1,5 +1,5 @@
 #!/bin/bash
-# modules/wordpress/install-tailwind.sh
+# modules/wordpress/install-tailpress.sh
 # Menu: WordPress
 # Description: Initializes TailPress theme with Tailwind CSS in a WordPress Docker container
 set -e
@@ -38,9 +38,12 @@ docker exec -i -e WP_SITE_TITLE="$WP_SITE_TITLE" -e THEME_SLUG="$THEME_SLUG" "$C
 
   echo "✅ Theme build complete."
 
+  echo "📦 Installing Blade templating via Composer..."
+  composer require jenssegers/blade illuminate/view
+  echo "✅ Blade templating installed."
+
   echo "Optimizing Composer autoloader for production..."
   composer dump-autoload --optimize --no-dev
-
   echo "✅ Composer autoloader optimized."
 EOF
 
