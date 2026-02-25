@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Menu: Docker Management
-# Description: Export all project files and Docker volumes for VPS migration.
+# Description: Export all user files and Docker volumes for VPS migration.
 
 vps_export() {
     echo ""
@@ -10,7 +10,7 @@ vps_export() {
     echo "=============================================="
     echo ""
 
-    # --- Discover docker-compose projects in home directory ---
+    # --- Discover docker-compose projects (for container shutdown) ---
     echo "Scanning for Docker Compose projects in $HOME ..."
     COMPOSE_DIRS=()
     while IFS= read -r compose_file; do
@@ -18,7 +18,7 @@ vps_export() {
     done < <(find "$HOME" -maxdepth 2 -name "docker-compose.yml" -not -path "*/.git/*")
 
     if [ ${#COMPOSE_DIRS[@]} -eq 0 ]; then
-        echo "  No Docker Compose projects found in $HOME."
+        echo "  No Docker Compose projects found."
     else
         echo "  Found ${#COMPOSE_DIRS[@]} project(s):"
         for dir in "${COMPOSE_DIRS[@]}"; do
@@ -43,8 +43,8 @@ vps_export() {
 
     echo ""
     echo "This script will export:"
-    echo "  - All project folders listed above"
-    echo "  - Key dotfiles (.env, .ssh, .bashrc, .profile, .config/gh)"
+    echo "  - Everything in $HOME"
+    echo "    (excluding .cache, node_modules, .git, vendor, vps-migration)"
     echo "  - All Docker named volumes listed above"
     echo ""
     read -rp "Continue? [y/N]: " confirm
@@ -66,7 +66,7 @@ vps_export() {
         echo "Done."
     fi
 
-    # --- Setup output directory ---
+    # --- Setup staging directory ---
     TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
     EXPORT_DIR="$HOME/vps-migration"
     STAGE_DIR="$EXPORT_DIR/stage-$TIMESTAMP"
@@ -74,30 +74,28 @@ vps_export() {
 
     echo ""
     echo "----------------------------------------------"
-    echo "  Step 1: Exporting project files"
+    echo "  Step 1: Exporting user files"
     echo "----------------------------------------------"
+    echo "  Source : $HOME"
+    echo "  Skipping: .cache, node_modules, .git, vendor,"
+    echo "            vps-migration, vps-migration-restore"
+    echo ""
 
     FILES_ARCHIVE="$STAGE_DIR/vps-files-$TIMESTAMP.tar.gz"
 
-    # Build tar include list from discovered compose dirs (relative to $HOME)
-    INCLUDE_DIRS=()
-    for dir in "${COMPOSE_DIRS[@]}"; do
-        REL=$(realpath --relative-to="$HOME" "$dir")
-        INCLUDE_DIRS+=("$REL")
-    done
-
-    # Add dotfiles if they exist
-    DOTFILES=(.env .ssh .bashrc .profile)
-    for df in "${DOTFILES[@]}"; do
-        [ -e "$HOME/$df" ] && INCLUDE_DIRS+=("$df")
-    done
-    [ -d "$HOME/.config/gh" ] && INCLUDE_DIRS+=(".config/gh")
-
-    echo "  Archiving files..."
     tar czf "$FILES_ARCHIVE" \
         --ignore-failed-read \
         -C "$HOME" \
-        "${INCLUDE_DIRS[@]}" \
+        --exclude="./.cache" \
+        --exclude="./.git" \
+        --exclude="./node_modules" \
+        --exclude="./*/node_modules" \
+        --exclude="./*/*/node_modules" \
+        --exclude="./*/vendor" \
+        --exclude="./*/*/vendor" \
+        --exclude="./vps-migration" \
+        --exclude="./vps-migration-restore" \
+        . \
         2>/dev/null
 
     if [ -f "$FILES_ARCHIVE" ]; then
@@ -147,7 +145,7 @@ vps_export() {
         rm -rf "$STAGE_DIR"
     else
         echo "  ✘ Failed to create final archive."
-        echo "    Your files and volumes are still available in: $STAGE_DIR"
+        echo "    Your files and volumes are still in: $STAGE_DIR"
     fi
 
     echo ""
