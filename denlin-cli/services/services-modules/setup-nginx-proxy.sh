@@ -12,12 +12,14 @@ DOCKER_COMPOSE_FILE="$TARGET_DIR/docker-compose.yml"
 echo "Checking configuration file at $CONF_FILE..."
 if [[ ! -f "$CONF_FILE" ]]; then
     echo "$CONF_FILE does not exist. Creating it now."
-    # Ensure the config file has the correct user_email entry
-    if grep -q "^user_email=" "$CONF_FILE"; then
-        sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
-    else
-        echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
-    fi
+    sudo touch "$CONF_FILE"
+fi
+
+# Update email entry in config
+if grep -q "^user_email=" "$CONF_FILE"; then
+    sudo sed -i "s|^user_email=.*|user_email=$user_email|" "$CONF_FILE"
+else
+    echo "user_email=$user_email" | sudo tee -a "$CONF_FILE" > /dev/null
 fi
 
 # Source configuration file
@@ -40,11 +42,19 @@ if [[ ! "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; th
     exit 1
 fi
 
-# Update config file if a new email was entered
+# Update config file with confirmed email
 echo "Updating configuration file..."
 sudo bash -c "cat > $CONF_FILE" <<EOF
 user_email=$user_email
 EOF
+
+# Check user is in the docker group
+if ! groups "$USER" | grep -q '\bdocker\b'; then
+    echo "User '$USER' is not in the docker group. Adding now..."
+    sudo usermod -aG docker "$USER"
+    echo "Docker group membership applied. Re-running with updated permissions..."
+    exec sg docker "$0"
+fi
 
 # Check and remove Apache if installed
 if dpkg -l | grep -q apache2; then

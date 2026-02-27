@@ -294,6 +294,7 @@ Before installing Git, ensure your system is up-to-date:
 
 ```sh
 sudo apt update && sudo apt upgrade
+
 ```
 
 
@@ -302,6 +303,7 @@ sudo apt update && sudo apt upgrade
 
 ```sh
 sudo apt-get install git
+
 ```
 
 
@@ -312,6 +314,7 @@ Once installed, verify the version of Git to ensure it’s installed correctly:
 
 ```sh
 git --version
+
 ```
 
 
@@ -379,6 +382,7 @@ Run this commad and follow the prompts
 
 ```sh
 denlin setup-ssh-login
+
 ```
 
 
@@ -392,12 +396,14 @@ To install Docker Engine, use the following command:
 
 ```sh
 denlin docker-install
+
 ```
 
 If you did not get the `Hello from Docker!` message, you can test your installation by running:
 
 ```sh
 docker run hello-world
+
 ```
 
 
@@ -421,6 +427,7 @@ To create the Nginx proxy, use the following command:
 
 ```sh
 denlin services
+
 ```
 
 Then select the option `setup-nginx-proxy`.
@@ -441,6 +448,7 @@ Test your installation by creating a test container:
 
 ```sh
 denlin services
+
 ```
 
 Then select the option `new-hello-world-container`.
@@ -503,6 +511,7 @@ On Windows, you can it install with:
 
 ```sh
 winget install --id GitHub.cli
+
 ```
 
 > [!IMPORTANT]
@@ -514,6 +523,7 @@ On Mac, you can install with Homebrew:
 
 ```sh
 brew install gh
+
 ```
 
 ### 3. Test GitHub CLI Installation
@@ -545,6 +555,7 @@ Create a new React project with Vite.
 
 ```sh
 npm create vite@latest
+
 ```
 
 Complete the flow by selecting (y) to install packages, choose a `Project name`, `framework` and options like `variant`. Change into your directory, run `npm install` and `npm run dev`. 
@@ -612,6 +623,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `create-dockerfile`.
@@ -634,6 +646,7 @@ Run the following command in your project root (where your Dockerfile is located
 
 ```sh
 docker build -t react-counter .
+
 ```
 
 This will:
@@ -647,6 +660,7 @@ Run the following command to start your container:
 
 ```sh
 docker run -d -p 8080:80 --name react-counter-container react-counter
+
 ```
 
 This will:
@@ -678,12 +692,14 @@ To stop the running container:
 
 ```sh
 docker stop react-counter-container
+
 ```
 
 To remove it completely:
 
 ```sh
 docker rm react-counter-container
+
 ```
 
 ### 5. (Optional) View Logs & Debug
@@ -692,12 +708,14 @@ Check running containers:
 
 ```sh
 docker ps
+
 ```
 
 Check logs of your container:
 
 ```sh
 docker logs react-counter-container
+
 ```
 
 
@@ -712,6 +730,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `create-github-pat`
@@ -758,6 +777,7 @@ Open a GitBash terminal in your projects folder and log into GitHub CLI.
 
 ```bash
 gh auth login
+
 ```
 
 Follow the interactive prompts to log into your GitHub account, using your `PAT` when asked for your `authentication token`.
@@ -788,6 +808,7 @@ If your GitHub authorization fails, please try again.
 ```sh
 gh auth logout
 gh auth login
+
 ```
 
 GitHub CLI may ask you to authenticate your device with the browser, by giving you a one-time code and asking you to log into GitHub with `https://github.com/login/device`
@@ -813,6 +834,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `initialize-git-repository`.
@@ -839,6 +861,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `create-github-actions-secret-pat`. 
@@ -857,6 +880,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `store-docker-image`.
@@ -878,6 +902,7 @@ Call the Services Menu
 
 ```sh
 denlin services
+
 ```
 
 From services menu select `create-docker-compose`.
@@ -906,12 +931,14 @@ On the server, use the keygen utility to generate a new key.
 
 ```sh
 ssh-keygen -t rsa -b 4096
+
 ```
 
 Copy the content of the private key.
 
 ```sh
 more ~/.ssh/id_rsa
+
 ```
 
 Copy the contents of the file to the clipboard.
@@ -924,12 +951,14 @@ In addition, we will also add the public key to the authorized keys of our serve
 
 ```sh
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
 ```
 
 Now reboot the server to update the keys.
 
 ```sh
 sudo reboot
+
 ```
 
 ### 2. Create GitHub Repository Secrets
@@ -955,18 +984,21 @@ Add your changes to the git staging area.
 
 ```sh
 git add .
+
 ```
 
 Commit your changes.
 
 ```sh
 git commit -m feat: deploy
+
 ```
 
 Push your changes to the repository.
 
 ```sh
 git push
+
 ```
 
 ### 4. Confirm Workflow Execution
