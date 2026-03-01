@@ -326,6 +326,17 @@ git version 2.x.x
 ```
 
 
+### 4. Reboot Server
+
+You can now reboot the server to ensure all changes take effect.
+
+
+```sh
+sudo reboot
+
+```
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Create New User With Denlin-CLI
