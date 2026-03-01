@@ -48,12 +48,15 @@ sudo bash -c "cat > $CONF_FILE" <<EOF
 user_email=$user_email
 EOF
 
-# Check user is in the docker group
-if ! groups "$USER" | grep -q '\bdocker\b'; then
-    echo "User '$USER' is not in the docker group. Adding now..."
-    sudo usermod -aG docker "$USER"
-    echo "Docker group membership applied. Re-running with updated permissions..."
-    exec sg docker "$0"
+# Check docker socket access
+if ! docker info > /dev/null 2>&1; then
+    if getent group docker > /dev/null 2>&1; then
+        echo "Docker group exists but this session lacks access. Re-launching with docker group..."
+        exec sg docker "$0"
+    else
+        echo "Error: Docker does not appear to be installed. Please run the Docker install service first."
+        exit 1
+    fi
 fi
 
 # Check and remove Apache if installed

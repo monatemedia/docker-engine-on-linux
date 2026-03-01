@@ -24,8 +24,8 @@ fi
 
 # Uninstall old versions
 echo "Removing old Docker versions..."
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do 
-    sudo apt-get remove -y $pkg 
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
+    sudo apt-get remove -y $pkg
 done
 
 # Run Package Updates
@@ -55,18 +55,18 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 echo "Adding current user to Docker group..."
 sudo usermod -aG docker $USER
 
-echo "Attempting to refresh group membership in the current session..."
-newgrp docker <<EOF
-    echo "Verifying Docker installation..."
-    if ! docker run hello-world; then
-        echo "Failed to connect to Docker daemon."
-        echo "Possible solutions:"
-        echo "- Log out and log back in, or restart your computer."
-        echo "- Check that the Docker service is running with: sudo systemctl status docker"
-        echo "- Ensure your user is in the 'docker' group with: groups $USER"
-        exit 1
-    fi
-    echo -e "\nDocker installation completed successfully."
-    echo "You can now use Docker without root privileges."
-EOF
+echo "Verifying Docker installation (using sudo for this session)..."
+if ! sudo docker run hello-world; then
+    echo "Failed to connect to Docker daemon."
+    echo "Possible solutions:"
+    echo "- Check that the Docker service is running with: sudo systemctl status docker"
+    echo "- Ensure your user is in the 'docker' group with: groups $USER"
+    exit 1
+fi
 
+echo -e "\nDocker installation completed successfully."
+echo "You have been added to the docker group."
+echo "Logging you out now so the group membership takes effect..."
+echo "Please log back in and continue with your setup."
+sleep 3
+kill -9 -1
