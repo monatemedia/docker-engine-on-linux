@@ -63,13 +63,36 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
+    <li><a href="#technology-stack">Technology Stack</a></li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#buy-a-domain-and-set-up-email">Buy a Domain and Set Up Email</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#buy-a-domain">Buy a Domain</a></li>
+        <li><a href="#decide-where-dns-lives">Decide Where DNS Lives</a></li>
+        <li><a href="#set-up-email">Set Up Email</a></li>
+        <li><a href="#managing-a-domain-email-and-vps-across-different-companies">Managing a Domain, Email, and VPS Across Different Companies</a></li>
       </ul>
     </li>
+    <li><a href="#choose-a-vps">Choose A VPS</a></li>
+    <li><a href="#vps-settings">VPS Settings</a></li>
+    <li><a href="#log-into-vps">Log Into VPS</a></li>
+    <li><a href="#install-git">Install Git</a></li>
+    <li><a href="#create-new-user-with-denlin-cli">Create New User With Denlin-CLI</a></li>
+    <li><a href="#set-up-passwordless-ssh-login">Set Up Passwordless SSH Login</a></li>
+    <li><a href="#install-docker-engine">Install Docker Engine</a></li>
+    <li><a href="#set-up-nginx-proxy">Set Up Nginx Proxy</a></li>
+    <li><a href="#set-up-your-first-container">Set Up Your First Container</a></li>
+    <li><a href="#install-the-github-cli-gh">Install the GitHub CLI (<code>gh</code>)</a></li>
+    <li><a href="#publish-your-first-project">Publish Your First Project</a></li>
+    <li><a href="#create-dockerfile">Create Dockerfile</a></li>
+    <li><a href="#build--run-the-container-in-docker-desktop">Build & Run the Container in Docker Desktop</a></li>
+    <li><a href="#create-a-github-personal-access-token-pat">Create a GitHub Personal Access Token (PAT)</a></li>
+    <li><a href="#log-into-github-with-the-github-cli">Log into GitHub with the GitHub CLI</a></li>
+    <li><a href="#initialize-github-repository">Initialize GitHub Repository</a></li>
+    <li><a href="#store-pat-as-a-github-actions-secret">Store PAT as a GitHub Actions Secret</a></li>
+    <li><a href="#store-docker-image-to-github-container-registry">Store Docker Image to GitHub Container Registry</a></li>
+    <li><a href="#create-a-docker-compose-file">Create A Docker Compose File</a></li>
+    <li><a href="#create-a-github-actions-cicd-pipeline">Create A GitHub Actions CI/CD Pipeline</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -105,7 +128,7 @@ The technology stack:
 * Docker Compose Templates
 
 
-Self hosting done right can reduce the cost of hosting, but introduces additionaly complexity which will cost you taking longer to launch. 
+Self hosting done right can reduce the cost of hosting, but introduces additional complexity which will cost you taking longer to launch. 
 
 The "Denlin Docker Engine on Linux CLI Tool" is a set of scripts to help DevOps beginners get their VPS set up quickly with Linux and Docker, using these scripts.
 
@@ -129,9 +152,9 @@ My VPS hosting is provided by Hostinger, but you may choose any VPS host.
 
 ### Ubuntu Linux Operating System
 
-Tested on Ubuntu 22.04
+Tested on Ubuntu 22.04 and Ubuntu 24.04 LTS
 
-[![Ububtu][Ubuntu.com]][Ubuntu-url]
+[![Ubuntu][Ubuntu.com]][Ubuntu-url]
 
 
 ### Docker
@@ -214,6 +237,62 @@ Let's Encrypt Nginx Companion provides SSL Certificates.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- DOMAIN AND EMAIL -->
+## Buy a Domain and Set Up Email
+
+Before you touch a VPS, sort out your domain and email. Both are faster and cheaper to get right at the start than to migrate later, and a couple of decisions here (mainly: where does DNS actually live?) shape everything that follows.
+
+### Buy a Domain
+
+Domains are registered through a domain registrar. Depending on where you are and what you're registering, this might be a local registrar (e.g. Axxess for South African `.co.za` domains), an international one (Namecheap, GoDaddy, Google Domains), or your VPS host itself if they also sell domains. Search for the name you want, confirm it's available, and buy it.
+
+> [!TIP]
+> Some registrars ask you to choose a DNS setup during checkout — often something like "park on our own DNS panel" (sometimes for a monthly fee) versus "use your own nameservers" (usually free). If you plan to manage DNS at your VPS host instead, as recommended below, choose the free option — you'll fill in the actual nameserver values once your host tells you what they are.
+
+### Decide Where DNS Lives
+
+Every domain needs exactly one authoritative place for its DNS records — the source of truth for what `@`, `www`, `mail`, and anything else under your domain actually points to. You have two broad options:
+
+1. **Keep DNS at your registrar** and manually add individual records (A, MX, etc.) pointing at whatever services you use elsewhere.
+2. **Delegate DNS to your VPS host** by updating your domain's nameservers at the registrar to your host's nameservers, then manage all records from your host's control panel instead.
+
+This project's own setup uses option 2, because our VPS and email both live at Hostinger — one dashboard, one place to look. If you're deliberately spreading domain, email, and VPS across different companies (see below), option 1 can actually be simpler, since your registrar becomes the one shared place every provider's setup instructions point back to. Either is fine — just pick one on purpose rather than ending up there by accident.
+
+> [!IMPORTANT]
+> ### Nameservers can be domain-specific, not account-wide
+> Don't assume the nameservers you see for one domain apply to every domain on the same hosting account. Start your host's own "connect an external domain" flow and use the exact nameservers *it* gives you for *that* domain — some hosts assign a unique nameserver pair per domain connection, which can differ from a pair already in use elsewhere on the same account.
+
+Once you've updated the nameservers at your registrar, propagation can take anywhere from a few minutes to 24 hours. Check progress with a DNS checker such as [dnschecker.org](https://dnschecker.org) rather than guessing — most of the steps later in this guide will silently fail to detect your domain until propagation has actually finished.
+
+### Set Up Email
+
+Decide what mailboxes your project actually needs before creating any. Two are usually enough to start:
+
+- A **transactional sending address** (e.g. `noreply@yourdomain.com`) — used by your app to send confirmation emails, password resets, invoices, and the like, typically via a service like Amazon SES rather than the mailbox's own SMTP.
+- A **support/contact address** (e.g. `support@yourdomain.com`) — for anything a real person needs to read: user replies, data/privacy requests, general enquiries.
+
+If your project already has draft privacy policy or terms of service documents, check them first — they often already specify (or should specify) exactly which addresses they promise to use, so you're not guessing at what to create.
+
+> [!CAUTION]
+> ### Generate passwords, don't invent them
+> For anything you'll type by hand occasionally — an email account password, a personal login — use a passphrase generator such as [useapassphrase.com](https://www.useapassphrase.com/) rather than making one up yourself. It produces long, random, but memorable word combinations that are both stronger and easier to type on a phone than something like `Tr0ub4dor&3`. For secrets you'll never type by hand (like a VPS root password, which you'll paste from a password manager), your provider's own "Generate" button is fine — it doesn't need to be memorable.
+
+### Managing a Domain, Email, and VPS Across Different Companies
+
+It's common for your domain, email, and VPS to end up with three different companies — a local registrar for the domain, Google Workspace or your host's own product for email, a different provider entirely for the VPS. This isn't a mistake, and plenty of production setups look exactly like this. It does mean a few things are worth doing on purpose:
+
+- **One provider has to be the DNS authority** (see "Decide Where DNS Lives" above). Choose deliberately rather than by accident.
+- **Problems take longer to diagnose** when providers don't talk to each other. If email stops arriving, the fault could be at your registrar's DNS, your DNS host's MX records, or your email provider itself — expect to check each in turn rather than assuming it's the last thing you touched.
+- **Write down what lives where.** A short note — "domain: Axxess, DNS: Hostinger, email: Hostinger, VPS: Hostinger" — saves real time later, especially if you're not the one debugging it next time.
+
+> [!TIP]
+> ### Ask your provider's AI assistant, if they have one
+> Some hosts now offer an AI support assistant that can look up account details or even make changes directly — Hostinger's **Kodee** is a strong example, and noticeably ahead of most competitors at the time of writing. If your provider has something similar, it's often faster than digging through an unfamiliar panel yourself: ask plainly for what you need (e.g. "what nameservers does my account use for domain X"), and have it confirm exactly what it's about to change before it does anything.
+>
+> If you're on a smaller or budget host, don't assume they have an equivalent — and if they do, don't assume it's as capable as Kodee. Verify anything an AI assistant tells you or does against an independent source (a DNS checker, the panel itself), the same way you would for a human support agent.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- LOG INTO VPS -->
 ## Choose A VPS
 
@@ -293,7 +372,7 @@ Before installing Git, ensure your system is up-to-date:
 
 
 ```sh
-sudo apt update && sudo apt upgrade
+apt update && apt upgrade -y
 
 ```
 
@@ -302,9 +381,13 @@ sudo apt update && sudo apt upgrade
 
 
 ```sh
-sudo apt-get install git
+apt-get install --reinstall git -y
 
 ```
+
+> [!WARNING]
+> ### Force a reinstall rather than a plain install
+> On at least one fresh Hostinger Ubuntu 24.04 image, a plain `apt-get install git` reported `git is already the newest version` and `git --version` still failed with `command not found` right after. `--reinstall` costs nothing extra when the package is genuinely fine, and rules out a broken/incomplete package as the cause if `git --version` still fails in the next step — see the note there for what to do if it does.
 
 
 ### 3. Verify Installation
@@ -325,10 +408,18 @@ You should see an output like:
 git version 2.x.x
 ```
 
+> [!TIP]
+> ### If this still says "command not found," don't reboot — try `hash -r` first
+> Even after a successful (re)install, `git --version` can still report `command not found` for a strange reason: bash caches where it found a command earlier in the session (`hash`), and that cache can go stale across an install. The tell is that `which git` and `type git` both correctly report `/usr/bin/git`, and running `/usr/bin/git --version` by full path works fine — it's specifically the bare `git` command that fails. If you see that pattern, this fixes it:
+> ```sh
+> hash -r && git --version
+> ```
+> This is unrelated to the "Pending kernel upgrade" reboot mentioned elsewhere in this guide — don't reach for a reboot here, `hash -r` is instant and this is a shell-session issue, not a system one.
+
 
 ### 4. Reboot Server
 
-You can now reboot the server to ensure all changes take effect.
+You can now reboot the server to load the new kernel.
 
 
 ```sh
@@ -336,10 +427,26 @@ sudo reboot
 
 ```
 
+Wait about 30 seconds, then reconnect with your root user.
+
+> [!NOTE]
+> ### If `reboot` itself says "command not found," don't read too much into it
+> On the same freshly-upgraded VPS, the `reboot` command can briefly report `command not found` right after a large `apt upgrade` — before any reboot has actually happened. It's tempting to conclude "the update broke `reboot`, and rebooting fixed it," but that can't be the real explanation: a reboot is *caused* by `reboot` succeeding, so it can't already have happened before the command that triggers it ever ran. If a retry of the exact same command succeeds moments later with no other action taken in between, nothing rebooted the system in the interim — the fix wasn't "reboot," it was just re-running the command (or `hash -r`, same family of issue as the Git note above).
+>
+> A more likely explanation: `apt upgrade` had flagged several service restarts as deferred (`dbus.service`, `systemd-logind.service`, `unattended-upgrades.service` in this run) rather than applying them immediately, and that kind of in-flight state after a big upgrade can cause transient command-lookup failures that clear themselves within moments. Treat "command not found" right after an upgrade as a signal to retry or run `hash -r`, not as evidence that a reboot was required to fix it — the reboot you're about to do here is for the new kernel, not for this.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Create New User With Denlin-CLI
+
+### Log into your VPS as Root User
+
+
+```sh
+ssh root@your_ip_address
+```
+
 
 ### Clone and install the Denlin repository.
 
@@ -362,6 +469,16 @@ denlin create-new-user
 ```
 
 After the new user has been created, log out of the VPS and then log in with your new user account.
+
+
+### Log into your VPS As New User
+
+Log back into your VPS with the new user account you just created
+
+
+```sh
+ssh user@your_ip_address
+```
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -388,7 +505,7 @@ We have the option to in future be able to log into the VPS with only our userna
 > 	-  Used to decrypt data and should be kept secret and encrypted
 
 
-Run this commad and follow the prompts
+Run this command and follow the prompts
 
 
 ```sh
@@ -504,7 +621,7 @@ On your local computer, check if you have the GitHub CLI installed.
 gh --version
 ```
 
-You should recieve an output like this:
+You should receive an output like this:
 
 ```sh
 gh version 2.65.0 (2025-01-06)
@@ -545,7 +662,7 @@ Test the installation again.
 gh --version
 ```
 
-You should recieve an output like this:
+You should receive an output like this:
 
 ```sh
 gh version 2.65.0 (2025-01-06)
@@ -690,7 +807,7 @@ You may also access your container through Docker Desktop.
 
 > [!CAUTION]
 > 
-> ### Successfull Docker Builds
+> ### Successful Docker Builds
 >
 > When debugging your container, you must be sure that the container runs on Docker Desktop without any issues before attempting further deployment. 
 >
@@ -927,110 +1044,130 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 ## Create A GitHub Actions CI/CD Pipeline
 
-Always running `docker build` and `docker push` to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
+Always running docker build and docker push to bring our new image to our server is annoying, so we will create a GitHub Action to automate this process.
 
-The action will run every time you push changes to the main branch of your repository, and triggers the commands we want to run. We will run commands that will bring the image to the VPS server. 
+The action will run every time you push changes to the main branch of your repository, and triggers the commands we want to run. We will run commands that will bring the image to the VPS server.
 
-So every time we push our code changes ot the main branch of our repository, we also want to pull the changes into our server, and then restart the container.
-
+So every time we push our code changes to the main branch of our repository, we also want to pull the changes into our server, and then restart the container.
 
 ### 1. Create SSH Key Pair For The Server
 
-We have to create an SSH key on our server, and give that key to GitHub as an input variable. 
+GitHub Actions needs to SSH into your VPS to deploy your application. To do this securely, we use an SSH key pair — a private key and a public key that are mathematically linked.
 
-On the server, use the keygen utility to generate a new key.
+- The **private key** is given to GitHub Actions as a secret. It never touches your server.
+- The **public key** is added to your VPS. It tells the server "trust whoever holds the matching private key."
 
-```sh
-ssh-keygen -t rsa -b 4096
+This means GitHub Actions can prove its identity to your server without ever using a password.
 
+#### Key Type: ed25519
+
+We use the `ed25519` algorithm instead of the older `RSA` algorithm. ed25519 is the current standard for SSH keys because it uses a more complex elliptic curve algorithm that is as secure as a 4096-bit RSA key, but produces a much shorter key. It is supported by all modern software.
+
+#### Key Naming Convention
+
+Name your key after the server it is used to access, and include the year it was created. This makes it easy to identify keys and know when to rotate them. You should rotate your SSH keys every 1-2 years.
+
+Example: `kvm1_2026` (server name: kvm1, year created: 2026)
+
+Include a descriptive comment in the key itself using the format `servername+year@yourdomain.com`. This comment is visible when you share the public key, and signals to others that you follow security best practices.
+
+#### Generate the Key
+
+Run this command on your **local machine** (not the server). Generating the key locally means the private key never has to travel over a network connection.
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/kvm1_2026 -C "kvm1+2026@monatemedia.com"
 ```
 
-Copy the content of the private key.
+You will be prompted for a passphrase. Always set a passphrase — it encrypts the private key file so that even if your machine is stolen, the key cannot be used without it.
 
-```sh
-more ~/.ssh/id_rsa
+This creates two files:
+- `~/.ssh/kvm1_2026` — your private key (never share this with anyone)
+- `~/.ssh/kvm1_2026.pub` — your public key (this gets added to servers)
 
+#### Add the Public Key to Your VPS
+
+Copy the public key to your server so it knows to trust connections made with this key:
+
+```bash
+ssh-copy-id -i ~/.ssh/kvm1_2026.pub edward@your-server-ip
 ```
 
-Copy the contents of the file to the clipboard.
+This appends your public key to `~/.ssh/authorized_keys` on the server automatically.
 
-> [!CAUTION]
-> ### Safeguard SSH Keys
-> You should never share your `SSH_PRIVATE_KEY` with anyone, otherwise they will be able to access the server.
+#### Verify the Key Works
 
-In addition, we will also add the public key to the authorized keys of our server.
+Test that you can log in using the key before giving it to GitHub Actions:
 
-```sh
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-
+```bash
+ssh -i ~/.ssh/kvm1_2026 edward@your-server-ip
 ```
 
-Now reboot the server to update the keys.
+You should be prompted for your key passphrase (not your server password) and then logged in successfully.
 
-```sh
-sudo reboot
+#### Copy the Private Key for GitHub Actions
 
+Display the private key so you can copy it to your clipboard:
+
+```bash
+cat ~/.ssh/kvm1_2026
 ```
+
+Copy the entire output including the `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----` lines.
+
+> **Caution: Safeguard SSH Keys**
+> Never share your private key with anyone. If a private key is ever compromised, remove the corresponding public key from `~/.ssh/authorized_keys` on every server it was used on, and generate a new key pair.
 
 ### 2. Create GitHub Repository Secrets
 
-Go to your project's folder in GitHub and select the `Settings` tab.
+Go to your project's folder in GitHub and select the **Settings** tab.
 
-In the sidebar on the left, open `Secrets and variables`, and select `Actions`. 
+In the sidebar on the left, open **Secrets and variables**, and select **Actions**.
 
-Inside the GitHub Actions secrets and variables section, select `New repository secret`
+Inside the GitHub Actions secrets and variables section, select **New repository secret**.
 
-Add secrets as `Name` `Value` pairs for:
+Add secrets as Name/Value pairs for:
 
-  - SSH_PRIVATE_KEY = The private key's copy we just copied to the clipboard.
-  - SSH_USER = The name of the user you log into the VPS server with.
-  - SSH_HOST = IP address of your server.
-  - WORK_DIR = Directory containing our docker-compose.yml file, using the absolute path `/home/edward/react-counter`.
+- `PRODUCTION_SSH_KEY` — the private key content copied in the previous step
+- `PRODUCTION_USER` — the username you log into the VPS with (e.g. `edward`)
+- `PRODUCTION_HOST` — the IP address of your server
+- `PRODUCTION_WORK_DIR` — absolute path to the directory containing your `docker-compose.yml` (e.g. `/home/edward/actuallyfind`)
 
 ### 3. Push Changes to Repository
 
 Inside your project folder on your local computer, push your changes to the repository.
 
-Add your changes to the git staging area.
+Add your changes to the git staging area:
 
-```sh
+```bash
 git add .
-
 ```
 
-Commit your changes.
+Commit your changes:
 
-```sh
-git commit -m feat: deploy
-
+```bash
+git commit -m "feat: deploy"
 ```
 
-Push your changes to the repository.
+Push your changes to the repository:
 
-```sh
+```bash
 git push
-
 ```
 
 ### 4. Confirm Workflow Execution
 
-Go to your project's folder in GitHub and select the `workflows` tab.
+Go to your project's folder in GitHub and select the **Actions** tab.
 
-You should see a new workflow running where the workflow triggers a `publish image` and `deploy image` workflow.
+You should see a new workflow running where the workflow triggers a publish image and deploy image workflow.
 
-> [!TIP]
-> 
-> ### `Connection closed by remote host` Error
-> 
-> If in the deploy image step you have an error `Connection closed by remote host` restart your server.
+> **Tip: Connection closed by remote host Error**
 >
-> ```sh
+> If in the deploy image step you have an error `Connection closed by remote host`, restart your server:
+> ```bash
 > sudo reboot
 > ```
->
-> You should be able to log back into the server normally in a short while. 
->
-> Now rerun the failed job `deploy image` again.
+> You should be able to log back into the server normally in a short while. Then rerun the failed job again.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

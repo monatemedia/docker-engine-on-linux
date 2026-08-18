@@ -46,16 +46,16 @@ cat << EOF > "$TMP_PATH"
 #!/bin/bash
 
 # Ensure SSH key exists
-if [ ! -f "\$HOME/.ssh/id_rsa" ]; then
+if [ ! -f "\$HOME/.ssh/id_ed25519" ]; then
     echo "No SSH key found. Generating a new SSH key pair..."
-    ssh-keygen -t rsa -b 4096 -N "" -f "\$HOME/.ssh/id_rsa"
+    ssh-keygen -t ed25519 -N "" -f "\$HOME/.ssh/id_ed25519"
 else
     echo "An existing SSH key was found. Proceeding..."
 fi
 
 # Copy the public key to the VPS
 echo "Copying SSH public key to the VPS..."
-ssh-copy-id -i "\$HOME/.ssh/id_rsa.pub" "$vps_user@$vps_ip"
+ssh-copy-id -i "\$HOME/.ssh/id_ed25519.pub" "$vps_user@$vps_ip"
 
 if [ \$? -eq 0 ]; then
     echo "Public key successfully copied. Passwordless SSH login is now enabled!"
