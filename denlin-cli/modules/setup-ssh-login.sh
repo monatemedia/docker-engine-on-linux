@@ -48,7 +48,8 @@ cat << EOF > "$TMP_PATH"
 # Ensure SSH key exists
 if [ ! -f "\$HOME/.ssh/id_ed25519" ]; then
     echo "No SSH key found. Generating a new SSH key pair..."
-    ssh-keygen -t ed25519 -N "" -f "\$HOME/.ssh/id_ed25519"
+    echo "You'll be prompted for a passphrase - use a strong one (a passphrase generator like https://www.useapassphrase.com/ works well)."
+    ssh-keygen -t ed25519 -f "\$HOME/.ssh/id_ed25519"
 else
     echo "An existing SSH key was found. Proceeding..."
 fi
