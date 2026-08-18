@@ -325,8 +325,10 @@ In your hosting provider's control panel, you'll want to chose an operating syst
 
 > [!TIP]
 > ## Git Bash
-> Git Bash is an application which provides an emulation layer for a Git command line experience. Windows users should use the Git Bash terminal client.
+> Git Bash is an application which provides an emulation layer for a Git command line experience. Windows users should use the Git Bash terminal client for every local-machine step in this guide, unless a step explicitly says otherwise.
 > Mac users can use their native command line shells, provided they have Git installed.
+>
+> A handful of steps later on (managing a Windows service, for example) need something Git Bash can't do on its own — those steps will explicitly say **PowerShell as Administrator** and are the exception, not the norm. Once that specific step is done, go straight back to Git Bash for everything else.
 
 
 Log into your VPS
@@ -512,6 +514,113 @@ Run this command and follow the prompts
 denlin setup-ssh-login
 
 ```
+
+You'll be asked for a passphrase while the key is being generated. Use a strong one — a passphrase generator like [useapassphrase.com](https://www.useapassphrase.com/) works well. A key with no passphrase is just as usable to anyone who ever gets a copy of the file itself (a stolen laptop, a leaked backup, malware quietly reading your disk) as it is to you, so it's worth the few extra seconds now.
+
+### Use an SSH Agent (So You Only Enter Your Passphrase Once)
+
+Typing a passphrase on every single `ssh` or `scp` call gets old fast — but you don't have to give up the passphrase to get that convenience back. An SSH agent is a small background service that holds your *unlocked* key in memory after you enter the passphrase once — it's never written back to disk — and quietly answers on your behalf for every SSH connection after that, for as long as it keeps running. In practice: one passphrase prompt after you log into your computer, then passwordless-feeling SSH for the rest of that session.
+
+On Windows, the agent ships with OpenSSH but is off by default. One-time setup, in PowerShell **as Administrator**:
+
+```powershell
+Get-Service ssh-agent | Set-Service -StartupType Automatic
+Start-Service ssh-agent
+```
+
+Then, once per login session, in Git Bash:
+
+```sh
+ssh-add ~/.ssh/id_ed25519
+```
+
+You'll be asked for the passphrase this one time. After that, `ssh user@your_ip_address` should connect straight through with no prompt at all — until you log off, reboot, or restart the agent, at which point you'll `ssh-add` again.
+
+> [!WARNING]
+> ### "Could not open a connection to your authentication agent"
+> Git Bash ships its own bundled build of OpenSSH (you can check with `which ssh-add` — if it points at `/usr/bin/ssh-add`, this is what's happening), and that build doesn't know how to talk to the Windows `ssh-agent` service's named pipe, even once the service is running. The fix is to tell Git Bash to prefer Windows' own native OpenSSH client, which does speak to it — both builds read and write the same `~/.ssh` folder, so nothing about your keys changes:
+> ```sh
+> echo 'export PATH="/c/Windows/System32/OpenSSH:$PATH"' >> ~/.bashrc
+> source ~/.bashrc
+> which ssh-add
+> ```
+> That last command should now print `/c/Windows/System32/OpenSSH/ssh-add.exe`. Re-run `ssh-add ~/.ssh/id_ed25519` and it should connect to the agent this time.
+
+On macOS and most Linux desktops, an agent is already running by default, and `ssh-add ~/.ssh/id_ed25519` (macOS: `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` to persist it across restarts) is generally all you need — no service to enable first.
+
+> [!NOTE]
+> An SSH agent protects against your key file leaking on its own — a backup, a stolen drive, malware reading your files. It doesn't protect against someone with live access to your already-unlocked machine while the agent has the key loaded; at that point they can use the agent directly without ever needing the passphrase. That's a much narrower window than "anyone who ever gets the file, forever," which is what a passphrase-less key exposes you to — and it's why the passphrase is worth having even though disabling password login (next section) already closes off remote guessing attacks on its own.
+
+> [!TIP]
+> ### `sudo` wants your account password, not your key's passphrase
+> Once you're used to typing a passphrase to unlock your key, it's an easy autopilot mistake to type that same passphrase into a `sudo` prompt moments later on the server — they're two different secrets, asked by two very similar-looking prompts, close together in time. `sudo` on the VPS always wants the Linux account password for the user you're logged in as (the one you set with `chpasswd` back when the user was created), never the SSH key passphrase. If `sudo` keeps rejecting a password you're sure is right, this mix-up is the first thing to check.
+
+### Disable Password Login
+
+Once you've confirmed `ssh user@your_ip_address` connects with your key, the account password is still a valid way to log in too — key-based login being available doesn't turn password login off. Anyone who ever guesses, phishes, or brute-forces that password can still get in the same way you could before you set up a key at all. Turning password auth off closes that door entirely, so the key becomes the only way in.
+
+> [!WARNING]
+> A mistake in `sshd_config` can lock you out of the server entirely, with no password fallback left to recover it. Do not skip the backup step, do not close your current terminal session until you've verified a *new* connection works in a separate window, and if anything looks wrong, you still have this session open to fix it in.
+
+**1. Back up the files you're about to change:**
+
+```sh
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+```
+
+> [!IMPORTANT]
+> ### Cloud VPS images often override `sshd_config` from a separate file
+> Many providers' Ubuntu cloud images (Hostinger included) ship `Include /etc/ssh/sshd_config.d/*.conf` near the top of `sshd_config`, plus a drop-in file in that folder that explicitly sets `PasswordAuthentication yes` — usually so the password the provider generated for you works on your very first login. sshd applies the *first* value it finds for a given setting and ignores later ones, and an early `Include` means the drop-in file wins over anything you edit further down in the main file. Editing `sshd_config` alone can look like it worked and change nothing.
+>
+> Check for this before editing anything:
+> ```sh
+> sudo grep -n "Include" /etc/ssh/sshd_config
+> ls -la /etc/ssh/sshd_config.d/
+> sudo grep -rniE "PasswordAuthentication|PermitRootLogin" /etc/ssh/sshd_config /etc/ssh/sshd_config.d/
+> ```
+> If a file in `sshd_config.d/` sets `PasswordAuthentication yes`, that's the one that actually needs to change — back it up too:
+> ```sh
+> sudo cp /etc/ssh/sshd_config.d/50-cloud-init.conf /etc/ssh/sshd_config.d/50-cloud-init.conf.bak
+> ```
+> (filename may differ depending on your provider — use whatever the grep above turned up).
+
+**2. Make the change** — adjust the filename in the first command to match whatever your own grep found:
+
+```sh
+sudo sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config.d/50-cloud-init.conf
+sudo sed -i -e 's/^#PasswordAuthentication yes/PasswordAuthentication no/' -e 's/^PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+```
+
+The second command also turns off root login entirely. From here on, admin work happens by logging in as your regular user and using `sudo`, not by logging in as root directly — worth doing even if you're not disabling passwords, since a keyless, password-only root account is the single most attractive target on the whole server.
+
+**3. Verify the edits landed, and check the config is valid:**
+
+```sh
+sudo grep -rniE "PasswordAuthentication|PermitRootLogin" /etc/ssh/sshd_config /etc/ssh/sshd_config.d/
+sudo sshd -t
+```
+
+`sshd -t` printing nothing at all is success — it only prints output when something's wrong.
+
+**4. Reload (not restart) so the change takes effect without dropping your current connection:**
+
+```sh
+sudo systemctl reload ssh
+```
+
+**5. Leaving this session open, open a brand-new terminal window and confirm:**
+
+```sh
+ssh user@your_ip_address
+```
+
+connects via your key with no password ever offered, and:
+
+```sh
+ssh root@your_ip_address
+```
+
+is refused immediately with no password prompt at all. Only once both check out in the new window should you close the original session.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
