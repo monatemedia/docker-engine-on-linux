@@ -93,6 +93,7 @@
     <li><a href="#store-docker-image-to-github-container-registry">Store Docker Image to GitHub Container Registry</a></li>
     <li><a href="#create-a-docker-compose-file">Create A Docker Compose File</a></li>
     <li><a href="#create-a-github-actions-cicd-pipeline">Create A GitHub Actions CI/CD Pipeline</a></li>
+    <li><a href="#deploying-multiple-environments-staging--production">Deploying Multiple Environments (Staging & Production)</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -1311,6 +1312,62 @@ You should see a new workflow running where the workflow triggers a publish imag
 > ```
 > You should be able to log back into the server normally in a short while. Then rerun the failed job again.
 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Deploying Multiple Environments (Staging & Production)
+
+> [!NOTE]
+> Everything in "Create A GitHub Actions CI/CD Pipeline" above assumes one VPS, one
+> environment, one secret group (`PRODUCTION_SSH_KEY`, `PRODUCTION_USER`, `PRODUCTION_HOST`,
+> `PRODUCTION_WORK_DIR`). A project that instead runs separate `deploy-staging` and
+> `deploy-production` jobs needs a fully-prefixed secret group *per environment* —
+> `STAGING_SSH_HOST`/`PRODUCTION_SSH_HOST`, `STAGING_SSH_USER`/`PRODUCTION_SSH_USER`, and so
+> on — which is what `create-deploy-ssh` (below) generates. Note this is a different naming
+> shape than section 2 above (`PRODUCTION_USER`/`PRODUCTION_HOST`, no `_SSH_` in the middle) —
+> if a future project's generated workflow (see `services/github-actions/docker-publish.yml`)
+> is extended to multiple environments, standardizing its secret names on the `{ENV}_SSH_*`
+> shape avoids a manual rename step every time.
+
+### Generate a Deploy Key Per Environment
+
+To generate an SSH deploy key for a specific environment, install it on the VPS, and upload
+it as GitHub Actions secrets, use `create-deploy-ssh` in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin services
+
+```
+
+From services menu select `create-deploy-ssh`.
+
+> [!WARNING]
+> ### This Key Must Have No Passphrase
+>
+> Unlike your own personal login key (`denlin setup-ssh-login`, which correctly *does* prompt
+> for a passphrase), this key is loaded unattended by GitHub Actions' `ssh-agent` step. There's
+> no human in that pipeline to answer a passphrase prompt, so a passphrase-protected key fails
+> in CI the same way it fails a local `ssh -o BatchMode=yes` check — `Permission denied
+> (publickey)`, even when the public key is correctly installed on the VPS. `create-deploy-ssh`
+> generates the key with `-N ""` for you, so there's nothing to answer.
+
+You'll be asked which environment this key is for (`staging` or `production`) and the absolute
+work directory on the VPS for that environment. If staging and production share one VPS, give
+each a distinct work directory — the deploy job's own cleanup step (`rm -f
+${WORK_DIR}/docker-compose.yml`) will otherwise let one environment's deploy delete the other's
+compose file.
+
+The script runs the same `ssh-keyscan` check the "Add Server to Known Hosts" CI step runs
+before it ever touches GitHub, so a wrong IP, closed firewall port, or downed VPS shows up
+locally in seconds instead of after a multi-minute CI run — then uploads
+`{ENV}_SSH_HOST`/`{ENV}_SSH_USER`/`{ENV}_SSH_KEY`/`{ENV}_WORK_DIR` for you. For `production`,
+it uploads as an Environment secret (`gh secret set ... --env production`) rather than a plain
+repository secret, since a job declaring `environment: "production"` is the one place required
+reviewers / branch protection rules could later apply.
+
+Repeat for each environment (`staging`, then `production`).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
