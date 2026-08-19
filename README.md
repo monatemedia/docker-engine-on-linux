@@ -742,7 +742,10 @@ cd ~
 rm -rf ~/hello-world
 ```
 
-Then remove the DNS record you added for it from your domain provider's control panel, the same way you added it.
+Then remove the DNS record you added for it. In your domain provider's DNS zone editor (or DNS Records panel), find the `A` record with `Name`/`Host` matching what you used for this test (e.g. `hello-world`) pointing at your VPS IP, and delete just that one — leave any records for your real domain or subdomains untouched.
+
+> [!TIP]
+> If your host has an AI assistant like Kodee (see the "Managing a Domain, Email, and VPS Across Different Companies" section near the top), it's a fast way to do this — just tell it exactly which record to remove and have it confirm before applying. If not, the manual steps above work the same everywhere; DNS panels vary in layout but all have some form of a records list you can search or filter by name.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
