@@ -643,6 +643,9 @@ docker run hello-world
 
 ```
 
+> [!NOTE]
+> When this finishes successfully, it ends by force-closing your terminal session — that's intentional, not a crash. Your user was just added to the `docker` group, and Linux only picks that up on your next login, so the script logs you out to make sure it takes effect. Just log back in and carry on; running `docker` commands without `sudo` should work from here.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -711,8 +714,35 @@ Also note that if the application will be hosted in the main domain, the `Name` 
 
 Now visit your domain or subdomain in the browser, and you should see your Hello World website over HTTPS.
 
+> [!WARNING]
+> ### If HTTP works but HTTPS doesn't load at all
+> The certificate request fires the moment the container starts — which, following the steps in order, happens *before* the DNS record you're told to add even exists yet. That first attempt fails with a DNS lookup error, and the Let's Encrypt companion only retries once an hour on its own, not immediately. If HTTP works but HTTPS won't load, this is almost certainly why. Confirm it:
+> ```sh
+> docker logs letsencrypt-companion --tail 20
+> ```
+> Look for something like `NXDOMAIN` or `DNS problem`. If you see that, DNS has since propagated (that's why HTTP already works) — you just need to force a retry rather than wait out the hour. Simply restarting your app's container **won't** do it; the companion only re-checks when a container's configuration changes, not on every restart. Restart the companion itself instead, which re-processes everything on boot:
+> ```sh
+> docker restart letsencrypt-companion
+> ```
+> Give it 20-30 seconds, then check the log again for `Your cert is in: ...` — HTTPS should work immediately after.
+
 
 ![Hello World Screen Shot][hello-world-screenshot]
+
+### Clean Up the Test Container
+
+This container was only ever meant to prove Docker, Nginx, and SSL actually work together — once you've confirmed HTTPS loads, remove it rather than leaving a "Hello World" page live on a real subdomain indefinitely.
+
+On the VPS:
+
+```sh
+cd ~/hello-world
+docker compose down
+cd ~
+rm -rf ~/hello-world
+```
+
+Then remove the DNS record you added for it from your domain provider's control panel, the same way you added it.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
