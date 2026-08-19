@@ -59,6 +59,15 @@ cat <<EOL >"$TEMP_SCRIPT"
 
 set -e
 
+# On Windows Git Bash, MSYS silently rewrites any argument that looks like a
+# POSIX absolute path (e.g. \$WORK_DIR, starting with /) into a Windows path
+# before handing it to a native (non-MSYS) binary like gh.exe — turning
+# "/home/edward/sparkshop-staging" into "C:/Program Files/Git/home/edward/..."
+# with no error and no visible difference in what you typed. This broke
+# WORK_DIR secrets multiple times in production use before being tracked down.
+# No-op on Linux/Mac, so safe to export unconditionally.
+export MSYS_NO_PATHCONV=1
+
 VPS_USER="$vps_user"
 VPS_IP="$vps_ip"
 DEPLOY_ENVIRONMENT="$deploy_environment"
