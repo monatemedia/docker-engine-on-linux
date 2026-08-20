@@ -8,7 +8,6 @@ vps_user=$(whoami)
 
 # Variables
 CONF_FILE="/etc/denlin-cli.conf"
-TEMP_SCRIPT="/tmp/create-deploy-ssh-temp.sh"
 
 # Step 1: Check if configuration file exists
 if [ -f "$CONF_FILE" ]; then
@@ -36,6 +35,15 @@ while true; do
     echo "Please enter 'staging' or 'production'."
 done
 env_upper=$(echo "$deploy_environment" | tr '[:lower:]' '[:upper:]')
+
+# Named per-environment (not a fixed "/tmp/create-deploy-ssh-temp.sh") so that
+# running this twice in a row for two different environments — staging, then
+# production, say — before downloading/running the first one can't silently
+# overwrite it on the VPS. That collision used to be real: the second run's
+# temp script would clobber the first's at the same fixed path, so only the
+# second environment's key ever actually got generated even though both runs
+# reported success.
+TEMP_SCRIPT="/tmp/create-deploy-ssh-temp-${deploy_environment}.sh"
 
 # Step 4: Ask for the work dir this environment's docker-compose.yml will live in
 echo "This must be a DIFFERENT path than any other environment sharing this VPS —"
@@ -99,6 +107,10 @@ key_path="\$HOME/.ssh/\${application_name}_\${DEPLOY_ENVIRONMENT}_\$(date +%Y)"
 if [ -f "\$key_path" ]; then
     echo "Reusing existing key: \$key_path"
 else
+    # ssh-keygen won't create a missing ~/.ssh itself — it just fails with
+    # "No such file or directory" if this is the first time SSH has ever
+    # written anything there on this machine. Cheap to guard unconditionally.
+    mkdir -p "\$HOME/.ssh"
     echo "Generating ed25519 key pair (no passphrase — used unattended by CI)..."
     ssh-keygen -t ed25519 -N "" -f "\$key_path" -C "\${application_name}-\${DEPLOY_ENVIRONMENT}+\$(date +%Y)@monatemedia.com"
 fi
@@ -178,9 +190,9 @@ echo "1. Open a terminal in the root of your PROJECT'S folder on your local comp
 echo "   (not this VPS, and not the denlin-cli folder — the actual app repo being deployed)."
 echo ""
 echo "2. Download the script using the following command:"
-echo "   scp ${vps_user}@${vps_ip}:$TEMP_SCRIPT ./create-deploy-ssh-temp.sh"
+echo "   scp ${vps_user}@${vps_ip}:$TEMP_SCRIPT ./create-deploy-ssh-temp-${deploy_environment}.sh"
 echo ""
 echo "3. Run the script using:"
-echo "   ./create-deploy-ssh-temp.sh"
+echo "   ./create-deploy-ssh-temp-${deploy_environment}.sh"
 echo ""
 echo "Once the script finishes, it will delete itself from both the VPS and the local computer."
