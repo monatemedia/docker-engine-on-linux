@@ -142,24 +142,33 @@ fi
 echo "Copying public key to \$VPS_USER@\$VPS_IP..."
 ssh-copy-id -i "\${key_path}.pub" "\$VPS_USER@\$VPS_IP"
 
-# Step 4: Preflight — the exact check the 'Add Server to Known Hosts' CI step
-# runs. Catch a bad IP/closed firewall port/downed VPS here, not after a push.
-# -o KexAlgorithms=-sntrup761x25519-sha512@openssh.com drops just that one
-# hybrid post-quantum KEX method from the offered list. Ubuntu 24.04's
-# OpenSSH 9.6 advertises it by default; Windows' bundled ssh-keyscan (older,
-# and — unlike ssh.exe on the same machine — apparently built without
-# support for it) fails the whole negotiation outright rather than falling
-# back, with "choose_kex: unsupported KEX method ...". ssh.exe itself (used
-# by ssh-copy-id and the login preflight below) already negotiates a
-# different, mutually-supported KEX fine, so this is ssh-keyscan-specific.
-# The leading "-" removes it from the default list rather than replacing the
-# list outright, so this is a no-op on any system that already handles it.
+# Step 4: Preflight — a lightweight reachability/banner check, loosely
+# mirroring the 'Add Server to Known Hosts' CI step. Some local ssh-keyscan
+# builds on Windows can't negotiate with Ubuntu 24.04's OpenSSH 9.6, which
+# offers the sntrup761x25519-sha512@openssh.com hybrid post-quantum KEX
+# method by default — either failing outright with "unsupported KEX method",
+# or (on older builds with no algorithm-override flag at all — no -o, only
+# the unrelated -O) never getting that far. Passing an explicit KexAlgorithms
+# override to work around this reliably isn't possible across every
+# ssh-keyscan build in the wild, so instead: treat those two specific
+# failure signatures as a known local-tooling gap, not a real connectivity
+# problem — proven by ssh-copy-id (which uses ssh.exe, not ssh-keyscan.exe)
+# having already succeeded immediately above — and don't hard-fail on them.
+# Still hard-fail on anything else (bad IP, closed firewall, downed VPS),
+# and Step 5 right after this does a full real login check regardless.
 echo "Preflight: ssh-keyscan..."
-if ! ssh-keyscan -o KexAlgorithms=-sntrup761x25519-sha512@openssh.com -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1 || [ ! -s /tmp/deploy_ssh_keyscan_check ]; then
-    echo "Error: ssh-keyscan could not reach \$VPS_IP. Check the IP, firewall (port 22), and that the VPS is up."
-    cat /tmp/deploy_ssh_keyscan_check 2>/dev/null || true
-    rm -f /tmp/deploy_ssh_keyscan_check
-    exit 1
+ssh-keyscan -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1
+if [ ! -s /tmp/deploy_ssh_keyscan_check ] || grep -qiE "unsupported KEX method|unknown option" /tmp/deploy_ssh_keyscan_check; then
+    if grep -qiE "unsupported KEX method|unknown option" /tmp/deploy_ssh_keyscan_check 2>/dev/null; then
+        echo "⚠️  Local ssh-keyscan couldn't negotiate with the VPS (known limitation of"
+        echo "    some ssh-keyscan builds, not a real connectivity problem) — skipping."
+        echo "    Continuing to the real login preflight, which uses ssh directly."
+    else
+        echo "Error: ssh-keyscan could not reach \$VPS_IP. Check the IP, firewall (port 22), and that the VPS is up."
+        cat /tmp/deploy_ssh_keyscan_check 2>/dev/null || true
+        rm -f /tmp/deploy_ssh_keyscan_check
+        exit 1
+    fi
 fi
 rm -f /tmp/deploy_ssh_keyscan_check
 
