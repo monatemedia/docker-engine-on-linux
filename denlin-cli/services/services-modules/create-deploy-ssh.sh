@@ -232,6 +232,10 @@ echo
 echo "You can find these secrets here:"
 echo "  https://github.com/\$full_repo/settings/secrets/actions"
 
+echo
+echo "✅ Your GitHub repo (\$full_repo) is now connected to the remote server (\$VPS_IP)."
+echo "   GitHub Actions can deploy '\${DEPLOY_ENVIRONMENT}' to \$WORK_DIR on that VPS from here on."
+
 # Step 7: Cleanup
 echo "Cleaning up temporary script..."
 rm -- "\$0"

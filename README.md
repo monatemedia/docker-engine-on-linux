@@ -1329,6 +1329,47 @@ You should see a new workflow running where the workflow triggers a publish imag
 > is extended to multiple environments, standardizing its secret names on the `{ENV}_SSH_*`
 > shape avoids a manual rename step every time.
 
+### Scaffold the Local Deploy Files
+
+Before generating a deploy key, get the local files that hold your app's environment
+configuration in place. Use `configure-deploy-env` in Denlin's Services Menu.
+
+Call the Services Menu
+
+```sh
+denlin services
+
+```
+
+From services menu select `configure-deploy-env`.
+
+This never touches the VPS beyond downloading itself and cleaning up afterwards — it only
+creates files in your project's own local repo:
+
+- `.gitignore` — created if missing, and `.env.deploy-base` / `.env.deploy-secrets.production`
+  / `.env.deploy-secrets.staging` are added to it if they aren't already listed.
+- `.env.deploy-base` — values that are identical between staging and production. Created
+  once, shared by both environments.
+- `.env.deploy-secrets.<environment>` — values that differ between staging and production,
+  for the one environment you selected.
+
+Neither file gets pre-filled with guessed field names — Denlin has no way to know what a
+particular app actually needs, so both are created as blank templates with an explanatory
+comment, and you fill them in yourself based on what your `docker-compose.yml` expects. Run
+it once per environment (`staging`, then `production`); an already-existing file is always
+left alone, never overwritten.
+
+> [!NOTE]
+> ### Why two files instead of one
+> The real distinction isn't "secret vs. non-secret" — a shared value can still be a real
+> credential. It's "shared vs. environment-specific": if a value is identical in staging and
+> production, it belongs in `.env.deploy-base`; if it differs at all, it belongs in the
+> matching `.env.deploy-secrets.<environment>` file, even if that particular value isn't
+> secret either. `provision-app-env` (below) merges the two, with the environment-specific
+> file always winning on a conflicting key.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Generate a Deploy Key Per Environment
 
 To generate an SSH deploy key for a specific environment, install it on the VPS, and upload
@@ -1368,6 +1409,40 @@ repository secret, since a job declaring `environment: "production"` is the one 
 reviewers / branch protection rules could later apply.
 
 Repeat for each environment (`staging`, then `production`).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Merge and Send the .env to the VPS
+
+Once `.env.deploy-base` and `.env.deploy-secrets.<environment>` are filled in, use
+`provision-app-env` in Denlin's Services Menu to build the real `.env` and send it to the
+VPS.
+
+Call the Services Menu
+
+```sh
+denlin services
+
+```
+
+From services menu select `provision-app-env`.
+
+This merges the two local files — the environment-specific file wins on any key both
+define — and `scp`s the result to the VPS as `.env` in the work directory `create-deploy-ssh`
+set up for that environment. Like `configure-deploy-env`, app-runtime values never touch
+GitHub Actions secrets at all — only the four SSH values above do.
+
+> [!WARNING]
+> ### An existing `.env` is never silently overwritten
+> If `.env` already exists at the target work directory — the normal case any time you're
+> rotating a credential rather than provisioning for the first time — the script asks before
+> replacing it, and backs the old one up first as `.env.bak-<timestamp>` (timestamped using
+> the VPS's own clock, not your local machine's). Answering no cancels without sending
+> anything.
+
+Provisioning the `.env` doesn't restart anything on its own. Trigger a deploy afterwards
+(push a tag, or run the workflow manually) for the change to actually take effect —
+`docker-publish.yml`'s deploy jobs only verify `.env` exists, they don't read or write it.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
