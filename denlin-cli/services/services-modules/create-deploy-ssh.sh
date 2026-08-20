@@ -157,7 +157,16 @@ ssh-copy-id -i "\${key_path}.pub" "\$VPS_USER@\$VPS_IP"
 # Still hard-fail on anything else (bad IP, closed firewall, downed VPS),
 # and Step 5 right after this does a full real login check regardless.
 echo "Preflight: ssh-keyscan..."
-ssh-keyscan -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1
+# "|| true" is load-bearing here, not decoration: under 'set -e', a bare
+# non-conditional command that exits non-zero kills the whole script right
+# then and there — silently, since ssh-keyscan's own output is redirected
+# into the check file rather than the terminal. That's exactly what a KEX
+# negotiation failure does (it exits non-zero), so without "|| true" this
+# line alone defeats the whole tolerant-check block below: the script would
+# die right here with zero visible output, immediately after the "Preflight:
+# ssh-keyscan..." echo, instead of ever reaching the logic that's supposed
+# to treat that specific failure as non-fatal.
+ssh-keyscan -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1 || true
 if [ ! -s /tmp/deploy_ssh_keyscan_check ] || grep -qiE "unsupported KEX method|unknown option" /tmp/deploy_ssh_keyscan_check; then
     if grep -qiE "unsupported KEX method|unknown option" /tmp/deploy_ssh_keyscan_check 2>/dev/null; then
         echo "⚠️  Local ssh-keyscan couldn't negotiate with the VPS (known limitation of"
