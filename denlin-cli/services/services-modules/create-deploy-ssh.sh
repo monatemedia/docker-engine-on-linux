@@ -67,14 +67,21 @@ cat <<EOL >"$TEMP_SCRIPT"
 
 set -e
 
-# On Windows Git Bash, MSYS silently rewrites any argument that looks like a
-# POSIX absolute path (e.g. \$WORK_DIR, starting with /) into a Windows path
-# before handing it to a native (non-MSYS) binary like gh.exe — turning
-# "/home/edward/sparkshop-staging" into "C:/Program Files/Git/home/edward/..."
-# with no error and no visible difference in what you typed. This broke
-# WORK_DIR secrets multiple times in production use before being tracked down.
-# No-op on Linux/Mac, so safe to export unconditionally.
-export MSYS_NO_PATHCONV=1
+# NOTE ON MSYS_NO_PATHCONV: this used to be exported globally right here, for
+# the whole script. That was wrong — it broke ssh-keygen for anyone whose
+# Windows PATH resolves \`ssh-keygen\` to Windows' own built-in OpenSSH client
+# (C:\\Windows\\System32\\OpenSSH\\ssh-keygen.exe, not Git's MSYS-runtime-linked
+# one) rather than Git for Windows' bundled version: with MSYS_NO_PATHCONV set,
+# Bash stops auto-converting "\$HOME/.ssh/..." into a real Windows path before
+# handing it to a native (non-MSYS) binary, so a genuinely native ssh-keygen.exe
+# gets a literal "/c/Users/.../.ssh/..." string it can't resolve and fails with
+# "No such file or directory" — even though \`mkdir -p ~/.ssh\` right beforehand
+# succeeds, since that's Git Bash's own MSYS-native mkdir, unaffected either way.
+# \$WORK_DIR is a different case: it's never meant to be resolved as a path on
+# THIS machine at all — it's just a string describing a path on the remote VPS —
+# so gh.exe (also genuinely native, no MSYS runtime) must NOT have it rewritten.
+# Scoped narrowly to just the \`gh secret set\` calls below instead of exported
+# for the whole script, so ssh-keygen/ssh-copy-id/ssh get normal path handling.
 
 VPS_USER="$vps_user"
 VPS_IP="$vps_ip"
@@ -145,7 +152,14 @@ if ! ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -i "\$key_path" "\
 fi
 echo "Both preflight checks passed."
 
-# Step 6: Upload the four secrets
+# Step 6: Upload the four secrets. \$WORK_DIR describes a path on the remote
+# VPS, not this machine — scope MSYS_NO_PATHCONV here only, so gh.exe (a
+# genuinely native binary, no MSYS runtime) receives it as the literal string
+# it is instead of having Bash "helpfully" rewrite it into a local Windows
+# path first. See the note above Step 2 for why this must NOT be exported
+# any earlier — it broke ssh-keygen for the opposite reason.
+export MSYS_NO_PATHCONV=1
+
 if ! command -v gh &> /dev/null; then
     echo "GitHub CLI (gh) not found — install it first: https://cli.github.com/"
     exit 1
