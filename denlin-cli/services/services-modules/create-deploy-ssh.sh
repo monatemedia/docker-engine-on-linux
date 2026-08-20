@@ -45,10 +45,26 @@ env_upper=$(echo "$deploy_environment" | tr '[:lower:]' '[:upper:]')
 # reported success.
 TEMP_SCRIPT="/tmp/create-deploy-ssh-temp-${deploy_environment}.sh"
 
-# Step 4: Ask for the work dir this environment's docker-compose.yml will live in
-echo "This must be a DIFFERENT path than any other environment sharing this VPS —"
-echo "otherwise one environment's deploy will delete another's docker-compose.yml."
-read -p "Absolute work dir on this VPS for '$deploy_environment' (e.g. /home/${vps_user}/PROJECT-${deploy_environment}): " work_dir
+# Step 4: Ask for the project name and build the work dir from it, rather
+# than asking for the full absolute path directly — a hand-typed path is an
+# easy place to fat-finger a typo (wrong username, wrong app name, forgetting
+# the -staging/-production suffix, a stray extra slash), and unlike most
+# typos this one fails silently: it just creates/uses a different directory
+# than intended, with no error, and can end up sharing a path with another
+# environment's docker-compose.yml.
+echo "The work dir is built for you as /home/${vps_user}/<project>-${deploy_environment} —"
+echo "you only need to give the project name below (must be unique among whatever"
+echo "other apps/environments already share this VPS)."
+while true; do
+    read -p "Project name (lowercase, kebab-case, e.g. 'actuallyfind' or 'my-app'): " project_name
+    if [[ "$project_name" =~ ^[a-z][a-z0-9]*(-[a-z0-9]+)*$ ]]; then
+        break
+    fi
+    echo "Please use lowercase letters, digits, and hyphens only, starting with a letter"
+    echo "(kebab-case) — e.g. 'actuallyfind' or 'my-app', not 'ActuallyFind' or 'my_app'."
+done
+work_dir="/home/${vps_user}/${project_name}-${deploy_environment}"
+echo "Work dir will be: $work_dir"
 
 # Step 5: Save vps_ip to configuration file (github_username/CR_PAT untouched if already set)
 echo "Saving configuration to $CONF_FILE..."
@@ -128,8 +144,18 @@ ssh-copy-id -i "\${key_path}.pub" "\$VPS_USER@\$VPS_IP"
 
 # Step 4: Preflight — the exact check the 'Add Server to Known Hosts' CI step
 # runs. Catch a bad IP/closed firewall port/downed VPS here, not after a push.
+# -o KexAlgorithms=-sntrup761x25519-sha512@openssh.com drops just that one
+# hybrid post-quantum KEX method from the offered list. Ubuntu 24.04's
+# OpenSSH 9.6 advertises it by default; Windows' bundled ssh-keyscan (older,
+# and — unlike ssh.exe on the same machine — apparently built without
+# support for it) fails the whole negotiation outright rather than falling
+# back, with "choose_kex: unsupported KEX method ...". ssh.exe itself (used
+# by ssh-copy-id and the login preflight below) already negotiates a
+# different, mutually-supported KEX fine, so this is ssh-keyscan-specific.
+# The leading "-" removes it from the default list rather than replacing the
+# list outright, so this is a no-op on any system that already handles it.
 echo "Preflight: ssh-keyscan..."
-if ! ssh-keyscan -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1 || [ ! -s /tmp/deploy_ssh_keyscan_check ]; then
+if ! ssh-keyscan -o KexAlgorithms=-sntrup761x25519-sha512@openssh.com -T 10 -H "\$VPS_IP" > /tmp/deploy_ssh_keyscan_check 2>&1 || [ ! -s /tmp/deploy_ssh_keyscan_check ]; then
     echo "Error: ssh-keyscan could not reach \$VPS_IP. Check the IP, firewall (port 22), and that the VPS is up."
     cat /tmp/deploy_ssh_keyscan_check 2>/dev/null || true
     rm -f /tmp/deploy_ssh_keyscan_check
