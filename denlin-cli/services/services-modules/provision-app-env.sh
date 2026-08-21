@@ -34,8 +34,27 @@ while true; do
 done
 env_upper=$(echo "$deploy_environment" | tr '[:lower:]' '[:upper:]')
 
-# Step 4: Ask for the work dir (same one create-deploy-ssh used for this environment)
-read -p "Absolute work dir on this VPS for '$deploy_environment' (e.g. /home/${vps_user}/PROJECT-${deploy_environment}): " work_dir
+# Step 4: Ask for the project name and build the work dir the exact same way
+# create-deploy-ssh does, rather than asking for the full absolute path
+# directly. This used to be a free-text "absolute work dir" prompt — and
+# create-deploy-ssh's own prompt asks only for the bare project name and
+# builds the path itself, so it was easy to answer this one the same way
+# out of habit (e.g. just "actuallyfind") and end up targeting a brand-new,
+# wrong directory instead of the one create-deploy-ssh already registered
+# as {ENV}_WORK_DIR in GitHub. That happened for real, not hypothetically —
+# hence this fix.
+echo "The work dir is the same one create-deploy-ssh used for this environment:"
+echo "/home/${vps_user}/<project>-${deploy_environment}."
+while true; do
+    read -p "Project name (lowercase, kebab-case, e.g. 'actuallyfind' or 'my-app'): " project_name
+    if [[ "$project_name" =~ ^[a-z][a-z0-9]*(-[a-z0-9]+)*$ ]]; then
+        break
+    fi
+    echo "Please use lowercase letters, digits, and hyphens only, starting with a letter"
+    echo "(kebab-case) — e.g. 'actuallyfind' or 'my-app', not 'ActuallyFind' or 'my_app'."
+done
+work_dir="/home/${vps_user}/${project_name}-${deploy_environment}"
+echo "Work dir: $work_dir"
 
 TEMP_SCRIPT="/tmp/provision-app-env-temp-${deploy_environment}.sh"
 
