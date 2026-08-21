@@ -236,10 +236,15 @@ echo
 echo "✅ Your GitHub repo (\$full_repo) is now connected to the remote server (\$VPS_IP)."
 echo "   GitHub Actions can deploy '\${DEPLOY_ENVIRONMENT}' to \$WORK_DIR on that VPS from here on."
 
-# Step 7: Cleanup
+# Step 7: Cleanup — VPS-side delete first, local self-delete last. See
+# provision-app-env.sh's cleanup_and_exit for why this order matters: this
+# script deletes its own file (\$0), and doing that before a network call
+# that still has to run risks the interpreter trying to keep reading from a
+# file that's already gone out from under it — seen this hang on Windows on
+# one run and not another with the same code, back to back.
 echo "Cleaning up temporary script..."
-rm -- "\$0"
 ssh "${vps_user}@${vps_ip}" "rm $TEMP_SCRIPT"
+rm -- "\$0"
 echo "Cleanup complete. You may now close this terminal."
 EOL
 

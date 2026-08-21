@@ -89,8 +89,16 @@ SECRETS_FILE=".env.deploy-secrets.\${DEPLOY_ENVIRONMENT}"
 cleanup_and_exit() {
     local exit_code="\${1:-0}"
     echo "Cleaning up temporary script..."
-    rm -- "\$0"
+    # VPS-side delete first, local self-delete last — not the reverse. This
+    # local script deletes its own file (\$0) as part of cleanup; doing that
+    # BEFORE a network call that still has to run risks the interpreter
+    # trying to keep reading/executing from a file that's already gone out
+    # from under it, which is inconsistent across platforms (seen this hang
+    # on Windows/Git Bash on one run and not another, same code, back to
+    # back). Deleting the remote copy first has no such risk, so do the
+    # network operation while the local file is still intact.
     ssh "${vps_user}@${vps_ip}" "rm $TEMP_SCRIPT"
+    rm -- "\$0"
     echo "Cleanup complete. You may now close this terminal."
     exit "\$exit_code"
 }
