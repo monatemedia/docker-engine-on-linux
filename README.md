@@ -1329,6 +1329,23 @@ You should see a new workflow running where the workflow triggers a publish imag
 > is extended to multiple environments, standardizing its secret names on the `{ENV}_SSH_*`
 > shape avoids a manual rename step every time.
 
+> [!WARNING]
+> ### The `PAT` Secret Doesn't Follow You Between Repos
+> Before any of the steps below, make sure this repository can actually log into the GitHub
+> Container Registry. The generated workflow's `publish` job runs `docker login ghcr.io` using
+> *this repo's own* `PAT` secret before it can push an image — if that secret is missing or
+> stale here, the run fails with `denied: denied` in the Actions log, which looks like a deploy
+> problem but isn't one. Having already set this up for a different project doesn't carry over:
+> the underlying token (`CR_PAT`, saved once in `/etc/denlin-cli.conf` on the VPS by
+> `create-github-pat`) can safely be reused across projects sharing that VPS, but the `PAT`
+> GitHub Actions secret itself is per-repository and has to be pushed to *this* repo
+> separately, even if it's the exact same token value. If you haven't already run these for
+> this project, do so now, in this order:
+> 1. `create-github-pat` (see "Create a GitHub Personal Access Token (PAT)" above) — reuses
+>    your saved `CR_PAT` instead of generating a new one if it's still valid.
+> 2. `create-github-actions-secret-pat` (see "Store PAT as a GitHub Actions Secret" above) —
+>    pushes it as this repo's `PAT` secret.
+
 ### Scaffold the Local Deploy Files
 
 Before generating a deploy key, get the local files that hold your app's environment
