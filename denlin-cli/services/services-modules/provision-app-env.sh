@@ -123,6 +123,17 @@ fi
 # configure-deploy-env writes, not by anything this script has to parse
 # correctly.
 declare -A MERGED
+# Keys in the order they first appear (base file first, then any new keys
+# from the secrets file). \${!MERGED[@]} below is NOT usable for output: a
+# bash associative array iterates in hash order, not insertion order, so the
+# written .env came out shuffled. That is more than cosmetic - a value like
+# MAIL_FROM_NAME="\${APP_NAME}" only resolves if APP_NAME is defined ABOVE
+# it, so a shuffled file made such references work or silently go blank
+# depending on how the hash happened to fall (caught on actuallyfind staging
+# 2026-10-05: docker compose warned APP_NAME was unset because VITE_APP_NAME
+# landed on line 25 and APP_NAME on line 57). A key the secrets file
+# overrides keeps its original (base-file) position; only its value changes.
+MERGED_ORDER=()
 
 read_into_map() {
     local file="\$1"
@@ -135,6 +146,9 @@ read_into_map() {
                 echo "Error: \$key is still blank in \$file — fill it in first."
                 exit 1
             fi
+            if [[ -z "\${MERGED[\$key]+set}" ]]; then
+                MERGED_ORDER+=("\$key")
+            fi
             MERGED["\$key"]="\$value"
         fi
     done < "\$file"
@@ -145,7 +159,7 @@ read_into_map "\$SECRETS_FILE"
 echo "Merged \${#MERGED[@]} total key(s) from \$BASE_FILE + \$SECRETS_FILE."
 
 TMP_ENV=\$(mktemp)
-for key in "\${!MERGED[@]}"; do
+for key in "\${MERGED_ORDER[@]}"; do
     echo "\${key}=\${MERGED[\$key]}" >> "\$TMP_ENV"
 done
 
