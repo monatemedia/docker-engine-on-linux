@@ -388,6 +388,14 @@ apt-get install --reinstall git -y
 
 ```
 
+Also make sure `cron` is present. Most Ubuntu images have it, and `setup-nginx-proxy` checks for it later and installs it if missing, but installing it now means app deploys that schedule jobs on this server (such as ActuallyFind's weekly Cloudflare IP ranges refresh) work from the first run:
+
+```sh
+apt-get install -y cron
+systemctl enable --now cron
+
+```
+
 > [!WARNING]
 > ### Force a reinstall rather than a plain install
 > On at least one fresh Hostinger Ubuntu 24.04 image, a plain `apt-get install git` reported `git is already the newest version` and `git --version` still failed with `command not found` right after. `--reinstall` costs nothing extra when the package is genuinely fine, and rules out a broken/incomplete package as the cause if `git --version` still fails in the next step — see the note there for what to do if it does.
@@ -672,6 +680,11 @@ denlin services
 ```
 
 Then select the option `setup-nginx-proxy`.
+
+Besides starting the proxy it checks that `cron` is installed and running (installing it if not), creates the `nginx/` folders, and creates an empty `cloudflare.conf` that the proxy mounts. Apps that sit behind Cloudflare (ActuallyFind does) fill that file with Cloudflare's IP ranges from their own deploy.
+
+> [!WARNING]
+> Running `setup-nginx-proxy` again replaces `~/nginx-proxy/docker-compose.yml` with the template. It's safe with the current template (it keeps the `cloudflare.conf` mount), but any hand edits you made to that file are lost.
 
 Once the Nginx proxy has been set up, visit your IP address. You should get HTTP Error 503(Service Unavailable) status code message from Nginx.
 

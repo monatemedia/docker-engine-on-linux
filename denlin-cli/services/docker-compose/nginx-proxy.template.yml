@@ -16,6 +16,7 @@ services:
       - ./nginx/vhost:/etc/nginx/vhost.d # Stores custom Nginx virtual host configurations
       - ./nginx/acme:/etc/acme.sh # Stores Let's Encrypt ACME challenge files for SSL certs
       - ./nginx/html:/usr/share/nginx/html:rw # Ensure the ACME challenge files are placed in the correct path
+      - ./cloudflare.conf:/etc/nginx/conf.d/cloudflare.conf:ro # Cloudflare IP ranges (real visitor IP + $from_cloudflare flag); empty until an app's deploy fills it. setup-nginx-proxy creates the empty file first - if it is missing Docker creates a directory instead.
     networks:
       - proxy-network # Connects to the shared network for communication with other containers
 

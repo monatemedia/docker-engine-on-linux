@@ -71,9 +71,30 @@ else
     echo "Apache is not installed. Proceeding with setup..."
 fi
 
+# Cron is needed by app deploys that schedule jobs on this server (e.g. ActuallyFind's
+# weekly Cloudflare IP ranges refresh). Check it, install it if missing.
+echo "Checking that cron is installed..."
+if ! command -v crontab > /dev/null 2>&1; then
+    echo "Cron is not installed. Installing it..."
+    sudo apt-get update
+    sudo apt-get install -y cron
+fi
+if command -v systemctl > /dev/null 2>&1 && ! systemctl is-active --quiet cron; then
+    sudo systemctl enable --now cron
+fi
+if command -v crontab > /dev/null 2>&1 && systemctl is-active --quiet cron; then
+    echo "Cron is installed and running."
+else
+    echo "Warning: cron is not running. Jobs that apps schedule on this server will not fire."
+fi
+
 # Step 1: Generate docker-compose.yml from the template
 echo "Creating Docker Compose file from the template..."
-mkdir -p "$TARGET_DIR"
+mkdir -p "$TARGET_DIR"/nginx/{html,certs,vhost,acme}
+# Empty file the template bind-mounts. It must exist BEFORE 'up': if a bind-mounted
+# host file is missing Docker creates a directory with that name instead. Never
+# truncate an existing one - it may already hold the Cloudflare ranges.
+touch "$TARGET_DIR/cloudflare.conf"
 cp "$DOCKER_COMPOSE_DIR" "$DOCKER_COMPOSE_FILE"
 
 # Step 2: Replace the user email variable in the template
